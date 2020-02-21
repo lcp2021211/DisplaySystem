@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: clientController.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: clientController.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file NMTD MOTAT architecture 1.0 &lt;br>
+ !!!!DO NOT open source, this is a CONFIDENTIAL PROGRAM &lt;br>
+ This is main controller, handling request from proxys,
+ including shuffle request and handling request, applying shuffle policies, 
+ redistributing clients and proxies, and inform proxies of the changes.
+ @author Song Chengru created at 3/28/2019, 4:12:27 PM
+ */
+
+const Mappings = require('../models/proxyToClient')
+const error = require('../config/errorCode')
+const errorCode = error.errorCode
+const MAXCREDIT = require('../config/basics').basics.maxCredit
+const service = require('../controllers/services')
+/**
+ * Message sent to server about client to check if client is already in the map
+ * If it does, do nothing. Else add the client to map.
+ * @param {Object} req request obj
+ * @param {Object} res respond obj
+ * @param {Object} next middleware
+ */
+async function clientRegister(req, res, next) {
+  const ipArray = req.ip.split(':')
+  const proxyIP = ipArray[3]
+  const clientID = req.body.clientID
+  console.log(clientID)
+  // check if already in the map
+  try{
+    const proxyAndClient = await Mappings.findOne({client: clientID, proxy: proxyIP})
+    // save if not
+    if(proxyAndClient === null){
+      const result = await Mappings.findOne({proxy: proxyIP})
+      if(result){
+        result.client.push(clientID)
+        result.save(function(err) {
+          if(err){
+            res.send(errorCode.DOCNOTFOUND)
+          }
+          res.send(errorCode.SENDSUCCESSFULLY)
+        })
+        // res.send(errorCode.SENDSUCCESSFULLY)
+      }else{
+        res.send(errorCode.DOCNOTFOUND)
+      }
+    }
+  }catch(err) {
+    res.send(errorCode.DOCNOTFOUND)
+  }
+}
+
+/**
+ * Get proxy ip from req.ip and add the proxy ip to trusted proxys,
+ * Update database with empty clients array and proxy ip
+ * @todo Authentication of the request ip address
+ * @param {Obj} req request 
+ * @param {Obj} res respond
+ * @param {function} next middleware
+ */
+async function proxyRegister(req, res, next) {
+  const proxy = req.body.proxyIP
+  try {
+    const findProxy = await Mappings.findOne({proxy: proxy})
+    if(findProxy){
+      res.send(errorCode.PROXYEXIST)
+    }else{
+      const doc = new Mappings({
+        proxy: proxy,
+        client:[]
+      })
+      await doc.save()
+      res.send(errorCode.SENDSUCCESSFULLY)
+    }
+  } catch(err) {
+    console.log(err)
+  }
+}
+
+/**
+ * when a proxy request to shuffle because it is under attack
+ * @param {Obj} req request: req.ip for proxy ip address
+ * @param {Obj} res respond: respond to request
+ * @param {function} next middleware
+ */
+async function requestShuffle(req, res, next) {
+  // get the proxy ID
+  const ipArray = req.ip.split(':')
+  const proxyIP = ipArray[3]
+  
+  try {
+    const result = await Mappings.findOne({proxy: proxyIP})
+    if(result) {
+      // if proxy exists
+      // invoke shuffle algorithm
+      const resultJson = await shuffle(proxyIP, result.client)
+      // after shuffle, send the results to every client so that they switch to anothor proxy
+      console.log(resultJson)
+      res.send(resultJson)
+    }
+  } catch(err) {
+    console.error(err)
+    res.send(errorCode.DOCNOTFOUND)
+  }
+}
+/**
+ * delete client from database, because of client offline
+ * @param {Obj} req request
+ * @param {Obj} res respond
+ * @param {function} next middleware
+ */
+async function deleteClient(req, res, next) {
+  const clientID = req.body.clientID
+  const ipArray = req.ip.split(':')
+  const proxyIP = ipArray[3]
+  try {
+    const result = await Mappings.findOne({client: clientID, proxy: proxyIP})
+    // if the mappings are found in the database
+    if(result){
+      const index = result.client.indexOf(clientID)
+      result.client.splice(index, 1)
+      result.save()
+      res.send(errorCode.SENDSUCCESSFULLY)
+    }
+  } catch (err) {
+    console.error(err)
+    res.send(errorCode.DOCNOTFOUND)
+  }
+}
+
+/**
+ * 1.For each client, if the credit is already over the top, block it.
+ * 2.Add credit scoring to all clients in this proxy
+ * 3.Randomly redistribute through all proxys and inform clients
+ * @param {String} proxy ip address of proxy
+ */
+async function shuffle(proxy) {
+  try{
+    // first remove 
+    const result = await redistribute(proxy)
+    const proxy2Clients = result[1]
+    const resultMap = result[2]
+    informClient(resultMap)
+    saveNewMap(proxy2Clients).then(success => {
+      if(success)
+        console.log('save successfully!')
+      else{
+        console.log('what the...')
+      }
+    })
+  }catch(err){
+    console.error(err)
+  }
+}
+
+/**
+ * Add credit to client, now it's only a most simplified version,
+ * implementing y = x model
+ * @todo When to block the client
+ * @param {Obj} client Object {ID, Pass, credit, block}
+ * @returns {Obj} returns object after adding credit and determine whether should block
+ */
+function addCredit(client){
+  client.credit++
+}
+
+/**
+ * Redistribute all client through proxys.
+ * This is done by randomly redistribute through all clients.
+ * @param {String} proxyIP The request proxy ip address
+ * @returns {Array} [old proxy->old clients[], new proxy->new clients[], old proxy->[(old clients, new proxy)]]
+ */
+async function redistribute(proxyIP) {
+  return new Promise(async (resolve, reject) => {
+    const clientArray = []
+    let proxyArray = []
+    // proxy->new clients[]
+    let proxy2Clients = new Map()
+    // client->proxy
+    let client2Proxy = new Map()
+    try {
+      let before = await Mappings.find({})
+      before.forEach(element => {
+        if(element.proxy === proxyIP){
+          element.client.forEach(singleClient => {
+            addCredit(singleClient)
+          })
+        }
+        proxyArray.push(element.proxy)
+        element.client.forEach(client2 => {
+          clientArray.push(client2)
+        })
+      })
+      clientArray.sort(randomSort)
+      const evenly = clientArray.length / proxyArray.length
+      let clientCount = 0
+      proxyArray.forEach(proxy => {
+        let tempClient = []
+        for(let i=0; i&lt;evenly; i++){
+          if(clientCount &lt; clientArray.length){
+            tempClient.push(clientArray[clientCount])
+            client2Proxy.set(clientArray[clientCount].ID, proxy)
+            clientCount++
+          }
+          else
+            break
+        }
+        proxy2Clients.set(proxy, tempClient)
+      })
+      // old proxy->(clientID, newProxy)
+      const resultMap = new Map()
+      before.forEach(element => {
+        let tempClient = []
+        element.client.forEach(client => {
+          let newProxy = client2Proxy.get(client.ID)
+          tempClient.push({clientID: client.ID, newProxy: newProxy})
+        })
+        resultMap.set(element.proxy, tempClient)
+      })
+      resolve([before, proxy2Clients, resultMap])
+    } catch(err) {
+      console.error('redistributing error: ' + err)
+      reject(err)
+    }
+  })
+}
+/**
+ * For sort method that returns random input value
+ * @param {int} a Just a hint for comparing method
+ * @param {int} b Just a hint for comparing method
+ */
+function randomSort(a, b){
+  return Math.random() > .5 ? -1: 1
+}
+/**
+ * inform all client that connects to proxy to switch
+ * @param {Map} proxy2Clients map old proxy->([(old client, new proxy)])
+ */
+function informClient(proxy2Clients) {
+  proxy2Clients.forEach((value, key) => {
+    
+  })
+}
+/**
+ * Save new mappings
+ * @param {Map} newMap new proxy->clients[]
+ */
+function saveNewMap(newMap) {
+  return new Promise((resolve, reject) => {
+    // have to delete old mappings before inserting new docs
+    Mappings.remove({}, (err, doc) => {
+      if(err){
+        console.error(err)
+        console.log('error deleting docs')
+      }
+    })
+    
+    newMap.forEach((value, key) => {
+      let mapping = new Mappings()
+      mapping.saveMap = new Map([[key, value]])
+      mapping.save((err, doc) => {
+        if(err)
+          console.error(err)
+      })
+    })
+  })
+}
+module.exports = {
+  clientRegister: clientRegister,
+  proxyRegister: proxyRegister,
+  requestShuffle: requestShuffle,
+  deleteClient: deleteClient,
+  redistribute: redistribute,
+  shuffle: shuffle
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addCredit">addCredit</a></li><li><a href="global.html#clientRegister">clientRegister</a></li><li><a href="global.html#deleteClient">deleteClient</a></li><li><a href="global.html#informClient">informClient</a></li><li><a href="global.html#proxyRegister">proxyRegister</a></li><li><a href="global.html#randomSort">randomSort</a></li><li><a href="global.html#redistribute">redistribute</a></li><li><a href="global.html#requestShuffle">requestShuffle</a></li><li><a href="global.html#saveNewMap">saveNewMap</a></li><li><a href="global.html#shuffle">shuffle</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Mar 28 2019 16:19:26 GMT+0800 (中国标准时间)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
