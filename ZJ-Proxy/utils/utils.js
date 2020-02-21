@@ -9,13 +9,17 @@ exports.sendShuffleRequest = function(proxy) {
 
 // Register client by clientID
 exports.registerUser = function(clientID, type) {
-	return axios.post(`${serverURL}/clientRegister`, { clientID: clientID, proxyIP: `${config.ip}:${config.port}`, type: type });
+	return axios.post(`${serverURL}/clientRegister`, {
+		clientID: clientID,
+		proxyIP: `${config.ip}:${config.port}`,
+		type: type
+	});
 };
 
-// Register a spy 
+// Register a spy
 exports.spyRegister = function(clientID, type) {
 	return axios.post(`${serverURL}/spyRegister`, { clientID: clientID, proxyIP: `${config.ip}:${config.port}` });
-}
+};
 
 // Unregister client by clientID
 exports.deleteUser = function(clientID) {

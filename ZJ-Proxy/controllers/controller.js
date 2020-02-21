@@ -178,7 +178,6 @@ async function getSysInfo(req, res, next) {
 	});
 }
 
-
 /**
  * Get the information of CPU
  * @param {*} req: Request body

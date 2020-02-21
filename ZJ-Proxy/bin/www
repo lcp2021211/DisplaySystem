@@ -109,10 +109,10 @@ wsServer.on('request', async request => {
 	}
 	let connection = request.accept('echo-protocol', request.origin);
 	// resource represent the clientID, should be an identifier for the specific connection
-	let arr = request.resource.split('/')
+	let arr = request.resource.split('/');
 	let clientID = arr[1];
-	let type = parseInt(arr[2])
-	console.log('type: ' + type)
+	let type = parseInt(arr[2]);
+	console.log('type: ' + type);
 	connection.id = clientID;
 	// Need to judge if it is reconnect
 	if (global.ws.has(clientID)) {
