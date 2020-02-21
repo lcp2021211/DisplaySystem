@@ -1,0 +1,26 @@
+<nb-select placeholder="Select type" [(selected)]="type" size="large">
+  <nb-option value="video">Video</nb-option>
+  <nb-option value="download">Download</nb-option>
+</nb-select>
+
+<nb-select placeholder="Select number" [(selected)]="cardNumber" size="large">
+  <nb-option *ngFor="let i of MAX_NUMBER" [value]="i">{{ i }}</nb-option>
+</nb-select>
+
+<nb-select placeholder="Select users" [(selected)]="user" size="large">
+  <nb-option value="client">Client</nb-option>
+  <nb-option value="spy">Spy</nb-option>
+</nb-select>
+
+<button nbButton (click)="register()">Register</button>
+
+<nb-toggle [(checked)]="showChart" status="success" labelPosition="left">
+  <h5>Show Chart</h5>
+</nb-toggle>
+
+<div style="display: flex; width: 100%; flex-wrap: wrap;" [ngSwitch]="type" *ngIf="show">
+  <div *ngFor="let _ of [].constructor(cardNumber)" style="width: 19%; margin: 10px">
+    <app-video-card *ngSwitchCase="'video'" [showChart]="showChart" [user]="user"></app-video-card>
+    <app-download-card *ngSwitchCase="'download'" [showChart]="showChart" [user]="user"></app-download-card>
+  </div>
+</div>

@@ -1,0 +1,6 @@
+<nb-select placeholder="Select topology" (selectedChange)="topologyChange($event)" size="large">
+  <nb-option value="all">All Proxies</nb-option>
+  <nb-option *ngFor="let proxy of proxies" [value]="proxy">{{ proxy }}</nb-option>
+</nb-select>
+<button nbButton (click)="loadData()">Refresh</button>
+<div echarts [options]="topologyOption" class="echarts" style="width: 100%; height: 95%;"></div>
