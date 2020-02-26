@@ -8,17 +8,17 @@
  */
 
 const Mappings = require('../models/proxyToClient');
-const error = require('../config/errorCode');
-const errorCode = error.errorCode;
-
-const MAXCREDIT = require('../config/basics').basics.maxCredit;
+const errorCode = require('../config/errorCode').errorCode;
 const parameter = require('../config/basics').basics;
-
 const service = require('../controllers/services');
-const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
-const url = 'mongodb://localhost:27017';
-const client = new MongoClient(url);
+const proxies = require('../config/proxy').proxies;
+
+// const MAXCREDIT = require('../config/basics').basics.maxCredit;
+// const MongoClient = require('mongodb').MongoClient;
+// const url = 'mongodb://localhost:27017';
+// const client = new MongoClient(url);
+
 /**
  * Message sent to server about client to check if client is already in the map
  * If it does, do nothing. Else add the client to map.
@@ -214,6 +214,7 @@ async function requestShuffle(req, res, next) {
 		res.send(errorCode.DOCNOTFOUND);
 	}
 }
+
 /**
  * delete client from database, because of client offline
  * @param {Obj} req request
@@ -384,6 +385,7 @@ async function redistribute(attackVector) {
 		}
 	});
 }
+
 /**
  * For sort method that returns random input value
  * @param {int} a Just a hint for comparing method
@@ -392,6 +394,7 @@ async function redistribute(attackVector) {
 function randomSort(a, b) {
 	return Math.random() > 0.5 ? -1 : 1;
 }
+
 /**
  * inform all client that connects to proxy to switch
  * @param {Map} proxy2Clients map old proxy->([(old client, new proxy)])
@@ -466,6 +469,8 @@ async function attacked(req, res, next) {
 		console.error(err);
 	}
 }
+
+
 /**
  * Distribute client id to client, this is a temporary function that receives client request and distribute a id
  * @todo should be deleted further, or receive from proxy
@@ -480,6 +485,44 @@ function distributeClientID(req, res, next) {
 		message: temp
 	});
 	global.ids++;
+}
+
+/**
+ * Distribute clientID and proxy
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+function distributeClient(req, res, next) {
+	res.send({
+		code: 200,
+		clientID: global.ids,
+		proxy: randomProxy()
+	});
+	global.ids++;
+}
+
+
+/**
+ * Redistribute proxy
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+function redistributeClient(req, res, next) {
+	let { clientID, proxy } = req.body;
+	console.log(clientID + ',' + proxy);
+	res.send({
+		code: 200,
+		proxy: randomProxy()
+	});
+}
+
+/**
+ * Get proxy by random
+ */
+function randomProxy() {
+	return proxies[Math.floor(Math.random() * proxies.length)];
 }
 
 /**
@@ -572,6 +615,7 @@ function getSpy2(req, res, next) {
 		}
 	});
 }
+
 /**
  * This is a test function.
  * This is used to initialize before attack happened
@@ -669,51 +713,55 @@ function whetherBlock(req, res, next) {
  * @param {*} next
  */
 function addDomain(req, res, next) {
-	const proxies = [
-		'39.98.156.204',
-		'39.98.148.77',
-		'39.100.106.44',
-		'47.92.172.18',
-		'39.100.144.204',
-		'39.100.255.8',
-		'39.100.84.98',
-		'39.100.248.86',
-		'39.98.155.31',
-		'39.98.154.223',
-		'39.100.120.192',
-		'39.100.247.214',
-		'39.100.84.4',
-		'39.100.144.98',
-		'47.92.222.154',
-		'39.98.146.117'
-	];
+	// const proxies = [
+	// 	'39.98.156.204',
+	// 	'39.98.148.77',
+	// 	'39.100.106.44',
+	// 	'47.92.172.18',
+	// 	'39.100.144.204',
+	// 	'39.100.255.8',
+	// 	'39.100.84.98',
+	// 	'39.100.248.86',
+	// 	'39.98.155.31',
+	// 	'39.98.154.223',
+	// 	'39.100.120.192',
+	// 	'39.100.247.214',
+	// 	'39.100.84.4',
+	// 	'39.100.144.98',
+	// 	'47.92.222.154',
+	// 	'39.98.146.117'
+	// ];
 	Mappings.remove({}, err => {
 		if (err) {
 			console.error('error removing old:', err);
 		} else {
-			let count = 0;
+			// let count = 0;
 			proxies.forEach(proxy => {
-				let tempArr = [];
-				for (let i = 0; i < 10; i++) {
-					let tempClient = {
-						ID: count,
-						pass: '123456',
-						credit: 0,
-						block: false,
-						attackFrequency: 0,
-						attackStrength: 0,
-						accessTime: new Date(),
-						timeSlot: 0,
-						spy: false
-					};
-					tempArr.push(tempClient);
-					count++;
-				}
-				let temp = new Mappings({
-					client: tempArr,
-					proxy: `${proxy}:3000`
-				});
-				temp.save();
+				new Mappings({
+					client: [],
+					proxy: `${proxy}`
+				}).save();
+				// let tempArr = [];
+				// for (let i = 0; i < 10; i++) {
+				// 	let tempClient = {
+				// 		ID: count,
+				// 		pass: '123456',
+				// 		credit: 0,
+				// 		block: false,
+				// 		attackFrequency: 0,
+				// 		attackStrength: 0,
+				// 		accessTime: new Date(),
+				// 		timeSlot: 0,
+				// 		spy: false
+				// 	};
+				// 	tempArr.push(tempClient);
+				// 	count++;
+				// }
+				// let temp = new Mappings({
+				// 	client: tempArr,
+				// 	proxy: `${proxy}:3000`
+				// });
+				// temp.save();
 			});
 		}
 	});
@@ -744,6 +792,7 @@ function addDomain(req, res, next) {
 		}
 	});
 }
+
 module.exports = {
 	clientRegister: clientRegister,
 	proxyRegister: proxyRegister,
@@ -759,5 +808,7 @@ module.exports = {
 	getProxy: getProxy,
 	whetherBlock: whetherBlock,
 	addDomain: addDomain,
-	spyRegister: spyRegister
+	spyRegister: spyRegister,
+	distributeClient: distributeClient,
+	redistributeClient: redistributeClient
 };

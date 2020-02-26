@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/Mappings');
+
+const Mappings = require('../models/proxyToClient');
 const proxies = [
 	'39.99.199.31',
 	'39.99.198.165',
@@ -19,7 +21,6 @@ const proxies = [
 	'39.98.35.100'
 ];
 
-const Mappings = require('../models/proxyToClient');
 Mappings.remove({}, err => {
 	if (err) {
 		console.error('error removing old:', err);

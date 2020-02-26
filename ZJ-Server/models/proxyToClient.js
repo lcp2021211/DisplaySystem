@@ -45,4 +45,5 @@ MappingSchema.virtual('saveAll').set(function(array) {
 		this.client = element.client;
 	});
 });
+
 module.exports = mongoose.model('Mappings', MappingSchema);

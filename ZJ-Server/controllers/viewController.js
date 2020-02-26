@@ -13,7 +13,7 @@ const url = 'mongodb://localhost:27017';
 const client = new MongoClient(url);
 const os = require('os');
 const service = require('./services');
-global.realTime = new Map();
+// global.realTime = new Map();
 /**
  * Login with username and password
  * @param {string, string} req Username and password of user
@@ -229,7 +229,7 @@ function getClientNetworkInfo(req, res, next) {
 }
 
 /**
- * clear all clients in the view
+ * Clear all clients in the view
  * @param {none} req
  * @param {JSON} res indication whether succefully updated real time global obj
  * @param {function} next middleware
@@ -243,6 +243,7 @@ function clearClient(req, res, next) {
 		}
 	});
 }
+
 module.exports = {
 	LoginByUsername: LoginByUsername,
 	getUserInfo: getUserInfo,

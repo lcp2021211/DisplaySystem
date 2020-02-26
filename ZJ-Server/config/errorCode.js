@@ -1,4 +1,4 @@
-const errorCode = {
+exports.errorCode = {
 	DOCNOTFOUND: {
 		code: 401,
 		message: 'document not found'
@@ -16,4 +16,4 @@ const errorCode = {
 		message: 'client already exists'
 	}
 };
-exports.errorCode = errorCode;
+
