@@ -1,4 +1,10 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, Input } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+  Input
+} from '@angular/core';
 import { EChartOption } from 'echarts';
 import { NbThemeService, NbToastrService } from '@nebular/theme';
 import { InformationService } from 'src/app/utils/information.service';
@@ -23,6 +29,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
   private start = 0;
   private end = 0;
   private fileSize = 0;
+  private switchInterval = 5 * sec;
 
   @Input() showChart: boolean;
   @Input() user: string;
@@ -37,6 +44,9 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private _proxy: string;
   set proxy(val: string) {
+    if (val === 'null') {
+      return;
+    }
     if (this._proxy === undefined) {
       // First initialize proxy
       this._proxy = val;
@@ -61,7 +71,11 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
     return this._proxy;
   }
 
-  constructor(private service: InformationService, private theme: NbThemeService, private toast: NbToastrService) {}
+  constructor(
+    private service: InformationService,
+    private theme: NbThemeService,
+    private toast: NbToastrService
+  ) {}
 
   ngOnInit() {
     // Initialize time record
@@ -69,12 +83,12 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
     // Initialize data of chart
     this.service.initializeChartData(this.speed, this.delay);
 
-    this.service.getID().subscribe(
+    this.service.distributeClient().subscribe(
       (res: any) => {
         if (res.code === 200) {
           // Get clientID and proxy
-          this.clientID = res.message;
-          this.proxy = this.service.getProxy();
+          this.clientID = res.clientID;
+          this.proxy = res.proxy;
 
           // Start download and websocket connection
           this.download();
@@ -84,7 +98,9 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
         // Show error toast
         console.log(err);
         this.toast.show('', 'Get ClientID Error', { status: 'danger' });
+
         this.clientID = -1;
+        this.proxy = 'null';
       }
     );
   }
@@ -92,7 +108,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     // Manually destroy timer and webSocket
     clearInterval(this.timer1);
-    clearInterval(this.timer2);
+    clearTimeout(this.timer2);
     this.isLive = false;
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       this.ws.close();
@@ -131,28 +147,28 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
       // Update time record
       this.t = performance.now();
 
-      // Post current speed and delay to server
-      this.service.postInformation(
-        this.clientID,
-        this.proxy,
-        this.speed[this.speed.length - 1].value[1],
-        this.delay[this.delay.length - 1].value[1]
-      );
+      // // Post current speed and delay to server
+      // this.service.postInformation(
+      //   this.clientID,
+      //   this.proxy,
+      //   this.speed[this.speed.length - 1].value[1],
+      //   this.delay[this.delay.length - 1].value[1]
+      // );
 
-      // Get whether block
-      this.service.getBlock(this.clientID).subscribe(
-        res => {
-          if (res.code === 20000) {
-            this.block = res.message.client[0].block;
-            if (this.block) {
-              this.ws.close();
-            }
-          }
-        },
-        err => {
-          console.error(err);
-        }
-      );
+      // // Get whether block
+      // this.service.getBlock(this.clientID).subscribe(
+      //   res => {
+      //     if (res.code === 20000) {
+      //       this.block = res.message.client[0].block;
+      //       if (this.block) {
+      //         this.ws.close();
+      //       }
+      //     }
+      //   },
+      //   err => {
+      //     console.error(err);
+      //   }
+      // );
 
       this.speedOption = {
         grid: {
@@ -270,15 +286,31 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
       };
     }, sec);
 
-    // If 5 seconds not switch, then auto switch
-    this.timer2 = setInterval(() => {
-      // If not switch recently, then manually switch
+    this.autoSwitch();
+  }
+
+  /**
+   * Auto switch proxy at interval
+   * @private
+   * @memberof DownloadCardComponent
+   */
+  private autoSwitch() {
+    this.timer2 = setTimeout(() => {
       if (!this.switchFlag && !this.block) {
-        this.proxy = this.service.getProxy();
+        this.service.redistributeClient(this.clientID, this.proxy).subscribe(
+          (res: any) => {
+            if (res.code === 200) {
+              this.proxy = res.proxy;
+            }
+          },
+          (err: HttpErrorResponse) => {
+            console.log(err);
+          }
+        );
       }
-      // Reset switchFlag
       this.switchFlag = false;
-    }, 5 * sec);
+      this.autoSwitch();
+    }, this.switchInterval);
   }
 
   /**
@@ -297,13 +329,15 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
         this.end = Math.min(this.start + chunkSize, this.fileSize);
         // Downloading
         while (this.start < this.fileSize && !this.block && this.isLive) {
-          await this.service.getVideoByRange(this.proxy, this.start, this.end).then(() => {
-            // Update chunckCount
-            this.chunkCount++;
-            // Update range(start, end)
-            this.start = this.end;
-            this.end = Math.min(this.start + chunkSize, this.fileSize);
-          });
+          await this.service
+            .getVideoByRange(this.proxy, this.start, this.end)
+            .then(() => {
+              // Update chunckCount
+              this.chunkCount++;
+              // Update range(start, end)
+              this.start = this.end;
+              this.end = Math.min(this.start + chunkSize, this.fileSize);
+            });
         }
         // Download completion
         // If current client isn't block and card component isn't destroyed
@@ -327,7 +361,10 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
    * @memberof DownloadCardComponent
    */
   private initializeWebSocket() {
-    this.ws = new WebSocket(`ws://${this.proxy}/${this.clientID}/${this.user === 'client' ? 0 : 1}`, 'echo-protocol');
+    this.ws = new WebSocket(
+      `ws://${this.proxy}/${this.clientID}/${this.user === 'client' ? 0 : 1}`,
+      'echo-protocol'
+    );
     this.ws.onopen = () => {
       console.log(`Websocket open: ${this.clientID}-->${this.ws.url}`);
     };
@@ -344,7 +381,8 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.ws.onclose = (event: CloseEvent) => {
       // console.log(`Websocket close: ${this.clientID}-->${this.ws.url}, Code: ${event.code}, Reason: ${event.reason}`);
       if (event.code !== 1000) {
-        this.proxy = this.service.getProxy();
+        // TODO()
+        // this.proxy = this.service.getProxy();
       }
     };
     this.ws.onerror = () => {

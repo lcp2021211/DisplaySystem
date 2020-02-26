@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { proxies, serverIP } from './global';
+import { serverIP } from './global';
 
 @Injectable({
   providedIn: 'root'
@@ -10,12 +10,24 @@ export class InformationService {
   constructor(private http: HttpClient) {}
 
   /**
-   * Request clientID
+   * Distribute clientID and proxy 
    * @returns {Observable<any>}
    * @memberof InformationService
    */
-  getID(): Observable<any> {
-    return this.http.post(`${serverIP}/distributeID`, {});
+  distributeClient(): Observable<any> {
+    return this.http.get(`${serverIP}/distributeClient`, {});
+  }
+
+  /**
+   * Redistribute proxy
+   * @returns {Observable<any>}
+   * @memberof InformationService
+   */
+  redistributeClient(clientID: number, proxy: string): Observable<any> {
+    return this.http.post(`${serverIP}/redistributeClient`, {
+      clientID: clientID,
+      proxy: proxy
+    });
   }
 
   /**
@@ -25,23 +37,16 @@ export class InformationService {
    * @memberof InformationService
    */
   deleteClient(clientID: number) {
-    this.http.post(`${serverIP}/deleteClient`, { clientID: clientID }).subscribe(
-      res => {
-        console.log(res);
-      },
-      err => {
-        console.error(err);
-      }
-    );
-  }
-
-  /**
-   * Distribute proxy randomly
-   * @returns {string}
-   * @memberof InformationService
-   */
-  getProxy(): string {
-    return proxies[Math.floor(proxies.length * Math.random())];
+    this.http
+      .post(`${serverIP}/deleteClient`, { clientID: clientID })
+      .subscribe(
+        res => {
+          console.log(res);
+        },
+        err => {
+          console.error(err);
+        }
+      );
   }
 
   /**
@@ -66,7 +71,11 @@ export class InformationService {
    * @returns {Promise<BufferSource>}
    * @memberof InformationService
    */
-  getVideoByRange(url: string, start: number, end: number): Promise<BufferSource> {
+  getVideoByRange(
+    url: string,
+    start: number,
+    end: number
+  ): Promise<BufferSource> {
     return this.http
       .get(`http://${url}/getVideoByRange`, {
         params: { range: `${start}-${end}` },
@@ -95,7 +104,12 @@ export class InformationService {
    * @param {number} delay
    * @memberof InformationService
    */
-  postInformation(clientID: number, proxy: string, speed: number, delay: number) {
+  postInformation(
+    clientID: number,
+    proxy: string,
+    speed: number,
+    delay: number
+  ) {
     this.http
       .post(`${serverIP}/users/setClientNetworkInfo`, {
         clientID: clientID,
