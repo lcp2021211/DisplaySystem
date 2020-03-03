@@ -1,4 +1,4 @@
-exports.basics = {
+module.exports = {
 	maxCredit: 0,
 	waitSlot: 0,
 	alpha: 25,

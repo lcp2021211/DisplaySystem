@@ -13,15 +13,15 @@ const url = 'mongodb://localhost:27017';
 const client = new MongoClient(url);
 const os = require('os');
 const service = require('./services');
-// global.realTime = new Map();
+
 /**
  * Login with username and password
  * @param {string, string} req Username and password of user
  * @param {string} res token that maintain session
  * @param {function} next middleware
  */
-function LoginByUsername(req, res, next) {
-	const { username, password } = req.body;
+exports.LoginByUsername = (req, res, next) => {
+	let { username, password } = req.body;
 	console.log(username, password);
 	Users.findOne({ username: username }, (err, user) => {
 		if (err) {
@@ -33,7 +33,7 @@ function LoginByUsername(req, res, next) {
 		}
 		if (user) {
 			if (user.password === password) {
-				const token = crypto
+				let token = crypto
 					.createHash('sha256')
 					.update(username + password + new Date())
 					.digest('hex');
@@ -59,7 +59,7 @@ function LoginByUsername(req, res, next) {
 			}
 		}
 	});
-}
+};
 
 /**
  * Get detailed user info through query parameters
@@ -67,8 +67,8 @@ function LoginByUsername(req, res, next) {
  * @param {JSON} res a JSON object contains the information of the user
  * @param {function} next middleware
  */
-function getUserInfo(req, res, next) {
-	const { token } = req.query;
+exports.getUserInfo = (req, res, next) => {
+	let { token } = req.query;
 	console.log(token);
 	Users.findOne({ token: token }, (err, userInfo) => {
 		if (err) {
@@ -94,7 +94,7 @@ function getUserInfo(req, res, next) {
 			});
 		}
 	});
-}
+};
 
 /**
  * Written for autonomous attackers to obtain spies.
@@ -102,12 +102,12 @@ function getUserInfo(req, res, next) {
  * @param {JSON} res json containing the map of proxy and spy
  * @param {function} next middleware
  */
-function getSpy(req, res, next) {
+exports.getSpy = (req, res, next) => {
 	client.connect((err, client) => {
 		assert.equal(null, err);
 		// console.log('connected')
-		const db = client.db('Mappings');
-		const collection = db.collection('mapping');
+		let db = client.db('Mappings');
+		let collection = db.collection('mapping');
 		collection.aggregate(
 			[
 				{
@@ -140,7 +140,7 @@ function getSpy(req, res, next) {
 			}
 		);
 	});
-}
+};
 
 /**
  * The client request in 1s interval to get system information, this is the
@@ -148,11 +148,11 @@ function getSpy(req, res, next) {
  * @param {integer, integer} res cpu usage and memory usage of the current reverse proxy
  * @param {function} next middleware
  */
-function getSysInfo(req, res, next) {
-	const cpuUsage = os.loadavg()[0];
-	const totalmem = os.totalmem();
-	const freemem = os.freemem();
-	const memUsage = (totalmem - freemem) / totalmem;
+exports.getSysInfo = (req, res, next) => {
+	let cpuUsage = os.loadavg()[0];
+	let totalmem = os.totalmem();
+	let freemem = os.freemem();
+	let memUsage = (totalmem - freemem) / totalmem;
 	res.send({
 		code: 20000,
 		data: {
@@ -160,7 +160,7 @@ function getSysInfo(req, res, next) {
 			memUsage: memUsage
 		}
 	});
-}
+};
 
 /**
  * get all system information from every reverse proxy
@@ -168,7 +168,7 @@ function getSysInfo(req, res, next) {
  * @param {array} res an array contains usage
  * @param {function} next middleware
  */
-function getSysUsage(req, res, next) {
+exports.getSysUsage = (req, res, next) => {
 	service
 		.getRuntime()
 		.then(resultArr => {
@@ -188,7 +188,7 @@ function getSysUsage(req, res, next) {
 				}
 			});
 		});
-}
+};
 
 /**
  * set client network information
@@ -196,28 +196,28 @@ function getSysUsage(req, res, next) {
  * @param {none} res response code
  * @param {function} next middleware
  */
-function setClientNetworkInfo(req, res, next) {
-	// const { clientID, delayTime, networkSpeed } = req.body
+exports.setClientNetworkInfo = (req, res, next) => {
+	// let { clientID, delayTime, networkSpeed } = req.body
 	// global.realTime.set(clientID, {'delayTime': delayTime, 'networkSpeed': networkSpeed})
 	// res.send({
 	//   code: 20000,
 	//   message: 'update successfully!'
 	// })
-	const { clientID, proxy, delayTime, networkSpeed } = req.body;
+	let { clientID, proxy, delayTime, networkSpeed } = req.body;
 	global.realTime.set(clientID, { proxy: proxy, delayTime: delayTime, networkSpeed: networkSpeed });
 	res.send({
 		code: 20000,
 		message: 'update successfully!'
 	});
-}
+};
 /**
  * return the information of all clients
  * @param {none} req
  * @param {map} res a map of all network information of current clients
  * @param {function} next middleware
  */
-function getClientNetworkInfo(req, res, next) {
-	const clientArr = [];
+exports.getClientNetworkInfo = (req, res, next) => {
+	let clientArr = [];
 	global.realTime.forEach((elem, key) => {
 		elem['clientID'] = key;
 		clientArr.push(elem);
@@ -226,7 +226,7 @@ function getClientNetworkInfo(req, res, next) {
 		code: 20000,
 		data: clientArr
 	});
-}
+};
 
 /**
  * Clear all clients in the view
@@ -234,7 +234,7 @@ function getClientNetworkInfo(req, res, next) {
  * @param {JSON} res indication whether succefully updated real time global obj
  * @param {function} next middleware
  */
-function clearClient(req, res, next) {
+exports.clearClient = (req, res, next) => {
 	global.realTime = new Map();
 	res.send({
 		code: 20000,
@@ -242,15 +242,4 @@ function clearClient(req, res, next) {
 			message: 'clear succefully'
 		}
 	});
-}
-
-module.exports = {
-	LoginByUsername: LoginByUsername,
-	getUserInfo: getUserInfo,
-	getSpy: getSpy,
-	getSysInfo: getSysInfo,
-	getSysUsage: getSysUsage,
-	setClientNetworkInfo: setClientNetworkInfo,
-	getClientNetworkInfo: getClientNetworkInfo,
-	clearClient: clearClient
 };

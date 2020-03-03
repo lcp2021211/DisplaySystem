@@ -12,7 +12,7 @@ const Logger = require('../utils/logger');
  * @param {Map} proxy2Clients old proxy->(client, new proxy)
  * @function informClient(proxy2Clients)
  */
-function informClient(proxy2Clients, client2Proxy) {
+exports.informClient = (proxy2Clients, client2Proxy) => {
 	let content = [];
 	client2Proxy.forEach((proxy, client) => {
 		content.push([client, proxy]);
@@ -24,16 +24,16 @@ function informClient(proxy2Clients, client2Proxy) {
 			else console.log(res.body);
 		});
 	});
-}
+};
 
-function getRuntime() {
+exports.getRuntime = () => {
 	return new Promise((resolve, reject) => {
 		Mappings.find({}, async (err, doc) => {
 			if (err) {
 				console.error(err);
 			}
 			if (doc) {
-				const resultArr = [];
+				let resultArr = [];
 				for (let item in doc) {
 					let length = doc[item].proxy.length;
 					if (doc[item].proxy.substr(length - 4, length - 1) === '3000') {
@@ -50,8 +50,4 @@ function getRuntime() {
 			}
 		});
 	});
-}
-module.exports = {
-	informClient: informClient,
-	getRuntime: getRuntime
 };

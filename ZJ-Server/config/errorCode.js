@@ -1,4 +1,4 @@
-exports.errorCode = {
+module.exports = {
 	DOCNOTFOUND: {
 		code: 401,
 		message: 'document not found'

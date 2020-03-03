@@ -3,13 +3,14 @@
 /**
  * Module dependencies.
  */
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/Mappings');
+
 const http = require('http');
 const app = require('../app');
-const mongoose = require('mongoose');
+const proxies = require('../config/proxies');
 const debug = require('debug')('server2:server');
-
-// Setup mongoose connection
-mongoose.connect('mongodb://localhost:27017/Mappings');
+const Mappings = require('../models/proxyToClient');
 
 /**
  * Get port from environment and store in Express.
@@ -78,11 +79,27 @@ function onListening() {
 	let addr = server.address();
 	let bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
 	debug('Listening on ' + bind);
+
+	initialize();
 }
 
-// Refresh the information of network each 60 secs
-setInterval(() => {
-	global.realTime = new Map();
-}, 60000);
+function initialize() {
+	Mappings.remove({}, err => {
+		if (err) {
+			console.error('error removing old:', err);
+		} else {
+			proxies.forEach(proxy => {
+				new Mappings({
+					client: [],
+					proxy: proxy,
+					maxSize: 10
+				}).save();
+			});
+		}
+	});
 
-
+	// Refresh the information of network each 60 secs
+	setInterval(() => {
+		global.realTime = new Map();
+	}, 60000);
+}

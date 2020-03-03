@@ -5,7 +5,7 @@ const MappingSchema = new Schema(
 	{
 		client: [
 			{
-				ID: String,
+				ID: Number,
 				pass: String,
 				credit: Number,
 				block: Boolean,
@@ -21,7 +21,10 @@ const MappingSchema = new Schema(
 			type: String,
 			required: true,
 			unique: true
-		}
+		},
+		maxSize: Number,
+		attackFrequency: Number,
+		attackStrength: Number
 	},
 	{ collection: 'mapping' }
 );

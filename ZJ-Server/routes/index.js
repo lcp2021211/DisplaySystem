@@ -11,17 +11,16 @@ router.get('/getProxy', clientController.getProxy);
 router.get('/addDomain', clientController.addDomain);
 router.get('/distributeClient', clientController.distributeClient);
 
-
 /** POST method */
-router.post('/clientRegister', clientController.clientRegister);
+router.post('/clientOnline', clientController.clientOnline);
+router.post('/clientOffline', clientController.clientOffline);
+router.post('/redistributeClient', clientController.redistributeClient);
 router.post('/proxyRegister', clientController.proxyRegister);
 router.post('/requestShuffle', clientController.requestShuffle);
 router.post('/deleteClient', clientController.deleteClient);
 router.post('/attacked', clientController.attacked);
-router.post('/distributeID', clientController.distributeClientID);
 router.post('/initializeAttack', clientController.initializeBeforeAttack);
 router.post('/whetherBlock', clientController.whetherBlock);
 router.post('/spyRegister', clientController.spyRegister);
-router.post('/redistributeClient', clientController.redistributeClient);
 
 module.exports = router;

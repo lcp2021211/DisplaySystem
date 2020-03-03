@@ -8,16 +8,16 @@
  */
 
 const Mappings = require('../models/proxyToClient');
-const errorCode = require('../config/errorCode').errorCode;
-const parameter = require('../config/basics').basics;
+const errorCode = require('../config/errorCode');
+const parameter = require('../config/basics');
 const service = require('../controllers/services');
 const assert = require('assert');
-const proxies = require('../config/proxy').proxies;
+const proxies = require('../config/proxies');
 
-// const MAXCREDIT = require('../config/basics').basics.maxCredit;
-// const MongoClient = require('mongodb').MongoClient;
-// const url = 'mongodb://localhost:27017';
-// const client = new MongoClient(url);
+// let MAXCREDIT = require('../config/basics').basics.maxCredit;
+// let MongoClient = require('mongodb').MongoClient;
+// let url = 'mongodb://localhost:27017';
+// let client = new MongoClient(url);
 
 /**
  * Message sent to server about client to check if client is already in the map
@@ -26,61 +26,28 @@ const proxies = require('../config/proxy').proxies;
  * @param {Object} res respond obj
  * @param {Object} next middleware
  */
-async function clientRegister(req, res, next) {
-	// const ipArray = req.ip.split(':')
-	// const proxyIP = ipArray[3]
-	const clientID = req.body.clientID;
-	const proxyIP = req.body.proxyIP;
-	const type = req.body.type;
-	// check if already registered
+exports.clientOnline = async (req, res, next) => {
+	let { clientID, proxy, type } = req.body;
 	try {
-		const proxyAndClient = await Mappings.findOne({ 'client.ID': clientID });
-		// save if not
-		if (proxyAndClient) {
+		if (await Mappings.findOne({ 'client.ID': clientID })) {
 			console.log('client registered');
 			res.send(errorCode.CLIENTEXIST);
 		} else {
-			const result = await Mappings.findOne({ proxy: proxyIP });
-			// let num = Math.random()
-			// let spy
-			// num < 0.6 ? spy = false : spy = true
-			if (result) {
-				let client;
-				if (type) {
-					client = {
-						ID: clientID,
-						pass: '123456',
-						credit: 0,
-						block: false,
-						attackFrequency: 0,
-						attackStrength: 0,
-						accessTime: new Date(),
-						timeSlot: 0,
-						spy: true
-					};
-				} else {
-					client = {
-						ID: clientID,
-						pass: '123456',
-						credit: 0,
-						block: false,
-						attackFrequency: 0,
-						attackStrength: 0,
-						accessTime: new Date(),
-						timeSlot: 0,
-						spy: false
-					};
-				}
-				result.client.push(client);
-				result.save(function(err) {
-					if (err) {
-						console.log(err);
-						res.send(errorCode.DOCNOTFOUND);
-					}
-					res.send(errorCode.SENDSUCCESSFULLY);
-				});
+			let client = {
+				ID: clientID,
+				pass: '123456',
+				credit: 0,
+				block: false,
+				attackFrequency: 0,
+				attackStrength: 0,
+				accessTime: new Date(),
+				timeSlot: 0,
+				spy: Boolean(type)
+			};
+			if (await Mappings.findOneAndUpdate({ proxy: proxy }, { $push: { client: client } })) {
+				res.send(errorCode.SENDSUCCESSFULLY);
 			} else {
-				console.log(`Not found Proxy: ${proxyIP}, ClientID: ${clientID}`);
+				console.log(`Not found Proxy: ${proxy}, ClientID: ${clientID}`);
 				res.send(errorCode.DOCNOTFOUND);
 			}
 		}
@@ -88,30 +55,46 @@ async function clientRegister(req, res, next) {
 		console.log(err);
 		res.send(errorCode.DOCNOTFOUND);
 	}
-}
+};
+
+exports.clientOffline = async (req, res, next) => {
+	let { clientID, proxy } = req.body;
+	console.log(clientID + ',' + proxy);
+	try {
+		if (await Mappings.findOneAndUpdate({ proxy: proxy }, { $pull: { client: { ID: clientID } } })) {
+			res.send(errorCode.SENDSUCCESSFULLY);
+		} else {
+			res.send(errorCode.DOCNOTFOUND);
+		}
+	} catch (err) {
+		console.log(err);
+		res.send(errorCode.DOCNOTFOUND);
+	}
+};
 
 /**
+ * TODO(Remove)
  * Register a spy
  * @param {Object} req request obj
  * @param {Object} res respond obj
  * @param {Object} next middleware
  */
-async function spyRegister(req, res, next) {
-	// const ipArray = req.ip.split(':')
-	// const proxyIP = ipArray[3]
-	const clientID = req.body.clientID;
-	const proxyIP = req.body.proxyIP;
+exports.spyRegister = async (req, res, next) => {
+	// let ipArray = req.ip.split(':')
+	// let proxyIP = ipArray[3]
+	let clientID = req.body.clientID;
+	let proxyIP = req.body.proxyIP;
 	// check if already registered
 	try {
-		const proxyAndClient = await Mappings.findOne({ 'client.ID': clientID });
+		let proxyAndClient = await Mappings.findOne({ 'client.ID': clientID });
 		// save if not
 		if (proxyAndClient) {
 			console.log('client registered');
 			res.send(errorCode.CLIENTEXIST);
 		} else {
-			const result = await Mappings.findOne({ proxy: proxyIP });
+			let result = await Mappings.findOne({ proxy: proxyIP });
 			if (result) {
-				const client = {
+				let client = {
 					ID: clientID,
 					pass: '123456',
 					credit: 0,
@@ -139,7 +122,7 @@ async function spyRegister(req, res, next) {
 		console.log(err);
 		res.send(errorCode.DOCNOTFOUND);
 	}
-}
+};
 
 /**
  * Get proxy ip from req.ip and add the proxy ip to trusted proxys,
@@ -149,21 +132,21 @@ async function spyRegister(req, res, next) {
  * @param {Obj} res respond
  * @param {function} next middleware
  */
-async function proxyRegister(req, res, next) {
-	const { proxy } = req.body;
+exports.proxyRegister = async (req, res, next) => {
+	let { proxy } = req.body;
 	try {
-		const proxyObj = await Mappings.findOne({ proxy: proxy });
+		let proxyObj = await Mappings.findOne({ proxy: proxy });
 		if (proxyObj) {
 			res.send({
 				code: 50000,
 				message: 'already exists proxy'
 			});
 		} else {
-			const map = new Mappings({
+			let map = new Mappings({
 				proxy: proxy,
 				client: []
 			});
-			const result = await map.save();
+			let result = await map.save();
 			if (result) {
 				res.send({
 					code: 20000,
@@ -183,7 +166,7 @@ async function proxyRegister(req, res, next) {
 			message: 'failed'
 		});
 	}
-}
+};
 
 /**
  * when a proxy request to shuffle because it is under attack
@@ -191,18 +174,17 @@ async function proxyRegister(req, res, next) {
  * @param {Obj} res respond: respond to request
  * @param {function} next middleware
  */
-async function requestShuffle(req, res, next) {
+exports.requestShuffle = async (req, res, next) => {
 	// get the proxy ID
-	// const ipArray = req.ip.split(':')
-	// const proxyIP = ipArray[3]
-	console.log(req.body);
-	const proxyIP = req.body.proxy;
+	// let ipArray = req.ip.split(':')
+	// let proxyIP = ipArray[3]
+	let proxyIP = req.body.proxy;
 	try {
-		const result = await Mappings.findOne({ proxy: proxyIP });
+		let result = await Mappings.findOne({ proxy: proxyIP });
 		if (result) {
 			// if proxy exists
 			// invoke shuffle algorithm
-			const resultJson = await shuffle(proxyIP, result.client);
+			let resultJson = await shuffle(proxyIP, result.client);
 			// after shuffle, send the results to every client so that they switch to anothor proxy
 			console.log(resultJson);
 			res.send(resultJson);
@@ -213,23 +195,24 @@ async function requestShuffle(req, res, next) {
 		console.error(err);
 		res.send(errorCode.DOCNOTFOUND);
 	}
-}
+};
 
 /**
+ * TODO(Remove)
  * delete client from database, because of client offline
  * @param {Obj} req request
  * @param {Obj} res respond
  * @param {function} next middleware
  */
-async function deleteClient(req, res, next) {
-	const clientID = req.body.clientID;
-	// const proxyIP = req.body.proxyIP
+exports.deleteClient = async (req, res, next) => {
+	let clientID = req.body.clientID;
+	// let proxyIP = req.body.proxyIP
 	try {
-		// const result = await Mappings.findOne({ "client.ID": clientID, proxy: proxyIP })
-		const result = await Mappings.findOne({ 'client.ID': clientID });
+		// let result = await Mappings.findOne({ "client.ID": clientID, proxy: proxyIP })
+		let result = await Mappings.findOne({ 'client.ID': clientID });
 		// if the mappings are found in the database
 		if (result) {
-			const index = result.client.indexOf(clientID);
+			let index = result.client.indexOf(clientID);
 			result.client.splice(index, 1);
 			result.save();
 			res.send({
@@ -243,7 +226,7 @@ async function deleteClient(req, res, next) {
 		console.error(err);
 		res.send(errorCode.DOCNOTFOUND);
 	}
-}
+};
 
 /**
  * 1.For each client, if the credit is already over the top, block it.
@@ -251,20 +234,20 @@ async function deleteClient(req, res, next) {
  * 3.Randomly redistribute through all proxys and inform clients
  * @param {String} proxy ip address of proxy
  */
-async function shuffle(attackVector) {
+exports.shuffle = async attackVector => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			// first remove
-			const result = await redistribute(attackVector);
+			let result = await redistribute(attackVector);
 			console.log('redistribution over');
-			const proxy2Clients = result[1];
-			const resultMap = result[2];
-			const client2Proxy = result[3];
+			let proxy2Clients = result[1];
+			let resultMap = result[2];
+			let client2Proxy = result[3];
 			console.log(client2Proxy);
-			informClient(proxy2Clients, client2Proxy);
+			service.informClient(proxy2Clients, client2Proxy);
 
 			saveNewMap(proxy2Clients);
-			const resultJson = {};
+			let resultJson = {};
 			resultMap.forEach((value, key) => {
 				resultJson[key] = value;
 			});
@@ -275,7 +258,7 @@ async function shuffle(attackVector) {
 			reject(err);
 		}
 	});
-}
+};
 
 /**
  * Add credit to client, now it's only a most simplified version,
@@ -305,7 +288,7 @@ function addCredit(client, attackFrequency, attackStrength) {
  * @param {JSON} the mappings of attacked proxy, attack strength and attack frequency
  * @returns {Array} [old proxy->old clients[], new proxy->new clients[], old proxy->[(old clients, new proxy)]]
  */
-async function redistribute(attackVector) {
+exports.redistribute = async attackVector => {
 	// console.log('input vector type: ', typeof (attackVector))
 
 	if (typeof attackVector === 'string') {
@@ -316,7 +299,7 @@ async function redistribute(attackVector) {
 	// attackVector = JSON.parse(attackVector)
 	// console.log(typeof(attackVector))
 	return new Promise(async (resolve, reject) => {
-		const clientArray = [];
+		let clientArray = [];
 		let proxyArray = [];
 		// proxy->new clients[]
 		let proxy2Clients = new Map();
@@ -347,8 +330,10 @@ async function redistribute(attackVector) {
 					clientArray.push(client2);
 				});
 			});
-			clientArray.sort(randomSort);
-			const evenly = Math.round(clientArray.length / proxyArray.length);
+			clientArray.sort((a, b) => {
+				return Math.random() > 0.5 ? -1 : 1;
+			});
+			let evenly = Math.round(clientArray.length / proxyArray.length);
 			let clientCount = 0;
 			proxyArray.forEach(proxy => {
 				let tempClient = [];
@@ -368,7 +353,7 @@ async function redistribute(attackVector) {
 				clientCount++;
 			}
 			// old proxy->(clientID, newProxy)
-			const resultMap = new Map();
+			let resultMap = new Map();
 			before.forEach(element => {
 				let tempClient = [];
 				element.client.forEach(client => {
@@ -384,24 +369,7 @@ async function redistribute(attackVector) {
 			reject(err);
 		}
 	});
-}
-
-/**
- * For sort method that returns random input value
- * @param {int} a Just a hint for comparing method
- * @param {int} b Just a hint for comparing method
- */
-function randomSort(a, b) {
-	return Math.random() > 0.5 ? -1 : 1;
-}
-
-/**
- * inform all client that connects to proxy to switch
- * @param {Map} proxy2Clients map old proxy->([(old client, new proxy)])
- */
-function informClient(proxy2Clients, client2Proxy) {
-	return service.informClient(proxy2Clients, client2Proxy);
-}
+};
 
 /**
  * Save new mappings
@@ -427,11 +395,11 @@ function saveNewMap(newMap) {
  * @param {Obj} res response obj contains reaction to proxy
  * @param {next} next middleware
  */
-async function attacked(req, res, next) {
-	// const proxy = req.body.proxy
-	// const attackFrequency = req.body.attackFrequency
-	// const attackStrength = req.body.attackStrength
-	const { attackVector } = req.body;
+exports.attacked = async (req, res, next) => {
+	// let proxy = req.body.proxy
+	// let attackFrequency = req.body.attackFrequency
+	// let attackStrength = req.body.attackStrength
+	let { attackVector } = req.body;
 	// Mappings.findOne({proxy: proxy}, async (err, doc) => {
 	//   if(err){
 	//     console.error(err)
@@ -439,11 +407,11 @@ async function attacked(req, res, next) {
 	//   }
 	//   if(doc){
 	//     try {
-	//       const result = await Mappings.findOne({proxy: proxy})
+	//       let result = await Mappings.findOne({proxy: proxy})
 	//       if(result) {
 	//         // if proxy exists
 	//         // invoke shuffle algorithm
-	//         const resultJson = await shuffle(proxy, attackFrequency, attackStrength)
+	//         let resultJson = await shuffle(proxy, attackFrequency, attackStrength)
 	//         console.log('after shuffle')
 	//         // after shuffle, send the results to every client so that they switch to anothor proxy
 	//         res.send(resultJson)
@@ -458,7 +426,7 @@ async function attacked(req, res, next) {
 	// })
 	try {
 		console.time('redistribute');
-		const resultJson = await shuffle(attackVector);
+		let resultJson = await this.shuffle(attackVector);
 		if (resultJson) {
 			res.send(resultJson);
 		} else {
@@ -468,57 +436,46 @@ async function attacked(req, res, next) {
 	} catch (err) {
 		console.error(err);
 	}
-}
-
-
-/**
- * Distribute client id to client, this is a temporary function that receives client request and distribute a id
- * @todo should be deleted further, or receive from proxy
- * @param {Obj} req Request from client that request client id
- * @param {Obj} res Respond an ID distinguished from previous one
- * @param {Function} next Middleware function
- */
-function distributeClientID(req, res, next) {
-	let temp = global.ids;
-	res.send({
-		code: 200,
-		message: temp
-	});
-	global.ids++;
-}
+};
 
 /**
+ * TODO(Add check)
  * Distribute clientID and proxy
  * @param {*} req
  * @param {*} res
  * @param {*} next
  */
-function distributeClient(req, res, next) {
+exports.distributeClient = async (req, res, next) => {
+	let proxy = randomProxy();
+	// let result = await Mappings.findOne({ proxy: proxy });
+	// if (result.client.length >= result.maxSize) {
+	// 	proxy = null;
+	// }
 	res.send({
 		code: 200,
 		clientID: global.ids,
-		proxy: randomProxy()
+		proxy: proxy
 	});
 	global.ids++;
-}
-
+};
 
 /**
+ * TODO()
  * Redistribute proxy
- * @param {*} req 
- * @param {*} res 
- * @param {*} next 
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
  */
-function redistributeClient(req, res, next) {
+exports.redistributeClient = async (req, res, next) => {
 	let { clientID, proxy } = req.body;
-	console.log(clientID + ',' + proxy);
 	res.send({
 		code: 200,
 		proxy: randomProxy()
 	});
-}
+};
 
 /**
+ * TODO(Should be replaced by other algorithm)
  * Get proxy by random
  */
 function randomProxy() {
@@ -531,7 +488,7 @@ function randomProxy() {
  * @param {JSON} res json containing the map of proxy and spy
  * @param {function} next middleware
  */
-function getSpy(req, res, next) {
+exports.getSpy = (req, res, next) => {
 	// Mappings.find({'client.spy': true})
 	// .select('proxy client')
 	// .select({'client': {$elemMatch: {'spy': true}}})
@@ -550,8 +507,8 @@ function getSpy(req, res, next) {
 	client.connect((err, client) => {
 		assert.equal(null, err);
 		// console.log('connected')
-		const db = client.db('Mappings');
-		const collection = db.collection('mapping');
+		let db = client.db('Mappings');
+		let collection = db.collection('mapping');
 		collection.aggregate(
 			[
 				{
@@ -581,7 +538,7 @@ function getSpy(req, res, next) {
 			}
 		);
 	});
-}
+};
 
 /**
  * another get spy using mongoose
@@ -589,7 +546,7 @@ function getSpy(req, res, next) {
  * @param {JSON} res JSON string containing all clients
  * @param {function } next middleware
  */
-function getSpy2(req, res, next) {
+exports.getSpy2 = (req, res, next) => {
 	Mappings.aggregate([
 		{
 			$project: {
@@ -614,7 +571,7 @@ function getSpy2(req, res, next) {
 			res.send(JSON.stringify(doc));
 		}
 	});
-}
+};
 
 /**
  * This is a test function.
@@ -623,7 +580,7 @@ function getSpy2(req, res, next) {
  * @param {JSON} res data indicate whether successfully initialized
  * @param {function} next middleware
  */
-function initializeBeforeAttack(req, res, next) {
+exports.initializeBeforeAttack = (req, res, next) => {
 	Mappings.updateMany(
 		{},
 		{
@@ -650,7 +607,7 @@ function initializeBeforeAttack(req, res, next) {
 			});
 		}
 	});
-}
+};
 
 /**
  * long poll request from client to resume wss connections
@@ -658,7 +615,7 @@ function initializeBeforeAttack(req, res, next) {
  * @param {JSON} res the json document contains proxy and client
  * @param {function} next middleware
  */
-function getProxy(req, res, next) {
+exports.getProxy = (req, res, next) => {
 	let { id } = req.query;
 	id = parseInt(id);
 	Mappings.findOne({ 'client.ID': id })
@@ -676,7 +633,7 @@ function getProxy(req, res, next) {
 				});
 			}
 		});
-}
+};
 
 /**
  * Request from client to acquire the information about whether the client is blocked
@@ -684,8 +641,8 @@ function getProxy(req, res, next) {
  * @param {json} res the information about the client
  * @param {function } next middleware
  */
-function whetherBlock(req, res, next) {
-	const { clientID } = req.body;
+exports.whetherBlock = (req, res, next) => {
+	let { clientID } = req.body;
 	Mappings.findOne({ 'client.ID': clientID })
 		.select('client proxy')
 		.select({ client: { $elemMatch: { ID: clientID } } })
@@ -704,16 +661,17 @@ function whetherBlock(req, res, next) {
 				});
 			}
 		});
-}
+};
 
 /**
+ * TODO(Remove)
  * function perform the same thing of add domain and select spy
  * @param {*} req
  * @param {*} res
  * @param {*} next
  */
-function addDomain(req, res, next) {
-	// const proxies = [
+exports.addDomain = (req, res, next) => {
+	// let proxies = [
 	// 	'39.98.156.204',
 	// 	'39.98.148.77',
 	// 	'39.100.106.44',
@@ -791,24 +749,4 @@ function addDomain(req, res, next) {
 			});
 		}
 	});
-}
-
-module.exports = {
-	clientRegister: clientRegister,
-	proxyRegister: proxyRegister,
-	requestShuffle: requestShuffle,
-	deleteClient: deleteClient,
-	redistribute: redistribute,
-	shuffle: shuffle,
-	attacked: attacked,
-	distributeClientID: distributeClientID,
-	getSpy: getSpy,
-	getSpy2: getSpy2,
-	initializeBeforeAttack: initializeBeforeAttack,
-	getProxy: getProxy,
-	whetherBlock: whetherBlock,
-	addDomain: addDomain,
-	spyRegister: spyRegister,
-	distributeClient: distributeClient,
-	redistributeClient: redistributeClient
 };
