@@ -1,10 +1,10 @@
-let fs = require('fs');
-let path = require('path');
-let EventEmitter = require('events').EventEmitter;
-let utils = require('../utils/utils');
-let config = require('../config/config');
-let os = require('os');
-let si = require('systeminformation');
+const fs = require('fs');
+const path = require('path');
+const EventEmitter = require('events').EventEmitter;
+const utils = require('../utils/utils');
+const config = require('../config/config');
+const os = require('os');
+const si = require('systeminformation');
 
 /**
  *
@@ -13,7 +13,7 @@ let si = require('systeminformation');
  * @param {*} res: Response body
  * @param {*} next: Middleware
  */
-function readMp4(req, res, next) {
+exports.readMp4 = (req, res, next) => {
 	res.writeHead(200, { 'Content-Type': 'video/mp4' });
 	let file = path.join(__dirname, '../public/test2.mp4');
 	let rs = fs.createReadStream(file);
@@ -35,7 +35,7 @@ function readMp4(req, res, next) {
 		console.log('end file');
 	});
 	rs.pipe(res);
-}
+};
 
 /**
  * Read specific range of MP4 file
@@ -43,7 +43,7 @@ function readMp4(req, res, next) {
  * @param {*} res: Response body, MP4 stream
  * @param {*} next: Middleware
  */
-function rangeMp4(req, res, next) {
+exports.rangeMp4 = (req, res, next) => {
 	let range = req.query.range;
 	let file = path.join(__dirname, '../public/test2.mp4');
 	let stat = fs.statSync(file);
@@ -67,7 +67,7 @@ function rangeMp4(req, res, next) {
 			fileSize: fileSize
 		});
 	}
-}
+};
 
 /**
  * Get Webm Video to be compatible with Chrome browser, however it's not used any more.
@@ -75,7 +75,7 @@ function rangeMp4(req, res, next) {
  * @param {*} res: Response body, Webm stream
  * @param {*} next: Middleware
  */
-function getWebmVideo(req, res, next) {
+exports.getWebmVideo = (req, res, next) => {
 	let range = req.query.range;
 	let file = path.join(__dirname, '../public/test.WebM');
 	let stat = fs.statSync(file);
@@ -99,7 +99,7 @@ function getWebmVideo(req, res, next) {
 			fileSize: fileSize
 		});
 	}
-}
+};
 
 /**
  * Send reconnect message to clients.
@@ -108,7 +108,7 @@ function getWebmVideo(req, res, next) {
  * @param {*} res: Response body, {code, message}
  * @param {*} next: Middleware
  */
-function reconnect(req, res, next) {
+exports.reconnect = (req, res, next) => {
 	let client2Proxy = new Map(req.body);
 	global.ws.forEach((conn, id) => {
 		let message = JSON.stringify({
@@ -124,7 +124,7 @@ function reconnect(req, res, next) {
 		code: 200,
 		message: 'sent all active users'
 	});
-}
+};
 
 /**
  * Detecting whether this proxy is attacked, if so, send attack messages to server
@@ -132,7 +132,7 @@ function reconnect(req, res, next) {
  * @param {*} res: Response body
  * @param {*} next: Middleware
  */
-function detectAttackfunc(req, res, next) {
+exports.detectAttack = (req, res, next) => {
 	let attackFrequency = req.query.attackFrequency;
 	let attackStrength = req.query.attackStrength;
 	if (typeof attackFrequency === 'undefined') {
@@ -151,7 +151,7 @@ function detectAttackfunc(req, res, next) {
  * @param {*} res: Response body, {code, info: {cpuUsage, memUsage, networkSpeed, diskUsage}}
  * @param {*} next: Middleware
  */
-async function getSysInfo(req, res, next) {
+exports.getSysInfo = async (req, res, next) => {
 	// let cpuUsage = os.loadavg()[0]
 	// let totalmem = os.totalmem()
 	// let freemem = os.freemem()
@@ -176,7 +176,7 @@ async function getSysInfo(req, res, next) {
 			diskUsage: diskUsage
 		}
 	});
-}
+};
 
 /**
  * Get the information of CPU
@@ -184,13 +184,13 @@ async function getSysInfo(req, res, next) {
  * @param {*} res: Response body, {info}
  * @param {*} next: Middleware
  */
-async function getCPUInfo(req, res, next) {
+exports.getCPUInfo = async (req, res, next) => {
 	let cpu = await si.currentLoad();
 	let cpuUsage = cpu.currentload;
 	res.send({
 		info: cpuUsage
 	});
-}
+};
 
 /**
  * The client request in 1s interval to get system information
@@ -198,7 +198,7 @@ async function getCPUInfo(req, res, next) {
  * @param {*} res: Response body, {info: {cpuUsage, memUsage, networkSpeed, diskIO, networkDropped, cpuSpeed, fsStats}}
  * @param {*} next: Middleware
  */
-async function getInfo(req, res, next) {
+exports.getInfo = async (req, res, next) => {
 	let cpu = await si.currentLoad();
 	let cpuUsage = cpu.currentload;
 	let cpuInfo = await si.cpuCurrentspeed();
@@ -221,34 +221,4 @@ async function getInfo(req, res, next) {
 			fsStats: fsstat.tx_sec
 		}
 	});
-}
-
-module.exports = {
-	detectAttack: detectAttackfunc,
-	readMp4: readMp4,
-	rangeMp4: rangeMp4,
-	getWebmVideo: getWebmVideo,
-	reconnect: reconnect,
-	getSysInfo: getSysInfo,
-	getCPUInfo: getCPUInfo,
-	getInfo: getInfo
 };
-
-/**
- * Execute interval to detect whether send message to server
- */
-setInterval(function() {
-	if (global.attackFrequency !== 0 || global.attackStrength !== 0) {
-		console.log('send frequency:', global.attackFrequency, ' send strength: ', global.attackStrength);
-		utils
-			.sendAttackMessage(global.attackFrequency, global.attackStrength)
-			.then(res => {
-				console.log(res);
-			})
-			.catch(err => {
-				console.error(err);
-			});
-		global.attackStrength = 0;
-		global.attackFrequency = 0;
-	}
-}, config.interval);

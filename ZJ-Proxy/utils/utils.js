@@ -1,29 +1,32 @@
-let axios = require('axios');
-let config = require('../config/config');
-let serverURL = `http://${config.serverIP}:5000`;
+const axios = require('axios');
+const config = require('../config/config');
+const serverURL = `http://${config.serverIP}:5000`;
 
 // while detecting ddos attacks
 exports.sendShuffleRequest = function(proxy) {
 	return axios.post(`${serverURL}/requestShuffle`, { proxy: proxy });
 };
 
-// Register client by clientID
-exports.registerUser = function(clientID, type) {
-	return axios.post(`${serverURL}/clientRegister`, {
+// Client is online
+exports.clientOnline = function(clientID, type) {
+	return axios.post(`${serverURL}/clientOnline`, {
 		clientID: clientID,
-		proxyIP: `${config.ip}:${config.port}`,
+		proxy: `${config.ip}:${config.port}`,
 		type: type
 	});
 };
 
-// Register a spy
-exports.spyRegister = function(clientID, type) {
-	return axios.post(`${serverURL}/spyRegister`, { clientID: clientID, proxyIP: `${config.ip}:${config.port}` });
-};
+// Client is offline
+exports.clientOffline = function(clientID) {
+	return axios.post(`${serverURL}/clientOffline`, {
+		clientID: clientID,
+		proxy: `${config.ip}:${config.port}`
+	});
+}
 
 // Unregister client by clientID
 exports.deleteUser = function(clientID) {
-	return axios.post(`${serverURL}/deleteClient`, { clientID: clientID, proxyIP: `${config.ip}:${config.port}` });
+	return axios.post(`${serverURL}/deleteClient`, { clientID: clientID, proxy: `${config.ip}:${config.port}` });
 };
 
 /**
