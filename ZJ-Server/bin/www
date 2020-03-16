@@ -95,6 +95,12 @@ function initialize() {
 					maxSize: 5
 				}).save();
 			});
+			// Store undistributed clients
+			new Mappings({
+				client: [],
+				proxy: 'null',
+				maxSize: -1
+			}).save();
 		}
 	});
 

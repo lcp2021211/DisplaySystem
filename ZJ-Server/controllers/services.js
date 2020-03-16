@@ -4,25 +4,37 @@
  * created at 3/28/2019, 3:45:49 PM
  */
 const axios = require('axios');
+const proxies = require('../config/proxies');
 const Mappings = require('../models/proxyToClient');
-const Logger = require('../utils/logger');
 
 /**
  * inform all clients that's connected to old proxy
  * @param {Map} proxy2Clients old proxy->(client, new proxy)
  * @function informClient(proxy2Clients)
  */
-exports.informClient = (proxy2Clients, client2Proxy) => {
-	let content = [];
-	client2Proxy.forEach((proxy, client) => {
-		content.push([client, proxy]);
-	});
+// exports.informClient = (proxy2Clients, client2Proxy) => {
+// 	let content = [];
+// 	client2Proxy.forEach((proxy, client) => {
+// 		content.push([client, proxy]);
+// 	});
+// 	console.log(client2Proxy);
+// 	proxy2Clients.forEach((value, key) => {
+// 		axios.post('http://' + key + '/reconnect', content, (err, res) => {
+// 			if (err) console.error(err);
+// 			else console.log(res.body);
+// 		});
+// 	});
+// };
+exports.informClient = client2Proxy => {
 	console.log(client2Proxy);
-	proxy2Clients.forEach((value, key) => {
-		axios.post('http://' + key + '/reconnect', content, (err, res) => {
-			if (err) console.error(err);
-			else console.log(res.body);
-		});
+	proxies.forEach(proxy => {
+		axios.post(`http://${proxy}/reconnect`, client2Proxy, (err, res) => {
+			if (err) {
+				console.error(err);
+			} else {
+				console.log('Inform Client Success');
+			}
+		})
 	});
 };
 

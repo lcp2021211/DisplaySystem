@@ -90,35 +90,54 @@ function test() {
 
 async function shuffle() {
 	// Generate mock data
-	await Mappings.remove({}, err => {
-		if (err) {
-			console.error('error removing old:', err);
-		} else {
-			for (let i = 0; i < 3; ++i) {
-				let clients = [];
-				for (let j = 0; j < 5; ++j) {
-					clients.push({
-						ID: i * 5 + j,
-						pass: '123456',
-						credit: Math.floor(Math.random() * 300)
-					});
-				}
-				new Mappings({
-					client: clients,
-					proxy: 'proxy' + i,
-					maxSize: 5,
-					level: i
-				}).save();
-			}
-		}
-	});
+	try {
+		await Mappings.remove({});
 
-	// Shuffle
+		for (let i = 0; i < 3; ++i) {
+			let clients = [];
+			for (let j = 0; j < 5; ++j) {
+				clients.push({
+					ID: i * 5 + j,
+					pass: '123456',
+					credit: Math.floor(Math.random() * 300)
+				});
+			}
+			await new Mappings({
+				client: clients,
+				proxy: 'proxy' + i,
+				maxSize: 5,
+				level: i
+			}).save();
+		}
+
+		let clients = [];
+		for (let i = 0; i < 3; ++i) {
+			let doc = await Mappings.findOneAndUpdate({ proxy: 'proxy' + i }, { client: [] });
+			console.log('========================');
+			clients.push(...doc.client);
+		}
+		console.log('Length: ' + clients.length);
+
+		clients.forEach(async client => {
+			let level = parseInt(client.credit / 100);
+			if (
+				await Mappings.findOneAndUpdate(
+					{ level: level, $where: 'this.client.length < this.maxSize' },
+					{ $push: { client: client } }
+				)
+			) {
+			} else {
+				console.log(client.ID + ' No proxy');
+			}
+		});
+	} catch (err) {
+		console.error(err);
+	}
 }
 
 // addProxy();
 // addClient();
-test();
-// shuffle();
+// test();
+shuffle();
 
 // mongoose.disconnect();

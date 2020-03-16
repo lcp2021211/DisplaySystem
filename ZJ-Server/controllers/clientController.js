@@ -13,19 +13,59 @@ const parameter = require('../config/basics');
 const service = require('../controllers/services');
 const proxies = require('../config/proxies');
 
+// exports.distributeClient = async (req, res, next) => {
+// 	let clientID = global.ids++;
+// 	let proxy = randomProxy();
+
+// 	try {
+// 		if (!(await Mappings.findOne({proxy: proxy, $where: 'this.client.length < this.maxSize'}))) {
+// 			proxy = null;
+// 		}
+// 		res.send({
+// 			code: 200,
+// 			clientID: clientID,
+// 			proxy: proxy
+// 		});
+// 	} catch (err) {
+// 		res.send(errorCode.FAILURE);
+// 	}
+// };
 exports.distributeClient = async (req, res, next) => {
 	let clientID = global.ids++;
 	let proxy = randomProxy();
+	let spy = req.body.spy;
 
 	try {
-		if (!(await Mappings.findOne({proxy: proxy, $where: 'this.client.length < this.maxSize'}))) {
-			proxy = null;
+		let client = {
+			ID: clientID,
+			pass: '123456',
+			credit: 0,
+			block: false,
+			attackFrequency: 0,
+			attackStrength: 0,
+			accessTime: new Date(),
+			timeSlot: 0,
+			spy: spy
+		};
+		let doc = await Mappings.findOneAndUpdate(
+			{ proxy: proxy, $where: 'this.client.length < this.maxSize' },
+			{ $push: { client: client } },
+			{ new: true }
+		);
+		if (doc) {
+			console.log('Length: ' + doc.client.length);
+			res.send({
+				code: 200,
+				clientID: clientID,
+				proxy: proxy
+			});
+		} else {
+			res.send({
+				code: 200,
+				clientID: clientID,
+				proxy: 'null'g
+			});
 		}
-		res.send({
-			code: 200,
-			clientID: clientID,
-			proxy: proxy
-		});
 	} catch (err) {
 		res.send(errorCode.FAILURE);
 	}
@@ -60,37 +100,37 @@ function randomProxy() {
  * @param {Object} res respond obj
  * @param {Object} next middleware
  */
-exports.clientOnline = async (req, res, next) => {
-	let { clientID, proxy, type } = req.body;
+// exports.clientOnline = async (req, res, next) => {
+// 	let { clientID, proxy, type } = req.body;
 
-	try {
-		let client = {
-			ID: clientID,
-			pass: '123456',
-			credit: 0,
-			block: false,
-			attackFrequency: 0,
-			attackStrength: 0,
-			accessTime: new Date(),
-			timeSlot: 0,
-			spy: Boolean(type)
-		};
-		let doc = await Mappings.findOneAndUpdate(
-			{ proxy: proxy, $where: 'this.client.length < this.maxSize' },
-			{ $push: { client: client } },
-			{ new: true }
-		);
-		if (doc) {
-			console.log('Length: ' + doc.client.length);
-			res.send(errorCode.SUCCESS);
-		} else {
-			res.send(errorCode.DOCNOTFOUND);
-		}
-	} catch (err) {
-		console.error(err);
-		res.send(errorCode.FAILURE);
-	}
-};
+// 	try {
+// 		let client = {
+// 			ID: clientID,
+// 			pass: '123456',
+// 			credit: 0,
+// 			block: false,
+// 			attackFrequency: 0,
+// 			attackStrength: 0,
+// 			accessTime: new Date(),
+// 			timeSlot: 0,
+// 			spy: Boolean(type)
+// 		};
+// 		let doc = await Mappings.findOneAndUpdate(
+// 			{ proxy: proxy, $where: 'this.client.length < this.maxSize' },
+// 			{ $push: { client: client } },
+// 			{ new: true }
+// 		);
+// 		if (doc) {
+// 			console.log('Length: ' + doc.client.length);
+// 			res.send(errorCode.SUCCESS);
+// 		} else {
+// 			res.send(errorCode.DOCNOTFOUND);
+// 		}
+// 	} catch (err) {
+// 		console.error(err);
+// 		res.send(errorCode.FAILURE);
+// 	}
+// };
 
 /**
  * When client is offline, pull it from the corresponding proxy
@@ -343,46 +383,51 @@ function saveNewMap(newMap) {
  * @param {Obj} res response obj contains reaction to proxy
  * @param {next} next middleware
  */
+// exports.attacked = async (req, res, next) => {
+// 	let { attackVector } = req.body;
+
+// 	try {
+// 		console.time('redistribute');
+// 		let resultJson = await this.shuffle(attackVector);
+// 		if (resultJson) {
+// 			res.send(resultJson);
+// 		} else {
+// 			res.send(errorCode.DOCNOTFOUND);
+// 		}
+// 		console.timeEnd('redistribute');
+// 	} catch (err) {
+// 		console.error(err);
+// 	}
+// };
 exports.attacked = async (req, res, next) => {
-	// let proxy = req.body.proxy
-	// let attackFrequency = req.body.attackFrequency
-	// let attackStrength = req.body.attackStrength
-	let { attackVector } = req.body;
-	// Mappings.findOne({proxy: proxy}, async (err, doc) => {
-	//   if(err){
-	//     console.error(err)
-	//     res.send(errorCode.DOCNOTFOUND)
-	//   }
-	//   if(doc){
-	//     try {
-	//       let result = await Mappings.findOne({proxy: proxy})
-	//       if(result) {
-	//         // if proxy exists
-	//         // invoke shuffle algorithm
-	//         let resultJson = await shuffle(proxy, attackFrequency, attackStrength)
-	//         console.log('after shuffle')
-	//         // after shuffle, send the results to every client so that they switch to anothor proxy
-	//         res.send(resultJson)
-	//       }else {
-	//         res.send(errorCode.DOCNOTFOUND)
-	//       }
-	//     } catch(err) {
-	//       console.error(err)
-	//       res.send(errorCode.DOCNOTFOUND)
-	//     }
-	//   }
-	// })
 	try {
-		console.time('redistribute');
-		let resultJson = await this.shuffle(attackVector);
-		if (resultJson) {
-			res.send(resultJson);
-		} else {
-			res.send(errorCode.DOCNOTFOUND);
-		}
-		console.timeEnd('redistribute');
+		let clients = [];
+		proxies.forEach(async proxy => {
+			let doc = await Mappings.findOneAndUpdate({ proxy: proxy }, { client: [] });
+			console.log(doc.client);
+			clients.push(...doc.client);
+		});
+		console.log('Number of Clients is: ' + clients.length);
+
+		// let client2Proxy = [];
+		// clients.forEach(async client => {
+		// 	let level = client.ID % 2;
+		// 	let doc = await Mappings.findOneAndUpdate(
+		// 		{ level: level, $where: 'this.client.length < this.maxSize' },
+		// 		{ $push: { client: client } }
+		// 	);
+		// 	if (doc) {
+		// 		client2Proxy.push([client.ID, proxy]);
+		// 	} else {
+		// 		client2Proxy.push([client.ID, null]);
+		// 	}
+		// });
+		// console.log('Attack')
+		// console.log(client2Proxy);
+		res.send(errorCode.SUCCESS);
 	} catch (err) {
 		console.error(err);
+		res.send(errorCode.FAILURE);
 	}
 };
 
