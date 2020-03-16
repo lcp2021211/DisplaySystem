@@ -10,12 +10,15 @@ export class InformationService {
   constructor(private http: HttpClient) {}
 
   /**
-   * Distribute clientID and proxy 
+   * Distribute clientID and proxy
    * @returns {Observable<any>}
    * @memberof InformationService
    */
-  distributeClient(): Observable<any> {
-    return this.http.get(`${serverIP}/distributeClient`, {});
+  // distributeClient(): Observable<any> {
+  //   return this.http.get(`${serverIP}/distributeClient`, {});
+  // }
+  distributeClient(isSpy: Boolean): Observable<any> {
+    return this.http.post(`${serverIP}/distributeClient`, { isSpy: isSpy });
   }
 
   /**
@@ -23,30 +26,8 @@ export class InformationService {
    * @returns {Observable<any>}
    * @memberof InformationService
    */
-  redistributeClient(clientID: number, proxy: string): Observable<any> {
-    return this.http.post(`${serverIP}/redistributeClient`, {
-      clientID: clientID,
-      proxy: proxy
-    });
-  }
-
-  /**
-   * TODO ()
-   * Delete the client from server according to clientID
-   * @param {number} clientID
-   * @memberof InformationService
-   */
-  deleteClient(clientID: number) {
-    this.http
-      .post(`${serverIP}/deleteClient`, { clientID: clientID })
-      .subscribe(
-        res => {
-          console.log(res);
-        },
-        err => {
-          console.error(err);
-        }
-      );
+  redistributeClient(): Observable<any> {
+    return this.http.post(`${serverIP}/redistributeClient`, {});
   }
 
   /**

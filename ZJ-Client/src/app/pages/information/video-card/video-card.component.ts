@@ -50,26 +50,20 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private _proxy: string;
   set proxy(val: string) {
-    if (val === 'null') {
-      return;
-    }
-    if (this._proxy === undefined) {
-      // First initialize proxy
-      this._proxy = val;
-      // Initial connection
-      this.initializeWebSocket();
-    } else if (this._proxy !== undefined && this._proxy !== val) {
+    if (this._proxy !== val) {
       // Update proxy
       this._proxy = val;
       // Update switchFlag and switchCount
       this.switchFlag = true;
       this.switchCount += 1;
-      // If websocket connection is open, then close it
+      // Close websocket
       if (this.ws && this.ws.readyState === WebSocket.OPEN) {
         this.ws.close();
       }
-      // Reconnect websocket
-      this.initializeWebSocket();
+      // Initialize websocket
+      if (this._proxy !== 'null') {
+        this.initializeWebSocket();
+      }
     }
   }
 
@@ -89,7 +83,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
     // Initialize data of chart
     this.service.initializeChartData(this.speed, this.delay);
 
-    this.service.distributeClient().subscribe(
+    this.service.distributeClient(this.user === 'spy').subscribe(
       (res: any) => {
         if (res.code === 200) {
           // Get clientID and proxy
@@ -308,7 +302,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
   private autoSwitch() {
     this.timer2 = setTimeout(() => {
       if (!this.switchFlag && !this.block) {
-        this.service.redistributeClient(this.clientID, this.proxy).subscribe(
+        this.service.redistributeClient().subscribe(
           (res: any) => {
             if (res.code === 200) {
               this.proxy = res.proxy;

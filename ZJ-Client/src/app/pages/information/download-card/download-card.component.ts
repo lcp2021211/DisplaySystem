@@ -44,26 +44,20 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private _proxy: string;
   set proxy(val: string) {
-    if (val === 'null') {
-      return;
-    }
-    if (this._proxy === undefined) {
-      // First initialize proxy
-      this._proxy = val;
-      // Initial connection
-      this.initializeWebSocket();
-    } else if (this._proxy !== undefined && this._proxy !== val) {
+    if (this._proxy !== val) {
       // Update proxy
       this._proxy = val;
       // Update switchFlag and switchCount
       this.switchFlag = true;
       this.switchCount += 1;
-      // If websocket connection is open, then close it
+      // Close websocket
       if (this.ws && this.ws.readyState === WebSocket.OPEN) {
         this.ws.close();
       }
-      // Reconnect websocket
-      this.initializeWebSocket();
+      // Initialize websocket
+      if (this._proxy !== 'null') {
+        this.initializeWebSocket();
+      }
     }
   }
 
@@ -83,7 +77,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
     // Initialize data of chart
     this.service.initializeChartData(this.speed, this.delay);
 
-    this.service.distributeClient().subscribe(
+    this.service.distributeClient(this.user === 'spy').subscribe(
       (res: any) => {
         if (res.code === 200) {
           // Get clientID and proxy
@@ -91,7 +85,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
           this.proxy = res.proxy;
 
           // Start download and websocket connection
-          this.download();
+          // this.download();
         }
       },
       (err: HttpErrorResponse) => {
@@ -286,7 +280,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
       };
     }, sec);
 
-    this.autoSwitch();
+    // this.autoSwitch();
   }
 
   /**
@@ -297,7 +291,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
   private autoSwitch() {
     this.timer2 = setTimeout(() => {
       if (!this.switchFlag && !this.block) {
-        this.service.redistributeClient(this.clientID, this.proxy).subscribe(
+        this.service.redistributeClient().subscribe(
           (res: any) => {
             if (res.code === 200) {
               this.proxy = res.proxy;
