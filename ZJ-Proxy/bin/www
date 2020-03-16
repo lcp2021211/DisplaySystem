@@ -101,7 +101,7 @@ function initialize() {
 	// initialize a map in memory to save all connections
 	global.ws = new Map();
 
-	wsServer.on('request', async (request) => {
+	wsServer.on('request', async request => {
 		// Validate
 		if (!originIsAllowed(request.origin)) {
 			request.reject();
@@ -121,15 +121,23 @@ function initialize() {
 		utils
 			.clientOnline(clientID, type)
 			.then(res => {
-				if (res.status === 200) {
-					console.log(res.data);
+				if (res.data.code === 200) {
+					console.log('Update Successfully');
+				} else {
+					connection.sendUTF(
+						JSON.stringify({
+							type: 'switch',
+							content: null
+						})
+					);
 				}
 			})
 			.catch(err => {
 				console.error(err);
 			});
+
 		console.log(`Client: ${clientID} connect! Connection size: ${global.ws.size}, -----------${new Date()}`);
-	
+
 		connection.on('message', function(message) {
 			if (message.type === 'utf8') {
 				console.log('Received UTF8 Message: ' + message.utf8Data);
@@ -139,7 +147,7 @@ function initialize() {
 				connection.sendBytes(message.binaryData);
 			}
 		});
-	
+
 		connection.on('close', function(reasonCode, description) {
 			console.log(`Client: ${clientID} disconnect! Connection size: ${global.ws.size}, -----------${new Date()}`);
 			global.ws.delete(connection.id);

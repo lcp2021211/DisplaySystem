@@ -24,11 +24,6 @@ exports.clientOffline = function(clientID) {
 	});
 }
 
-// Unregister client by clientID
-exports.deleteUser = function(clientID) {
-	return axios.post(`${serverURL}/deleteClient`, { clientID: clientID, proxy: `${config.ip}:${config.port}` });
-};
-
 /**
  * Send the attack message to server
  * @param {integer} attackFrequency frequency of attack
