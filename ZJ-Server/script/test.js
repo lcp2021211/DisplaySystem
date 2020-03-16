@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/Mappings');
+mongoose.connect('mongodb://localhost:27017/Motag');
+
 const Mappings = require('../models/proxyToClient');
-const proxies = require('../config/proxies');
+// const proxies = require('../config/proxies');
 
 async function addProxy() {
 	Mappings.remove({}, err => {
@@ -20,7 +21,17 @@ async function addProxy() {
 }
 
 async function addClient() {
-	for (let i = 0; i < 3; ++i) {
+	// Clear
+	await Mappings.findOneAndUpdate(
+		{ proxy: '39.100.130.220:3000' },
+		{ client: [] },
+		{
+			maxSize: 5
+		}
+	);
+	// Add
+	for (let i = 0; i < 2; ++i) {
+		console.log(i);
 		let client = {
 			ID: i,
 			pass: '123456',
@@ -30,24 +41,84 @@ async function addClient() {
 			attackStrength: 0,
 			accessTime: new Date(),
 			timeSlot: 0,
-			spy: false
+			spy: true
 		};
-		await Mappings.findOneAndUpdate({ proxy: '39.100.130.220:3000' }, { $push: { client: client } });
+		await Mappings.findOneAndUpdate(
+			{
+				proxy: '39.100.130.220:3000'
+				// $lte: ["$client.length", "$maxSize"]
+				// maxSize: {
+				// 	$gt: 0
+				// }
+			},
+			{
+				$push: {
+					client: client
+				}
+				// $inc: {
+				// 	maxSize: -1
+				// }
+			}
+		);
+	}
+
+	console.log('finish');
+	let doc = await Mappings.findOne({
+		proxy: '39.100.130.220:3000',
+		$where: 'this.client.length <= this.maxSize'
+	});
+	if (doc) {
+		console.log('length: ' + doc.client.length);
+	} else {
+		console.log('fuck');
 	}
 }
 
-async function removeClient() {
-	await Mappings.findOneAndUpdate(
-		{
-			proxy: '39.100.130.220:3000'
-		},
-		{
-			$pull: { client: { ID: 1 } }
+function test() {
+	Mappings.findOne({ proxy: '127.0.0.1' }, (err, doc) => {
+		if (err) {
+			console.log('err');
+		} else {
+			if (doc) {
+				console.log(doc);
+			} else {
+				console.log('good');
+			}
 		}
-	);
+	});
+}
+
+async function shuffle() {
+	// Generate mock data
+	await Mappings.remove({}, err => {
+		if (err) {
+			console.error('error removing old:', err);
+		} else {
+			for (let i = 0; i < 3; ++i) {
+				let clients = [];
+				for (let j = 0; j < 5; ++j) {
+					clients.push({
+						ID: i * 5 + j,
+						pass: '123456',
+						credit: Math.floor(Math.random() * 300)
+					});
+				}
+				new Mappings({
+					client: clients,
+					proxy: 'proxy' + i,
+					maxSize: 5,
+					level: i
+				}).save();
+			}
+		}
+	});
+
+	// Shuffle
 }
 
 // addProxy();
-removeClient();
+// addClient();
+test();
+// shuffle();
 
 // mongoose.disconnect();

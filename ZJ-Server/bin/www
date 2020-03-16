@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/Mappings');
+mongoose.connect('mongodb://localhost:27017/Motag');
 
 const http = require('http');
 const app = require('../app');
@@ -92,7 +92,7 @@ function initialize() {
 				new Mappings({
 					client: [],
 					proxy: proxy,
-					maxSize: 10
+					maxSize: 5
 				}).save();
 			});
 		}

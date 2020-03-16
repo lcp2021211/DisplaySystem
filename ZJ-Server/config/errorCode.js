@@ -1,19 +1,15 @@
 module.exports = {
+	SUCCESS: {
+		code: 200,
+		message: 'Update Successfully'
+	},
+	FAILURE: {
+		code: 400,
+		message: 'Update Unsuccessfully'
+	},
 	DOCNOTFOUND: {
 		code: 401,
-		message: 'document not found'
+		message: 'Document Not Found'
 	},
-	SENDSUCCESSFULLY: {
-		code: 200,
-		message: 'successfully updated'
-	},
-	PROXYEXIST: {
-		code: 402,
-		message: 'proxy already exists'
-	},
-	CLIENTEXIST: {
-		code: 402,
-		message: 'client already exists'
-	}
 };
 

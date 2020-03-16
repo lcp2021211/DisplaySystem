@@ -6,10 +6,14 @@
     - 超时自动分配也从本地随机分配转移至server端分配
     - proxy增加属性:最大可接入数量maxSize
 
+## 2020-03-05
+- 修改项目架构, 在分配clientID和proxy时进行maxSize检测并更新数据库
+- 解决高并发下的Mongoose问题
+- 根据评分将client进行分级
+
+
 ## TODO
-- 在server端分配过程中进行maxSize检测
-- 在client连接至proxy后,由proxy发送通知给server进行实际映射表的刷新
-- 解决Mongoose在高并发下的ACID问题
+- 
 
 
 # 注意

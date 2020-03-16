@@ -11,143 +11,126 @@ const Mappings = require('../models/proxyToClient');
 const errorCode = require('../config/errorCode');
 const parameter = require('../config/basics');
 const service = require('../controllers/services');
-const assert = require('assert');
 const proxies = require('../config/proxies');
 
-// let MAXCREDIT = require('../config/basics').basics.maxCredit;
-// let MongoClient = require('mongodb').MongoClient;
-// let url = 'mongodb://localhost:27017';
-// let client = new MongoClient(url);
+exports.distributeClient = async (req, res, next) => {
+	let clientID = global.ids++;
+	let proxy = randomProxy();
+
+	try {
+		if (!(await Mappings.findOne({proxy: proxy, $where: 'this.client.length < this.maxSize'}))) {
+			proxy = null;
+		}
+		res.send({
+			code: 200,
+			clientID: clientID,
+			proxy: proxy
+		});
+	} catch (err) {
+		res.send(errorCode.FAILURE);
+	}
+};
 
 /**
- * Message sent to server about client to check if client is already in the map
- * If it does, do nothing. Else add the client to map.
+ * TODO()
+ * Redistribute proxy
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+exports.redistributeClient = async (req, res, next) => {
+	// let { clientID, proxy } = req.body;
+	// res.send({
+	// 	code: 200,
+	// 	proxy: randomProxy()
+	// });
+};
+
+/**
+ * TODO(Should be replaced by other algorithm)
+ * Get proxy by random
+ */
+function randomProxy() {
+	return proxies[Math.floor(Math.random() * proxies.length)];
+}
+
+/**
+ * When client is online, push it into the corresponding proxy
  * @param {Object} req request obj
  * @param {Object} res respond obj
  * @param {Object} next middleware
  */
 exports.clientOnline = async (req, res, next) => {
 	let { clientID, proxy, type } = req.body;
+
 	try {
-		if (await Mappings.findOne({ 'client.ID': clientID })) {
-			console.log('client registered');
-			res.send(errorCode.CLIENTEXIST);
+		let client = {
+			ID: clientID,
+			pass: '123456',
+			credit: 0,
+			block: false,
+			attackFrequency: 0,
+			attackStrength: 0,
+			accessTime: new Date(),
+			timeSlot: 0,
+			spy: Boolean(type)
+		};
+		let doc = await Mappings.findOneAndUpdate(
+			{ proxy: proxy, $where: 'this.client.length < this.maxSize' },
+			{ $push: { client: client } },
+			{ new: true }
+		);
+		if (doc) {
+			console.log('Length: ' + doc.client.length);
+			res.send(errorCode.SUCCESS);
 		} else {
-			let client = {
-				ID: clientID,
-				pass: '123456',
-				credit: 0,
-				block: false,
-				attackFrequency: 0,
-				attackStrength: 0,
-				accessTime: new Date(),
-				timeSlot: 0,
-				spy: Boolean(type)
-			};
-			if (await Mappings.findOneAndUpdate({ proxy: proxy }, { $push: { client: client } })) {
-				res.send(errorCode.SENDSUCCESSFULLY);
-			} else {
-				console.log(`Not found Proxy: ${proxy}, ClientID: ${clientID}`);
-				res.send(errorCode.DOCNOTFOUND);
-			}
+			res.send(errorCode.DOCNOTFOUND);
 		}
 	} catch (err) {
-		console.log(err);
-		res.send(errorCode.DOCNOTFOUND);
+		console.error(err);
+		res.send(errorCode.FAILURE);
 	}
 };
 
+/**
+ * When client is offline, pull it from the corresponding proxy
+ * @param {Object} req request obj
+ * @param {Object} res respond obj
+ * @param {Object} next middleware
+ */
 exports.clientOffline = async (req, res, next) => {
 	let { clientID, proxy } = req.body;
-	console.log(clientID + ',' + proxy);
+
 	try {
 		if (await Mappings.findOneAndUpdate({ proxy: proxy }, { $pull: { client: { ID: clientID } } })) {
-			res.send(errorCode.SENDSUCCESSFULLY);
+			res.send(errorCode.SUCCESS);
 		} else {
 			res.send(errorCode.DOCNOTFOUND);
 		}
 	} catch (err) {
 		console.log(err);
-		res.send(errorCode.DOCNOTFOUND);
-	}
-};
-
-/**
- * TODO(Remove)
- * Register a spy
- * @param {Object} req request obj
- * @param {Object} res respond obj
- * @param {Object} next middleware
- */
-exports.spyRegister = async (req, res, next) => {
-	// let ipArray = req.ip.split(':')
-	// let proxyIP = ipArray[3]
-	let clientID = req.body.clientID;
-	let proxyIP = req.body.proxyIP;
-	// check if already registered
-	try {
-		let proxyAndClient = await Mappings.findOne({ 'client.ID': clientID });
-		// save if not
-		if (proxyAndClient) {
-			console.log('client registered');
-			res.send(errorCode.CLIENTEXIST);
-		} else {
-			let result = await Mappings.findOne({ proxy: proxyIP });
-			if (result) {
-				let client = {
-					ID: clientID,
-					pass: '123456',
-					credit: 0,
-					block: false,
-					attackFrequency: 0,
-					attackStrength: 0,
-					accessTime: new Date(),
-					timeSlot: 0,
-					spy: true
-				};
-				result.client.push(client);
-				result.save(function(err) {
-					if (err) {
-						console.log(err);
-						res.send(errorCode.DOCNOTFOUND);
-					}
-					res.send(errorCode.SENDSUCCESSFULLY);
-				});
-			} else {
-				console.log(`Not found Proxy: ${proxyIP}, ClientID: ${clientID}`);
-				res.send(errorCode.DOCNOTFOUND);
-			}
-		}
-	} catch (err) {
-		console.log(err);
-		res.send(errorCode.DOCNOTFOUND);
+		res.send(errorCode.FAILURE);
 	}
 };
 
 /**
  * Get proxy ip from req.ip and add the proxy ip to trusted proxys,
  * Update database with empty clients array and proxy ip
- * @todo Authentication of the request ip address
+ * TODO(Authentication of the request ip address)
  * @param {Obj} req request
  * @param {Obj} res respond
  * @param {function} next middleware
  */
 exports.proxyRegister = async (req, res, next) => {
-	let { proxy } = req.body;
+	let proxy = req.body;
 	try {
-		let proxyObj = await Mappings.findOne({ proxy: proxy });
-		if (proxyObj) {
+		if (await Mappings.findOne({ proxy: proxy })) {
 			res.send({
 				code: 50000,
 				message: 'already exists proxy'
 			});
 		} else {
-			let map = new Mappings({
-				proxy: proxy,
-				client: []
-			});
-			let result = await map.save();
-			if (result) {
+			if (await new Mappings({ proxy: proxy, client: [] }).save()) {
 				res.send({
 					code: 20000,
 					message: 'succefully inserted proxy: ' + proxy
@@ -175,50 +158,14 @@ exports.proxyRegister = async (req, res, next) => {
  * @param {function} next middleware
  */
 exports.requestShuffle = async (req, res, next) => {
-	// get the proxy ID
-	// let ipArray = req.ip.split(':')
-	// let proxyIP = ipArray[3]
-	let proxyIP = req.body.proxy;
+	let proxy = req.body.proxy;
 	try {
-		let result = await Mappings.findOne({ proxy: proxyIP });
-		if (result) {
-			// if proxy exists
-			// invoke shuffle algorithm
-			let resultJson = await shuffle(proxyIP, result.client);
+		if (await Mappings.findOne({ proxy: proxy })) {
+			// If proxy exists, invoke shuffle algorithm
+			let resultJson = await shuffle(proxy, result.client);
 			// after shuffle, send the results to every client so that they switch to anothor proxy
 			console.log(resultJson);
 			res.send(resultJson);
-		} else {
-			res.send(errorCode.DOCNOTFOUND);
-		}
-	} catch (err) {
-		console.error(err);
-		res.send(errorCode.DOCNOTFOUND);
-	}
-};
-
-/**
- * TODO(Remove)
- * delete client from database, because of client offline
- * @param {Obj} req request
- * @param {Obj} res respond
- * @param {function} next middleware
- */
-exports.deleteClient = async (req, res, next) => {
-	let clientID = req.body.clientID;
-	// let proxyIP = req.body.proxyIP
-	try {
-		// let result = await Mappings.findOne({ "client.ID": clientID, proxy: proxyIP })
-		let result = await Mappings.findOne({ 'client.ID': clientID });
-		// if the mappings are found in the database
-		if (result) {
-			let index = result.client.indexOf(clientID);
-			result.client.splice(index, 1);
-			result.save();
-			res.send({
-				code: 200,
-				message: 'delete user successfully'
-			});
 		} else {
 			res.send(errorCode.DOCNOTFOUND);
 		}
@@ -283,6 +230,7 @@ function addCredit(client, attackFrequency, attackStrength) {
 }
 
 /**
+ * TODO()
  * Redistribute all client through proxys.
  * This is done by randomly redistribute through all clients.
  * @param {JSON} the mappings of attacked proxy, attack strength and attack frequency
@@ -439,114 +387,12 @@ exports.attacked = async (req, res, next) => {
 };
 
 /**
- * TODO(Add check)
- * Distribute clientID and proxy
- * @param {*} req
- * @param {*} res
- * @param {*} next
- */
-exports.distributeClient = async (req, res, next) => {
-	let proxy = randomProxy();
-	// let result = await Mappings.findOne({ proxy: proxy });
-	// if (result.client.length >= result.maxSize) {
-	// 	proxy = null;
-	// }
-	res.send({
-		code: 200,
-		clientID: global.ids,
-		proxy: proxy
-	});
-	global.ids++;
-};
-
-/**
- * TODO()
- * Redistribute proxy
- * @param {*} req
- * @param {*} res
- * @param {*} next
- */
-exports.redistributeClient = async (req, res, next) => {
-	let { clientID, proxy } = req.body;
-	res.send({
-		code: 200,
-		proxy: randomProxy()
-	});
-};
-
-/**
- * TODO(Should be replaced by other algorithm)
- * Get proxy by random
- */
-function randomProxy() {
-	return proxies[Math.floor(Math.random() * proxies.length)];
-}
-
-/**
  * Written for autonomous attackers to obtain spies.
  * @param {} req nothing in there
  * @param {JSON} res json containing the map of proxy and spy
  * @param {function} next middleware
  */
 exports.getSpy = (req, res, next) => {
-	// Mappings.find({'client.spy': true})
-	// .select('proxy client')
-	// .select({'client': {$elemMatch: {'spy': true}}})
-	// .exec((err, doc) => {
-	//   if(err){
-	//     console.error('error occurred while finding spies: ', err)
-	//     res.send(JSON.stringify({
-	//       code: 403,
-	//       message: 'error while finding spies'
-	//     }))
-	//   }
-	//   if(doc){
-	//     res.send(JSON.stringify(doc))
-	//   }
-	// })
-	client.connect((err, client) => {
-		assert.equal(null, err);
-		// console.log('connected')
-		let db = client.db('Mappings');
-		let collection = db.collection('mapping');
-		collection.aggregate(
-			[
-				{
-					$project: {
-						client: {
-							$filter: {
-								input: '$client',
-								as: 'client',
-								cond: { $eq: ['$$client.spy', true] }
-							}
-						},
-						proxy: true
-					}
-				}
-			],
-			(err, cursor) => {
-				if (err) {
-					res.send({
-						code: 403,
-						message: 'error while finding spies'
-					});
-				}
-				cursor.toArray((err, doc) => {
-					// console.log(doc)
-					res.send(JSON.stringify(doc));
-				});
-			}
-		);
-	});
-};
-
-/**
- * another get spy using mongoose
- * @param {none} req get request
- * @param {JSON} res JSON string containing all clients
- * @param {function } next middleware
- */
-exports.getSpy2 = (req, res, next) => {
 	Mappings.aggregate([
 		{
 			$project: {
