@@ -90,11 +90,12 @@ async function initialize() {
 		if (err) {
 			console.error('error removing old:', err);
 		} else {
-			proxies.forEach(proxy => {
+			proxies.forEach((value, index) => {
 				new Mappings({
 					client: [],
-					proxy: proxy,
-					maxSize: 5
+					proxy: value,
+					level: index,
+					maxSize: 10
 				}).save();
 			});
 		}
