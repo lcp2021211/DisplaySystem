@@ -11,6 +11,8 @@ const app = require('../app');
 const proxies = require('../config/proxies');
 const debug = require('debug')('server2:server');
 const Mappings = require('../models/proxyToClient');
+const ProxyModel = require('../models/proxy');
+const ClientModel = require('../models/client');
 
 /**
  * Get port from environment and store in Express.
@@ -83,7 +85,7 @@ function onListening() {
 	initialize();
 }
 
-function initialize() {
+async function initialize() {
 	Mappings.remove({}, err => {
 		if (err) {
 			console.error('error removing old:', err);
@@ -95,14 +97,17 @@ function initialize() {
 					maxSize: 5
 				}).save();
 			});
-			// Store undistributed clients
-			new Mappings({
-				client: [],
-				proxy: 'null',
-				maxSize: -1
-			}).save();
 		}
 	});
+
+	// await ClientModel.remove({});
+	// await ProxyModel.remove({});
+
+	// proxies.forEach(proxy => {
+	// 	new ProxyModel({
+	// 		proxy: proxy
+	// 	}).save();
+	// })
 
 	// Refresh the information of network each 60 secs
 	setInterval(() => {

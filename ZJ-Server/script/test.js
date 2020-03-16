@@ -3,6 +3,7 @@ mongoose.connect('mongodb://localhost:27017/Motag');
 
 const Mappings = require('../models/proxyToClient');
 // const proxies = require('../config/proxies');
+const Proxies = require('../models/proxy');
 
 async function addProxy() {
 	Mappings.remove({}, err => {
@@ -135,9 +136,17 @@ async function shuffle() {
 	}
 }
 
+async function randomProxy() {
+	// let doc = await Proxies.find({});
+	// console.log(doc.length());
+	let doc = await Proxies.findOne({ $where: 'this.size < this.capacity' });
+	console.log(doc.proxy);
+}
+
+randomProxy();
 // addProxy();
 // addClient();
 // test();
-shuffle();
+// shuffle();
 
 // mongoose.disconnect();

@@ -13,6 +13,9 @@ const parameter = require('../config/basics');
 const service = require('../controllers/services');
 const proxies = require('../config/proxies');
 
+const ProxyModel = require('../models/proxy');
+const ClientModel = require('../models/client');
+
 // exports.distributeClient = async (req, res, next) => {
 // 	let clientID = global.ids++;
 // 	let proxy = randomProxy();
@@ -30,6 +33,7 @@ const proxies = require('../config/proxies');
 // 		res.send(errorCode.FAILURE);
 // 	}
 // };
+
 exports.distributeClient = async (req, res, next) => {
 	let clientID = global.ids++;
 	let proxy = randomProxy();
@@ -63,13 +67,41 @@ exports.distributeClient = async (req, res, next) => {
 			res.send({
 				code: 200,
 				clientID: clientID,
-				proxy: 'null'g
+				proxy: 'null'
 			});
 		}
 	} catch (err) {
 		res.send(errorCode.FAILURE);
 	}
 };
+
+// exports.distributeClient = async (req, res, next) => {
+// 	let clientID = global.ids++;
+// 	let spy = req.body.spy;
+
+// 	try {
+// 		let proxy = 'null';
+// 		let doc = await ProxyModel.findOneAndUpdate({ $where: 'this.size < this.capacity' }, { $inc: { size: 1 } });
+// 		if (doc) {
+// 			proxy = doc.proxy;
+// 		}
+// 		await new ClientModel({
+// 			ID: clientID,
+// 			proxy: proxy,
+// 			pass: '123456',
+// 			spy: spy
+// 		}).save();
+
+// 		res.send({
+// 			code: 200,
+// 			clientID: clientID,
+// 			proxy: proxy
+// 		});
+// 	} catch (err) {
+// 		console.error(err);
+// 		res.send(errorCode.FAILURE);
+// 	}
+// };
 
 /**
  * TODO()
@@ -152,6 +184,19 @@ exports.clientOffline = async (req, res, next) => {
 		res.send(errorCode.FAILURE);
 	}
 };
+
+// exports.clientOffline = async (req, res, next) => {
+// 	let { clientID, proxy } = req.body;
+
+// 	try {
+// 		await ClientModel.deleteOne({ ID: clientID });
+// 		await ProxyModel.updateOne({ proxy: proxy }, { $inc: { size: -1 } });
+// 		res.send(errorCode.SUCCESS);
+// 	} catch (err) {
+// 		console.log(err);
+// 		res.send(errorCode.FAILURE);
+// 	}
+// };
 
 /**
  * Get proxy ip from req.ip and add the proxy ip to trusted proxys,
@@ -399,37 +444,67 @@ function saveNewMap(newMap) {
 // 		console.error(err);
 // 	}
 // };
+
 exports.attacked = async (req, res, next) => {
 	try {
 		let clients = [];
-		proxies.forEach(async proxy => {
+		for (let proxy of proxies) {
 			let doc = await Mappings.findOneAndUpdate({ proxy: proxy }, { client: [] });
-			console.log(doc.client);
 			clients.push(...doc.client);
-		});
-		console.log('Number of Clients is: ' + clients.length);
+		}
 
-		// let client2Proxy = [];
-		// clients.forEach(async client => {
-		// 	let level = client.ID % 2;
-		// 	let doc = await Mappings.findOneAndUpdate(
-		// 		{ level: level, $where: 'this.client.length < this.maxSize' },
-		// 		{ $push: { client: client } }
-		// 	);
-		// 	if (doc) {
-		// 		client2Proxy.push([client.ID, proxy]);
-		// 	} else {
-		// 		client2Proxy.push([client.ID, null]);
-		// 	}
-		// });
-		// console.log('Attack')
-		// console.log(client2Proxy);
+		let client2Proxy = [];
+		for (let client of clients) {
+			let level = client.ID % 2;
+			let doc = await Mappings.findOneAndUpdate(
+				{ level: level, $where: 'this.client.length < this.maxSize' },
+				{ $push: { client: client } }
+			);
+			if (doc) {
+				client2Proxy.push([client.ID, doc.proxy]);
+			} else {
+				client2Proxy.push([client.ID, 'null']);
+			}
+		}
+		service.informClient(client2Proxy);
+		// TODO()
 		res.send(errorCode.SUCCESS);
 	} catch (err) {
 		console.error(err);
 		res.send(errorCode.FAILURE);
 	}
 };
+
+// exports.attacked = async (req, res, next) => {
+// 	try {
+// 		let clients = [];
+// 		(await ClientModel.find({})).forEach(doc => {
+// 			clients.push(doc);
+// 		});
+// 		console.log('Length of Clients: ' + clients.length);
+
+// 		await ProxyModel.updateMany({}, { size: 0 });
+// 		console.log('Clear Proxies');
+
+// 		let client2Proxy = [];
+// 		clients.forEach(async client => {
+// 			let proxy = 'null';
+// 			// TODO(Replace by other function)
+// 			let level = client.ID % 2;
+// 			let doc = await ProxyModel.findOneAndUpdate({ level: level, $where: 'this.size < this.capacity' }, { $inc: { size: 1 } });
+// 			if (doc) {
+// 				proxy = doc.proxy;
+// 			}
+// 			console.log(client.ID + ', ' + proxy);
+// 			await ClientModel.updateOne({ ID: client.ID }, { proxy: proxy });
+// 			client2Proxy.push([client.ID, proxy]);
+// 		});
+
+// 	} catch (err) {
+// 		console.error(err);
+// 		res.send(errorCode.FAILURE);
+// 	}
+// };
 
 /**
  * Written for autonomous attackers to obtain spies.
