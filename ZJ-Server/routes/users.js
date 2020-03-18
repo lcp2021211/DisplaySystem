@@ -8,7 +8,6 @@ router.get('/', function(req, res, next) {
 router.get('/getUserInfo', viewController.getUserInfo);
 router.get('/getSpy', viewController.getSpy);
 router.get('/getClientNetworkInfo', viewController.getClientNetworkInfo);
-router.get('/clearClient', viewController.clearClient);
 
 /** POST method */
 router.post('/LoginByUsername', viewController.LoginByUsername);

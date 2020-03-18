@@ -218,30 +218,14 @@ exports.setClientNetworkInfo = async (req, res, next) => {
  * @param {map} res a map of all network information of current clients
  * @param {function} next middleware
  */
-exports.getClientNetworkInfo = (req, res, next) => {
-	// let clientArr = [];
-	// global.realTime.forEach((elem, key) => {
-	// 	elem['clientID'] = key;
-	// 	clientArr.push(elem);
-	// });
-	// res.send({
-	// 	code: 20000,
-	// 	data: clientArr
-	// });
-};
-
-/**
- * Clear all clients in the view
- * @param {none} req
- * @param {JSON} res indication whether succefully updated real time global obj
- * @param {function} next middleware
- */
-exports.clearClient = (req, res, next) => {
-	// global.realTime = new Map();
-	// res.send({
-	// 	code: 20000,
-	// 	data: {
-	// 		message: 'clear succefully'
-	// 	}
-	// });
+exports.getClientNetworkInfo = async (req, res, next) => {
+	let doc = await Mappings.find({});
+	if (doc) {
+		res.send({
+			code: 200,
+			data: doc
+		});
+	} else {
+		res.send(errorCode.FAILURE);
+	}
 };

@@ -85,7 +85,7 @@ function onListening() {
 	initialize();
 }
 
-async function initialize() {
+function initialize() {
 	Mappings.remove({}, err => {
 		if (err) {
 			console.error('error removing old:', err);
@@ -110,8 +110,4 @@ async function initialize() {
 	// 	}).save();
 	// })
 
-	// Refresh the information of network each 60 secs
-	// setInterval(() => {
-	// 	global.realTime = new Map();
-	// }, 60000);
 }
