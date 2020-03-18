@@ -111,7 +111,7 @@ async function initialize() {
 	// })
 
 	// Refresh the information of network each 60 secs
-	setInterval(() => {
-		global.realTime = new Map();
-	}, 60000);
+	// setInterval(() => {
+	// 	global.realTime = new Map();
+	// }, 60000);
 }

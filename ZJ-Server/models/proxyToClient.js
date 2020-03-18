@@ -31,6 +31,14 @@ const MappingSchema = new Schema({
 			spy: {
 				type: Boolean,
 				default: false
+			},
+			networkSpeed: {
+				type: Number,
+				default: 0
+			},
+			networkDelay: {
+				type: Number,
+				default: 0
 			}
 		}
 	],

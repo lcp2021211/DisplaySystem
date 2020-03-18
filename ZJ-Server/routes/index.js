@@ -7,7 +7,6 @@ router.get('/', function(req, res, next) {
 });
 router.get('/getspy', clientController.getSpy);
 router.get('/getProxy', clientController.getProxy);
-router.get('/addDomain', clientController.addDomain);
 // router.get('/distributeClient', clientController.distributeClient);
 
 /** POST method */

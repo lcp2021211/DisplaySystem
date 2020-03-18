@@ -13,13 +13,12 @@ const parameter = require('../config/basics');
 const service = require('../controllers/services');
 const proxies = require('../config/proxies');
 
-const ProxyModel = require('../models/proxy');
-const ClientModel = require('../models/client');
-
+// const ProxyModel = require('../models/proxy');
+// const ClientModel = require('../models/client');
+//
 // exports.distributeClient = async (req, res, next) => {
 // 	let clientID = global.ids++;
 // 	let proxy = randomProxy();
-
 // 	try {
 // 		if (!(await Mappings.findOne({proxy: proxy, $where: 'this.client.length < this.maxSize'}))) {
 // 			proxy = null;
@@ -33,48 +32,7 @@ const ClientModel = require('../models/client');
 // 		res.send(errorCode.FAILURE);
 // 	}
 // };
-
-exports.distributeClient = async (req, res, next) => {
-	let clientID = global.ids++;
-	let proxy = randomProxy();
-	let spy = req.body.spy;
-
-	try {
-		let client = {
-			ID: clientID,
-			pass: '123456',
-			credit: 0,
-			block: false,
-			attackFrequency: 0,
-			attackStrength: 0,
-			accessTime: new Date(),
-			timeSlot: 0,
-			spy: spy
-		};
-		let doc = await Mappings.findOneAndUpdate(
-			{ proxy: proxy, $where: 'this.client.length < this.maxSize' },
-			{ $push: { client: client } },
-			{ new: true }
-		);
-		if (doc) {
-			console.log('Length: ' + doc.client.length);
-			res.send({
-				code: 200,
-				clientID: clientID,
-				proxy: proxy
-			});
-		} else {
-			res.send({
-				code: 200,
-				clientID: clientID,
-				proxy: 'null'
-			});
-		}
-	} catch (err) {
-		res.send(errorCode.FAILURE);
-	}
-};
-
+//
 // exports.distributeClient = async (req, res, next) => {
 // 	let clientID = global.ids++;
 // 	let spy = req.body.spy;
@@ -104,6 +62,50 @@ exports.distributeClient = async (req, res, next) => {
 // };
 
 /**
+ * Distribute clients for the first time
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+exports.distributeClient = async (req, res, next) => {
+	let clientID = global.ids++;
+	let proxy = 'null';
+	let spy = req.body.spy;
+
+	try {
+		let client = {
+			ID: clientID,
+			pass: '123456',
+			credit: 0,
+			block: false,
+			attackFrequency: 0,
+			attackStrength: 0,
+			accessTime: new Date(),
+			timeSlot: 0,
+			spy: spy
+		};
+		// Find proxy which isn't full
+		let doc = await Mappings.findOneAndUpdate(
+			{ $where: 'this.client.length < this.maxSize' },
+			{ $push: { client: client } },
+			{ new: true }
+		);
+		// If find, set the proxy value
+		if (doc) {
+			console.log('Length: ' + doc.client.length);
+			proxy = doc.proxy;
+		}
+		res.send({
+			code: 200,
+			clientID: clientID,
+			proxy: proxy
+		});
+	} catch (err) {
+		res.send(errorCode.FAILURE);
+	}
+};
+
+/**
  * TODO()
  * Redistribute proxy
  * @param {*} req
@@ -122,9 +124,9 @@ exports.redistributeClient = async (req, res, next) => {
  * TODO(Should be replaced by other algorithm)
  * Get proxy by random
  */
-function randomProxy() {
-	return proxies[Math.floor(Math.random() * proxies.length)];
-}
+// function randomProxy() {
+// 	return proxies[Math.floor(Math.random() * proxies.length)];
+// }
 
 /**
  * When client is online, push it into the corresponding proxy
@@ -174,7 +176,7 @@ exports.clientOffline = async (req, res, next) => {
 	let { clientID, proxy } = req.body;
 
 	try {
-		if (await Mappings.findOneAndUpdate({ proxy: proxy }, { $pull: { client: { ID: clientID } } })) {
+		if (await Mappings.updateOne({ proxy: proxy }, { $pull: { client: { ID: clientID } } })) {
 			res.send(errorCode.SUCCESS);
 		} else {
 			res.send(errorCode.DOCNOTFOUND);
@@ -627,92 +629,4 @@ exports.whetherBlock = (req, res, next) => {
 				});
 			}
 		});
-};
-
-/**
- * TODO(Remove)
- * function perform the same thing of add domain and select spy
- * @param {*} req
- * @param {*} res
- * @param {*} next
- */
-exports.addDomain = (req, res, next) => {
-	// let proxies = [
-	// 	'39.98.156.204',
-	// 	'39.98.148.77',
-	// 	'39.100.106.44',
-	// 	'47.92.172.18',
-	// 	'39.100.144.204',
-	// 	'39.100.255.8',
-	// 	'39.100.84.98',
-	// 	'39.100.248.86',
-	// 	'39.98.155.31',
-	// 	'39.98.154.223',
-	// 	'39.100.120.192',
-	// 	'39.100.247.214',
-	// 	'39.100.84.4',
-	// 	'39.100.144.98',
-	// 	'47.92.222.154',
-	// 	'39.98.146.117'
-	// ];
-	Mappings.remove({}, err => {
-		if (err) {
-			console.error('error removing old:', err);
-		} else {
-			// let count = 0;
-			proxies.forEach(proxy => {
-				new Mappings({
-					client: [],
-					proxy: `${proxy}`
-				}).save();
-				// let tempArr = [];
-				// for (let i = 0; i < 10; i++) {
-				// 	let tempClient = {
-				// 		ID: count,
-				// 		pass: '123456',
-				// 		credit: 0,
-				// 		block: false,
-				// 		attackFrequency: 0,
-				// 		attackStrength: 0,
-				// 		accessTime: new Date(),
-				// 		timeSlot: 0,
-				// 		spy: false
-				// 	};
-				// 	tempArr.push(tempClient);
-				// 	count++;
-				// }
-				// let temp = new Mappings({
-				// 	client: tempArr,
-				// 	proxy: `${proxy}:3000`
-				// });
-				// temp.save();
-			});
-		}
-	});
-
-	Mappings.find({}, (err, doc) => {
-		if (err) {
-			console.error(err);
-		}
-		if (doc) {
-			console.log(doc);
-			doc.forEach(proxy => {
-				if (proxy.client.length !== 0) {
-					proxy.client.forEach(client => {
-						client.spy = false;
-					});
-				}
-			});
-			for (let i = 0; i < 70; i++) {
-				let idx = Math.floor(Math.random() * doc.length) % doc.length;
-				let idx2 = Math.floor(Math.random() * doc[idx].client.length) % doc[idx].client.length;
-				doc[idx].client[idx2].spy = true;
-			}
-			let mapping = new Mappings();
-			mapping = doc;
-			mapping.forEach(element => {
-				element.save();
-			});
-		}
-	});
 };

@@ -5,14 +5,17 @@
  @author Song Chengru created at 2019-06-06 16:29:30
  */
 
-const Users = require('../models/users');
-const crypto = require('crypto');
-const MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
-const url = 'mongodb://localhost:27017';
-const client = new MongoClient(url);
 const os = require('os');
+const assert = require('assert');
+const crypto = require('crypto');
 const service = require('./services');
+const Users = require('../models/users');
+const errorCode = require('../config/errorCode');
+const Mappings = require('../models/proxyToClient');
+
+// const MongoClient = require('mongodb').MongoClient;
+// const url = 'mongodb://localhost:27017';
+// const client = new MongoClient(url);
 
 /**
  * Login with username and password
@@ -103,43 +106,43 @@ exports.getUserInfo = (req, res, next) => {
  * @param {function} next middleware
  */
 exports.getSpy = (req, res, next) => {
-	client.connect((err, client) => {
-		assert.equal(null, err);
-		// console.log('connected')
-		let db = client.db('Mappings');
-		let collection = db.collection('mapping');
-		collection.aggregate(
-			[
-				{
-					$project: {
-						client: {
-							$filter: {
-								input: '$client',
-								as: 'client',
-								cond: { $eq: ['$$client.spy', true] }
-							}
-						},
-						proxy: true
-					}
-				}
-			],
-			(err, cursor) => {
-				if (err) {
-					res.send({
-						code: 403,
-						message: 'error while finding spies'
-					});
-				}
-				cursor.toArray((err, doc) => {
-					// console.log(doc)
-					res.send({
-						code: 20000,
-						data: doc
-					});
-				});
-			}
-		);
-	});
+	// client.connect((err, client) => {
+	// 	assert.equal(null, err);
+	// 	// console.log('connected')
+	// 	let db = client.db('Mappings');
+	// 	let collection = db.collection('mapping');
+	// 	collection.aggregate(
+	// 		[
+	// 			{
+	// 				$project: {
+	// 					client: {
+	// 						$filter: {
+	// 							input: '$client',
+	// 							as: 'client',
+	// 							cond: { $eq: ['$$client.spy', true] }
+	// 						}
+	// 					},
+	// 					proxy: true
+	// 				}
+	// 			}
+	// 		],
+	// 		(err, cursor) => {
+	// 			if (err) {
+	// 				res.send({
+	// 					code: 403,
+	// 					message: 'error while finding spies'
+	// 				});
+	// 			}
+	// 			cursor.toArray((err, doc) => {
+	// 				// console.log(doc)
+	// 				res.send({
+	// 					code: 20000,
+	// 					data: doc
+	// 				});
+	// 			});
+	// 		}
+	// 	);
+	// });
 };
 
 /**
@@ -196,19 +199,18 @@ exports.getSysUsage = (req, res, next) => {
  * @param {none} res response code
  * @param {function} next middleware
  */
-exports.setClientNetworkInfo = (req, res, next) => {
-	// let { clientID, delayTime, networkSpeed } = req.body
-	// global.realTime.set(clientID, {'delayTime': delayTime, 'networkSpeed': networkSpeed})
-	// res.send({
-	//   code: 20000,
-	//   message: 'update successfully!'
-	// })
-	let { clientID, proxy, delayTime, networkSpeed } = req.body;
-	global.realTime.set(clientID, { proxy: proxy, delayTime: delayTime, networkSpeed: networkSpeed });
-	res.send({
-		code: 20000,
-		message: 'update successfully!'
-	});
+exports.setClientNetworkInfo = async (req, res, next) => {
+	let { clientID, networkSpeed, networkDelay } = req.body;
+	if (
+		await Mappings.updateOne(
+			{ 'client.ID': clientID },
+			{ $set: { 'client.$.networkSpeed': networkSpeed, 'client.$.networkDelay': networkDelay } }
+		)
+	) {
+		res.send(errorCode.SUCCESS);
+	} else {
+		res.send(errorCode.FAILURE);
+	}
 };
 /**
  * return the information of all clients
@@ -217,15 +219,15 @@ exports.setClientNetworkInfo = (req, res, next) => {
  * @param {function} next middleware
  */
 exports.getClientNetworkInfo = (req, res, next) => {
-	let clientArr = [];
-	global.realTime.forEach((elem, key) => {
-		elem['clientID'] = key;
-		clientArr.push(elem);
-	});
-	res.send({
-		code: 20000,
-		data: clientArr
-	});
+	// let clientArr = [];
+	// global.realTime.forEach((elem, key) => {
+	// 	elem['clientID'] = key;
+	// 	clientArr.push(elem);
+	// });
+	// res.send({
+	// 	code: 20000,
+	// 	data: clientArr
+	// });
 };
 
 /**
@@ -235,11 +237,11 @@ exports.getClientNetworkInfo = (req, res, next) => {
  * @param {function} next middleware
  */
 exports.clearClient = (req, res, next) => {
-	global.realTime = new Map();
-	res.send({
-		code: 20000,
-		data: {
-			message: 'clear succefully'
-		}
-	});
+	// global.realTime = new Map();
+	// res.send({
+	// 	code: 20000,
+	// 	data: {
+	// 		message: 'clear succefully'
+	// 	}
+	// });
 };
