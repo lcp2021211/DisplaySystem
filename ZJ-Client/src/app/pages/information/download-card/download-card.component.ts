@@ -85,7 +85,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
           this.proxy = res.proxy;
 
           // Start download and websocket connection
-          // this.download();
+          this.download();
         }
       },
       (err: HttpErrorResponse) => {
@@ -141,13 +141,12 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
       // Update time record
       this.t = performance.now();
 
-      // // Post current speed and delay to server
-      // this.service.postInformation(
-      //   this.clientID,
-      //   this.proxy,
-      //   this.speed[this.speed.length - 1].value[1],
-      //   this.delay[this.delay.length - 1].value[1]
-      // );
+      // Post current speed and delay to server
+      this.service.postInformation(
+        this.clientID,
+        this.speed[this.speed.length - 1].value[1],
+        this.delay[this.delay.length - 1].value[1]
+      );
 
       // // Get whether block
       // this.service.getBlock(this.clientID).subscribe(

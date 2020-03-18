@@ -87,16 +87,14 @@ export class InformationService {
    */
   postInformation(
     clientID: number,
-    proxy: string,
     speed: number,
     delay: number
   ) {
     this.http
       .post(`${serverIP}/users/setClientNetworkInfo`, {
         clientID: clientID,
-        proxy: proxy,
-        delayTime: delay,
-        networkSpeed: speed
+        networkSpeed: speed,
+        networkDelay: delay
       })
       .subscribe(
         res => {},

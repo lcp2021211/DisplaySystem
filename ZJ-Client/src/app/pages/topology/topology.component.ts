@@ -14,11 +14,13 @@ export class TopologyComponent implements OnInit, AfterViewInit {
   private config: any;
   private selected = 'all';
 
-  private clients = new Set();
   private proxies = new Set();
-  private proxyToClients = new Map();
+  private proxyToClients: any;
 
-  constructor(private service: TopologyService, private theme: NbThemeService) {}
+  constructor(
+    private service: TopologyService,
+    private theme: NbThemeService
+  ) {}
 
   ngOnInit() {
     // Subscribe theme changed
@@ -47,22 +49,8 @@ export class TopologyComponent implements OnInit, AfterViewInit {
   loadData() {
     this.service.getTopologyInfo().subscribe(
       res => {
-        if (res.code === 20000) {
-          // Reset clients, proxies and map
-          this.clients = new Set();
-          this.proxies = new Set();
-          this.proxyToClients = new Map();
-
-          res.data.forEach((value: any) => {
-            this.clients.add(`${value.clientID}`);
-            this.proxies.add(value.proxy);
-
-            if (this.proxyToClients.has(value.proxy)) {
-              this.proxyToClients.get(value.proxy).push([`${value.clientID}`, value.networkSpeed, value.delayTime]);
-            } else {
-              this.proxyToClients.set(value.proxy, [[`${value.clientID}`, value.networkSpeed, value.delayTime]]);
-            }
-          });
+        if (res.code === 200) {
+          this.proxyToClients = res.data;
 
           this.loadToplogy();
         }
@@ -149,87 +137,89 @@ export class TopologyComponent implements OnInit, AfterViewInit {
     let links = [];
 
     if (this.selected == 'all') {
-      // Add all proxy nodes
-      this.proxies.forEach(proxy => {
-        nodes.push({
-          name: proxy,
-          category: 'Proxy'
-        });
-      });
-      // Add all client nodes
-      this.clients.forEach(client => {
-        nodes.push({
-          name: client,
-          category: 'Client'
-        });
-      });
-      // Add server node
+      // Add Server
       nodes.push({
         name: 'Server',
         category: 'Server'
       });
-      // Add links: proxy -> client
-      this.proxyToClients.forEach((value, key) => {
-        for (let client of value) {
+
+      this.proxyToClients.forEach((e: any) => {
+        // Add proxy nodes
+        this.proxies.add(e.proxy);
+        
+        nodes.push({
+          name: e.proxy,
+          category: 'Proxy'
+        });
+
+        links.push({
+          source: e.proxy,
+          target: 'Server'
+        });
+
+        // Add client nodes and links
+        e.client.forEach((client: any) => {
+          nodes.push({
+            name: `${client.ID}`,
+            category: 'Client'
+          });
           links.push({
-            source: key,
-            target: client[0],
+            source: e.proxy,
+            target: `${client.ID}`,
             lineStyle: {
-              width: this.getLineWidth(client[1]),
-              color: this.getLineColor(client[2])
+              width: this.getLineWidth(client.networkSpeed),
+              color: this.getLineColor(client.networkDelay)
             },
             emphasis: {
               lineStyle: {
-                width: this.getLineWidth(client[1], true),
-                color: this.getLineColor(client[2], true)
+                width: this.getLineWidth(client.networkSpeed, true),
+                color: this.getLineColor(client.networkDelay, true)
               }
             }
           });
-        }
-      });
-      // Add links: proxy -> Server
-      this.proxies.forEach(proxy => {
-        links.push({
-          source: proxy,
-          target: 'Server'
         });
       });
+
     } else {
       // Add proxy node
       nodes.push({
         name: this.selected,
         category: 'Proxy'
       });
-      this.proxyToClients.get(this.selected).forEach(client => {
-        // Add all client nodes
-        nodes.push({
-          name: client[0],
-          category: 'Client'
-        });
-        // Add links: proxy -> client
-        links.push({
-          source: this.selected,
-          target: client[0],
-          lineStyle: {
-            width: this.getLineWidth(client[1]),
-            color: this.getLineColor(client[2])
-          },
-          label: {
-            show: true,
-            formatter: `Speed: ${client[1].toFixed(2)}KB/s\n Delay: ${client[2].toFixed(2)}ms`,
-            fontSize: 20,
-            color: this.getLineColor(client[2])
-          },
-          emphasis: {
-            lineStyle: {
-              width: this.getLineWidth(client[1], true),
-              color: this.getLineColor(client[2], true)
-            },
-            label: {
-              color: this.getLineColor(client[2], true)
-            }
-          }
-        });
+
+      this.proxyToClients.forEach((e: any) => {
+        if (e.proxy === this.selected) {
+          // Add client nodes
+          e.client.forEach((client: any) => {
+            nodes.push({
+              name: `${client.ID}`,
+              category: 'Client'
+            });
+            links.push({
+              source: e.proxy,
+              target: `${client.ID}`,
+              lineStyle: {
+                width: this.getLineWidth(client.networkSpeed),
+                color: this.getLineColor(client.networkDelay)
+              },
+              label: {
+                show: true,
+                formatter: `Speed: ${client.networkSpeed.toFixed(2)}KB/s\nDelay: ${client.networkDelay.toFixed(2)}ms`,
+                fontSize: 20,
+                color: this.getLineColor(client.networkDelay)
+              },
+              emphasis: {
+                lineStyle: {
+                  width: this.getLineWidth(client.networkSpeed, true),
+                  color: this.getLineColor(client.networkDelay, true)
+                },
+                label: {
+                  color: this.getLineColor(client.networkDelay, true)
+                }
+              }
+            })
+          })
+        }
       });
     }
 
