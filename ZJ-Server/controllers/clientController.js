@@ -548,16 +548,20 @@ exports.distributeClient = async (req, res, next) => {
 	let clientID = global.ids++;
 	let proxy = 'null';
 
-	let doc = await ProxyModel.find({ $where: 'this.size < this.capacity' });
-	if (doc) {
-		proxy = doc[Math.floor(Math.random() * doc.length)].proxy;
+	try {
+		let doc = await ProxyModel.find({ $where: 'this.size < this.capacity' });
+		if (doc) {
+			proxy = doc[Math.floor(Math.random() * doc.length)].proxy;
+		}
+		res.send({
+			code: 200,
+			clientID: clientID,
+			proxy: proxy
+		});
+	} catch (err) {
+		console.error(err);
+		res.send(errorCode.FAILURE);
 	}
-
-	res.send({
-		code: 200,
-		clientID: clientID,
-		proxy: proxy
-	});
 };
 
 /**
@@ -567,18 +571,22 @@ exports.distributeClient = async (req, res, next) => {
  * @param {*} res
  * @param {*} next
  */
-exports.redistributeClient = (req, res, next) => {
+exports.redistributeClient = async (req, res, next) => {
 	let proxy = 'null';
 
-	let doc = await ProxyModel.find({ $where: 'this.size < this.capacity'});
-	if (doc) {
-		proxy = doc[Math.floor(Math.random() * doc.length)].proxy;
+	try {
+		let doc = await ProxyModel.find({ $where: 'this.size < this.capacity' });
+		if (doc) {
+			proxy = doc[Math.floor(Math.random() * doc.length)].proxy;
+		}
+		res.send({
+			code: 200,
+			proxy: proxy
+		});
+	} catch (err) {
+		console.error(err);
+		res.send(errorCode.FAILURE);
 	}
-
-	res.send({
-		code: 200,
-		proxy: proxy
-	});
 };
 
 /**
@@ -599,10 +607,10 @@ exports.clientOnline = async (req, res, next) => {
 		let doc = await ProxyModel.findOneAndUpdate({ proxy: proxy }, { $inc: { size: 1 } }, { new: true });
 		if (doc.size <= doc.capacity) {
 			await ClientModel.updateOne({ ID: clientID }, { proxy: proxy });
-			console.log('ClientOnline Success: ' + clientID + ', ' + proxy);
+			// console.log('ClientOnline Success: ' + clientID + ', ' + proxy);
 			res.send(errorCode.SUCCESS);
 		} else {
-			console.log('ClientOnline Failed: ' + clientID + ', ' + proxy);
+			// console.log('ClientOnline Failed: ' + clientID + ', ' + proxy);
 			await ClientModel.updateOne({ ID: clientID }, { proxy: 'null' });
 			res.send(errorCode.FAILURE);
 		}
@@ -620,11 +628,11 @@ exports.clientOffline = async (req, res, next) => {
 	try {
 		await ClientModel.updateOne({ ID: clientID }, { proxy: 'null' });
 		await ProxyModel.updateOne({ proxy: proxy }, { $inc: { size: -1 } });
-		console.log('ClientOffline Success: ' + clientID + ', ' + proxy);
+		// console.log('ClientOffline Success: ' + clientID + ', ' + proxy);
 		res.send(errorCode.SUCCESS);
 	} catch (err) {
 		console.log(err);
-		console.log('ClientOffline Failed: ' + clientID + ', ' + proxy);
+		// console.log('ClientOffline Failed: ' + clientID + ', ' + proxy);
 		res.send(errorCode.FAILURE);
 	}
 };
@@ -633,11 +641,11 @@ exports.clientOffline = async (req, res, next) => {
  * TODO(=====================Model 2=====================)
  */
 exports.shuffle = async (req, res, next) => {
-	try {
-		let client2Proxy = [];
+	let client2Proxy = [];
+	let proxies = {};
 
+	try {
 		let clients = await ClientModel.find({ proxy: { $ne: 'null' } });
-		let proxies = {};
 		(await ProxyModel.find({})).forEach(e => {
 			proxies[e.proxy] = { size: 0, capacity: e.capacity, level: e.level };
 		});
@@ -672,14 +680,20 @@ exports.shuffle = async (req, res, next) => {
  * @param {function } next middleware
  */
 exports.whetherBlock = async (req, res, next) => {
-	let { clientID } = req.body;
-	let doc = await ClientModel.findOne({ ID: clientID });
-	if (doc) {
-		res.send({
-			code: 200,
-			message: doc.block
-		});
-	} else {
+	let clientID = req.body;
+
+	try {
+		let doc = await ClientModel.findOne({ ID: clientID });
+		if (doc) {
+			res.send({
+				code: 200,
+				message: doc.block
+			});
+		} else {
+			res.send(errorCode.FAILURE);
+		}
+	} catch (err) {
+		console.error(err);
 		res.send(errorCode.FAILURE);
 	}
 };
@@ -692,13 +706,18 @@ exports.whetherBlock = async (req, res, next) => {
  * @param {function} next middleware
  */
 exports.getSpy = async (req, res, next) => {
-	let doc = await ClientModel.find({ spy: true });
-	if (doc) {
-		res.send({
-			code: 200,
-			message: doc
-		});
-	} else {
+	try {
+		let doc = await ClientModel.find({ spy: true });
+		if (doc) {
+			res.send({
+				code: 200,
+				message: doc
+			});
+		} else {
+			res.send(errorCode.FAILURE);
+		}
+	} catch (err) {
+		console.error(err);
 		res.send(errorCode.FAILURE);
 	}
 };
@@ -712,10 +731,18 @@ exports.getSpy = async (req, res, next) => {
  * @param {function} next middleware
  */
 exports.initializeBeforeAttack = async (req, res, next) => {
-	let doc = ClientModel.updateMany({}, { credit: 0, block: false, attackFrequency: 0, attackStrength: 0, timeSlot: 0 });
-	if (doc) {
-		res.send(errorCode.SUCCESS);
-	} else {
+	try {
+		let doc = ClientModel.updateMany(
+			{},
+			{ credit: 0, block: false, attackFrequency: 0, attackStrength: 0, timeSlot: 0 }
+		);
+		if (doc) {
+			res.send(errorCode.SUCCESS);
+		} else {
+			res.send(errorCode.FAILURE);
+		}
+	} catch (err) {
+		console.error(err);
 		res.send(errorCode.FAILURE);
 	}
 };

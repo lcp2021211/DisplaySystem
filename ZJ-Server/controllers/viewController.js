@@ -241,9 +241,15 @@ exports.getSysUsage = (req, res, next) => {
  */
 exports.setClientNetworkInfo = async (req, res, next) => {
 	let { clientID, networkSpeed, networkDelay } = req.body;
-	if (await ClientModel.updateOne({ ID: clientID }, { networkSpeed: networkSpeed, networkDelay: networkDelay })) {
-		res.send(errorCode.SUCCESS);
-	} else {
+
+	try {
+		if (await ClientModel.updateOne({ ID: clientID }, { networkSpeed: networkSpeed, networkDelay: networkDelay })) {
+			res.send(errorCode.SUCCESS);
+		} else {
+			res.send(errorCode.FAILURE);
+		}
+	} catch (err) {
+		console.error(err);
 		res.send(errorCode.FAILURE);
 	}
 };
@@ -256,15 +262,18 @@ exports.setClientNetworkInfo = async (req, res, next) => {
  * @param {function} next middleware
  */
 exports.getClientNetworkInfo = async (req, res, next) => {
-	let doc = await ClientModel.find({ proxy: { $ne: 'null' } });
-	if (doc) {
-		console.log(doc.length);
-		console.log(doc);
-		res.send({
-			code: 200,
-			data: doc
-		});
-	} else {
+	try {
+		let doc = await ClientModel.find({ proxy: { $ne: 'null' } });
+		if (doc) {
+			res.send({
+				code: 200,
+				data: doc
+			});
+		} else {
+			res.send(errorCode.FAILURE);
+		}
+	} catch (err) {
+		console.error(err);
 		res.send(errorCode.FAILURE);
 	}
 };
