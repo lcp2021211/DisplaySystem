@@ -15,7 +15,8 @@ export class TopologyComponent implements OnInit, AfterViewInit {
   private selected = 'all';
 
   private proxies = new Set();
-  private proxyToClients: any;
+  private clients: any;
+  // private proxyToClients: any;
 
   constructor(
     private service: TopologyService,
@@ -50,7 +51,11 @@ export class TopologyComponent implements OnInit, AfterViewInit {
     this.service.getTopologyInfo().subscribe(
       res => {
         if (res.code === 200) {
-          this.proxyToClients = res.data;
+          // this.proxyToClients = res.data;
+          this.clients = res.data;
+          this.clients.forEach((e: any) => {
+            this.proxies.add(e.proxy);
+          });
 
           this.loadToplogy();
         }
@@ -136,89 +141,169 @@ export class TopologyComponent implements OnInit, AfterViewInit {
     let nodes = [];
     let links = [];
 
-    if (this.selected == 'all') {
-      // Add Server
+    // TODO(=====================Model 1=====================)
+    // if (this.selected == 'all') {
+    //   // Add Server
+    //   nodes.push({
+    //     name: 'Server',
+    //     category: 'Server'
+    //   });
+
+    //   this.proxyToClients.forEach((e: any) => {
+    //     // Add proxy nodes
+    //     this.proxies.add(e.proxy);
+
+    //     nodes.push({
+    //       name: e.proxy,
+    //       category: 'Proxy'
+    //     });
+
+    //     links.push({
+    //       source: e.proxy,
+    //       target: 'Server'
+    //     });
+
+    //     // Add client nodes and links
+    //     e.client.forEach((client: any) => {
+    //       nodes.push({
+    //         name: `${client.ID}`,
+    //         category: 'Client'
+    //       });
+    //       links.push({
+    //         source: e.proxy,
+    //         target: `${client.ID}`,
+    //         lineStyle: {
+    //           width: this.getLineWidth(client.networkSpeed),
+    //           color: this.getLineColor(client.networkDelay)
+    //         },
+    //         emphasis: {
+    //           lineStyle: {
+    //             width: this.getLineWidth(client.networkSpeed, true),
+    //             color: this.getLineColor(client.networkDelay, true)
+    //           }
+    //         }
+    //       });
+    //     });
+    //   });
+
+    // } else {
+    //   // Add proxy node
+    //   nodes.push({
+    //     name: this.selected,
+    //     category: 'Proxy'
+    //   });
+
+    //   this.proxyToClients.forEach((e: any) => {
+    //     if (e.proxy === this.selected) {
+    //       // Add client nodes
+    //       e.client.forEach((client: any) => {
+    //         nodes.push({
+    //           name: `${client.ID}`,
+    //           category: 'Client'
+    //         });
+    //         links.push({
+    //           source: e.proxy,
+    //           target: `${client.ID}`,
+    //           lineStyle: {
+    //             width: this.getLineWidth(client.networkSpeed),
+    //             color: this.getLineColor(client.networkDelay)
+    //           },
+    //           label: {
+    //             show: true,
+    //             formatter: `Speed: ${client.networkSpeed.toFixed(2)}KB/s\nDelay: ${client.networkDelay.toFixed(2)}ms`,
+    //             fontSize: 20,
+    //             color: this.getLineColor(client.networkDelay)
+    //           },
+    //           emphasis: {
+    //             lineStyle: {
+    //               width: this.getLineWidth(client.networkSpeed, true),
+    //               color: this.getLineColor(client.networkDelay, true)
+    //             },
+    //             label: {
+    //               color: this.getLineColor(client.networkDelay, true)
+    //             }
+    //           }
+    //         })
+    //       })
+    //     }
+    //   });
+    // }
+
+    // TODO(=====================Model 2=====================)
+    if (this.selected === 'all') {
       nodes.push({
         name: 'Server',
         category: 'Server'
       });
 
-      this.proxyToClients.forEach((e: any) => {
-        // Add proxy nodes
-        this.proxies.add(e.proxy);
-        
+      this.proxies.forEach((proxy: any) => {
         nodes.push({
-          name: e.proxy,
+          name: proxy,
           category: 'Proxy'
         });
-
         links.push({
-          source: e.proxy,
+          source: proxy,
           target: 'Server'
         });
+      });
 
-        // Add client nodes and links
-        e.client.forEach((client: any) => {
+      this.clients.forEach((client: any) => {
+        nodes.push({
+          name: `${client.ID}`,
+          category: 'Client'
+        });
+        links.push({
+          source: client.proxy,
+          target: `${client.ID}`,
+          lineStyle: {
+            width: this.getLineWidth(client.networkSpeed),
+            color: this.getLineColor(client.networkDelay)
+          },
+          emphasis: {
+            lineStyle: {
+              width: this.getLineWidth(client.networkSpeed, true),
+              color: this.getLineColor(client.networkDelay, true)
+            }
+          }
+        });
+      });
+    } else {
+      nodes.push({
+        name: this.selected,
+        category: 'Proxy'
+      });
+
+      this.clients.forEach((client: any) => {
+        if (client.proxy === this.selected) {
           nodes.push({
             name: `${client.ID}`,
             category: 'Client'
           });
           links.push({
-            source: e.proxy,
+            source: this.selected,
             target: `${client.ID}`,
             lineStyle: {
               width: this.getLineWidth(client.networkSpeed),
+              color: this.getLineColor(client.networkDelay)
+            },
+            label: {
+              show: true,
+              formatter: `Speed: ${client.networkSpeed.toFixed(
+                2
+              )}KB/s\nDelay: ${client.networkDelay.toFixed(2)}ms`,
+              fontSize: 20,
               color: this.getLineColor(client.networkDelay)
             },
             emphasis: {
               lineStyle: {
                 width: this.getLineWidth(client.networkSpeed, true),
                 color: this.getLineColor(client.networkDelay, true)
+              },
+              label: {
+                color: this.getLineColor(client.networkDelay, true)
               }
             }
           });
-        });
-      });
-
-    } else {
-      // Add proxy node
-      nodes.push({
-        name: this.selected,
-        category: 'Proxy'
-      });
-
-      this.proxyToClients.forEach((e: any) => {
-        if (e.proxy === this.selected) {
-          // Add client nodes
-          e.client.forEach((client: any) => {
-            nodes.push({
-              name: `${client.ID}`,
-              category: 'Client'
-            });
-            links.push({
-              source: e.proxy,
-              target: `${client.ID}`,
-              lineStyle: {
-                width: this.getLineWidth(client.networkSpeed),
-                color: this.getLineColor(client.networkDelay)
-              },
-              label: {
-                show: true,
-                formatter: `Speed: ${client.networkSpeed.toFixed(2)}KB/s\nDelay: ${client.networkDelay.toFixed(2)}ms`,
-                fontSize: 20,
-                color: this.getLineColor(client.networkDelay)
-              },
-              emphasis: {
-                lineStyle: {
-                  width: this.getLineWidth(client.networkSpeed, true),
-                  color: this.getLineColor(client.networkDelay, true)
-                },
-                label: {
-                  color: this.getLineColor(client.networkDelay, true)
-                }
-              }
-            })
-          })
         }
       });
     }

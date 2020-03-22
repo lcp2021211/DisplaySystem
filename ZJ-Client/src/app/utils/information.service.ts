@@ -14,12 +14,12 @@ export class InformationService {
    * @returns {Observable<any>}
    * @memberof InformationService
    */
-  // distributeClient(): Observable<any> {
-  //   return this.http.get(`${serverIP}/distributeClient`, {});
-  // }
-  distributeClient(isSpy: Boolean): Observable<any> {
-    return this.http.post(`${serverIP}/distributeClient`, { isSpy: isSpy });
+  distributeClient(): Observable<any> {
+    return this.http.get(`${serverIP}/distributeClient`, {});
   }
+  // distributeClient(spy: Boolean): Observable<any> {
+  //   return this.http.post(`${serverIP}/distributeClient`, { spy: spy });
+  // }
 
   /**
    * Redistribute proxy
@@ -85,11 +85,7 @@ export class InformationService {
    * @param {number} delay
    * @memberof InformationService
    */
-  postInformation(
-    clientID: number,
-    speed: number,
-    delay: number
-  ) {
+  postInformation(clientID: number, speed: number, delay: number) {
     this.http
       .post(`${serverIP}/users/setClientNetworkInfo`, {
         clientID: clientID,

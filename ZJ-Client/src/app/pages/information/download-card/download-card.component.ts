@@ -77,7 +77,8 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
     // Initialize data of chart
     this.service.initializeChartData(this.speed, this.delay);
 
-    this.service.distributeClient(this.user === 'spy').subscribe(
+    // this.service.distributeClient(this.user === 'spy').subscribe(
+    this.service.distributeClient().subscribe(
       (res: any) => {
         if (res.code === 200) {
           // Get clientID and proxy
@@ -148,20 +149,21 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
         this.delay[this.delay.length - 1].value[1]
       );
 
-      // // Get whether block
-      // this.service.getBlock(this.clientID).subscribe(
-      //   res => {
-      //     if (res.code === 20000) {
-      //       this.block = res.message.client[0].block;
-      //       if (this.block) {
-      //         this.ws.close();
-      //       }
-      //     }
-      //   },
-      //   err => {
-      //     console.error(err);
-      //   }
-      // );
+      // Get whether block
+      this.service.getBlock(this.clientID).subscribe(
+        res => {
+          if (res.code === 200) {
+            this.block = res.message;
+            console.log(this.block);
+            if (this.block) {
+              this.ws.close();
+            }
+          }
+        },
+        err => {
+          console.error(err);
+        }
+      );
 
       this.speedOption = {
         grid: {
@@ -355,7 +357,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   private initializeWebSocket() {
     this.ws = new WebSocket(
-      `ws://${this.proxy}/${this.clientID}/${this.user === 'client' ? 0 : 1}`,
+      `ws://${this.proxy}/${this.clientID}/${this.user === 'spy' ? 1 : 0}`,
       'echo-protocol'
     );
     this.ws.onopen = () => {
