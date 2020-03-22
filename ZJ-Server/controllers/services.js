@@ -26,7 +26,7 @@ const Mappings = require('../models/proxyToClient');
 // 	});
 // };
 exports.informClient = client2Proxy => {
-	console.log(client2Proxy);
+	// console.log(client2Proxy);
 	proxies.forEach(proxy => {
 		axios.post(`http://${proxy}/reconnect`, client2Proxy, (err, res) => {
 			if (err) {

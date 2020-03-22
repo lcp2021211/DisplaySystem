@@ -11,6 +11,7 @@ const app = require('../app');
 const proxies = require('../config/proxies');
 const debug = require('debug')('server2:server');
 const Mappings = require('../models/proxyToClient');
+
 const ProxyModel = require('../models/proxy');
 const ClientModel = require('../models/client');
 
@@ -85,29 +86,28 @@ function onListening() {
 	initialize();
 }
 
-function initialize() {
-	Mappings.remove({}, err => {
-		if (err) {
-			console.error('error removing old:', err);
-		} else {
-			proxies.forEach((value, index) => {
-				new Mappings({
-					client: [],
-					proxy: value,
-					level: index,
-					maxSize: 10
-				}).save();
-			});
-		}
-	});
+async function initialize() {
+	// TODO(=====================Model 1=====================)
+	// await Mappings.remove({});
 
-	// await ClientModel.remove({});
-	// await ProxyModel.remove({});
-
-	// proxies.forEach(proxy => {
-	// 	new ProxyModel({
-	// 		proxy: proxy
+	// proxies.forEach((value, index) => {
+	// 	new Mappings({
+	// 		client: [],
+	// 		proxy: value,
+	// 		level: index,
+	// 		maxSize: 10
 	// 	}).save();
-	// })
+	// });
+	
+	// TODO(=====================Model 2=====================)
+	await ClientModel.remove({});
+	await ProxyModel.remove({});
 
+	proxies.forEach((value, index) => {
+		new ProxyModel({
+			proxy: value,
+			level: index,
+			capacity: 40
+		}).save();
+	})
 }

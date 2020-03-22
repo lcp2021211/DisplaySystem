@@ -13,9 +13,8 @@ const Users = require('../models/users');
 const errorCode = require('../config/errorCode');
 const Mappings = require('../models/proxyToClient');
 
-// const MongoClient = require('mongodb').MongoClient;
-// const url = 'mongodb://localhost:27017';
-// const client = new MongoClient(url);
+const ProxyModel = require('../models/proxy');
+const ClientModel = require('../models/client');
 
 /**
  * Login with username and password
@@ -194,6 +193,47 @@ exports.getSysUsage = (req, res, next) => {
 };
 
 /**
+ * TODO(=====================Model 1=====================)
+ * set client network information
+ * @param {string} req clientID, delay time for a chunk and the current client download speed
+ * @param {none} res response code
+ * @param {function} next middleware
+ */
+// exports.setClientNetworkInfo = async (req, res, next) => {
+// 	let { clientID, networkSpeed, networkDelay } = req.body;
+// 	if (
+// 		await Mappings.updateOne(
+// 			{ 'client.ID': clientID },
+// 			{ $set: { 'client.$.networkSpeed': networkSpeed, 'client.$.networkDelay': networkDelay } }
+// 		)
+// 	) {
+// 		res.send(errorCode.SUCCESS);
+// 	} else {
+// 		res.send(errorCode.FAILURE);
+// 	}
+// };
+
+/**
+ * TODO(=====================Model 1=====================)
+ * return the information of all clients
+ * @param {none} req
+ * @param {map} res a map of all network information of current clients
+ * @param {function} next middleware
+ */
+// exports.getClientNetworkInfo = async (req, res, next) => {
+// 	let doc = await Mappings.find({});
+// 	if (doc) {
+// 		res.send({
+// 			code: 200,
+// 			data: doc
+// 		});
+// 	} else {
+// 		res.send(errorCode.FAILURE);
+// 	}
+// };
+
+/**
+ * TODO(=====================Model 2=====================)
  * set client network information
  * @param {string} req clientID, delay time for a chunk and the current client download speed
  * @param {none} res response code
@@ -201,26 +241,25 @@ exports.getSysUsage = (req, res, next) => {
  */
 exports.setClientNetworkInfo = async (req, res, next) => {
 	let { clientID, networkSpeed, networkDelay } = req.body;
-	if (
-		await Mappings.updateOne(
-			{ 'client.ID': clientID },
-			{ $set: { 'client.$.networkSpeed': networkSpeed, 'client.$.networkDelay': networkDelay } }
-		)
-	) {
+	if (await ClientModel.updateOne({ ID: clientID }, { networkSpeed: networkSpeed, networkDelay: networkDelay })) {
 		res.send(errorCode.SUCCESS);
 	} else {
 		res.send(errorCode.FAILURE);
 	}
 };
+
 /**
+ * TODO(=====================Model 2=====================)
  * return the information of all clients
  * @param {none} req
  * @param {map} res a map of all network information of current clients
  * @param {function} next middleware
  */
 exports.getClientNetworkInfo = async (req, res, next) => {
-	let doc = await Mappings.find({});
+	let doc = await ClientModel.find({ proxy: { $ne: 'null' } });
 	if (doc) {
+		console.log(doc.length);
+		console.log(doc);
 		res.send({
 			code: 200,
 			data: doc

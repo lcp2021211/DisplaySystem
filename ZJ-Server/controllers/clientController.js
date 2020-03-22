@@ -11,45 +11,45 @@ const Mappings = require('../models/proxyToClient');
 const errorCode = require('../config/errorCode');
 const parameter = require('../config/basics');
 const service = require('../controllers/services');
-const proxies = require('../config/proxies');
 
-// const ProxyModel = require('../models/proxy');
-// const ClientModel = require('../models/client');
-//
+const ProxyModel = require('../models/proxy');
+const ClientModel = require('../models/client');
+
+/**
+ * TODO(=====================Model 1=====================)
+ * Distribute clients for the first time
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
 // exports.distributeClient = async (req, res, next) => {
 // 	let clientID = global.ids++;
-// 	let proxy = randomProxy();
-// 	try {
-// 		if (!(await Mappings.findOne({proxy: proxy, $where: 'this.client.length < this.maxSize'}))) {
-// 			proxy = null;
-// 		}
-// 		res.send({
-// 			code: 200,
-// 			clientID: clientID,
-// 			proxy: proxy
-// 		});
-// 	} catch (err) {
-// 		res.send(errorCode.FAILURE);
-// 	}
-// };
-//
-// exports.distributeClient = async (req, res, next) => {
-// 	let clientID = global.ids++;
+// 	let proxy = 'null';
 // 	let spy = req.body.spy;
-
+//
 // 	try {
-// 		let proxy = 'null';
-// 		let doc = await ProxyModel.findOneAndUpdate({ $where: 'this.size < this.capacity' }, { $inc: { size: 1 } });
+// 		let client = {
+// 			ID: clientID,
+// 			pass: '123456',
+// 			credit: 0,
+// 			block: false,
+// 			attackFrequency: 0,
+// 			attackStrength: 0,
+// 			accessTime: new Date(),
+// 			timeSlot: 0,
+// 			spy: spy
+// 		};
+// 		// Find proxy which isn't full
+// 		let doc = await Mappings.findOneAndUpdate(
+// 			{ $where: 'this.client.length < this.maxSize' },
+// 			{ $push: { client: client } },
+// 			{ new: true }
+// 		);
+// 		// If find, set the proxy value
 // 		if (doc) {
+// 			console.log('Length: ' + doc.client.length);
 // 			proxy = doc.proxy;
 // 		}
-// 		await new ClientModel({
-// 			ID: clientID,
-// 			proxy: proxy,
-// 			pass: '123456',
-// 			spy: spy
-// 		}).save();
-
 // 		res.send({
 // 			code: 200,
 // 			clientID: clientID,
@@ -62,80 +62,29 @@ const proxies = require('../config/proxies');
 // };
 
 /**
- * Distribute clients for the first time
- * @param {*} req
- * @param {*} res
- * @param {*} next
- */
-exports.distributeClient = async (req, res, next) => {
-	let clientID = global.ids++;
-	let proxy = 'null';
-	let spy = req.body.spy;
-
-	try {
-		let client = {
-			ID: clientID,
-			pass: '123456',
-			credit: 0,
-			block: false,
-			attackFrequency: 0,
-			attackStrength: 0,
-			accessTime: new Date(),
-			timeSlot: 0,
-			spy: spy
-		};
-		// Find proxy which isn't full
-		let doc = await Mappings.findOneAndUpdate(
-			{ $where: 'this.client.length < this.maxSize' },
-			{ $push: { client: client } },
-			{ new: true }
-		);
-		// If find, set the proxy value
-		if (doc) {
-			console.log('Length: ' + doc.client.length);
-			proxy = doc.proxy;
-		}
-		res.send({
-			code: 200,
-			clientID: clientID,
-			proxy: proxy
-		});
-	} catch (err) {
-		res.send(errorCode.FAILURE);
-	}
-};
-
-/**
- * TODO()
+ * TODO(=====================Model 1=====================)
  * Redistribute proxy
  * @param {*} req
  * @param {*} res
  * @param {*} next
  */
-exports.redistributeClient = async (req, res, next) => {
-	// let { clientID, proxy } = req.body;
-	// res.send({
-	// 	code: 200,
-	// 	proxy: randomProxy()
-	// });
-};
+// exports.redistributeClient = async (req, res, next) => {
+// 	let { clientID, proxy } = req.body;
+// 	res.send({
+// 		code: 200,
+// 		proxy: randomProxy()
+// 	});
+// };
 
 /**
- * TODO(Should be replaced by other algorithm)
- * Get proxy by random
- */
-// function randomProxy() {
-// 	return proxies[Math.floor(Math.random() * proxies.length)];
-// }
-
-/**
+ * TODO(=====================Model 1=====================)
  * When client is online, push it into the corresponding proxy
  * @param {Object} req request obj
  * @param {Object} res respond obj
  * @param {Object} next middleware
  */
 // exports.clientOnline = async (req, res, next) => {
-// 	let { clientID, proxy, type } = req.body;
+// 	let { clientID, proxy, spy } = req.body;
 
 // 	try {
 // 		let client = {
@@ -147,7 +96,7 @@ exports.redistributeClient = async (req, res, next) => {
 // 			attackStrength: 0,
 // 			accessTime: new Date(),
 // 			timeSlot: 0,
-// 			spy: Boolean(type)
+// 			spy: Boolean(spy)
 // 		};
 // 		let doc = await Mappings.findOneAndUpdate(
 // 			{ proxy: proxy, $where: 'this.client.length < this.maxSize' },
@@ -167,33 +116,21 @@ exports.redistributeClient = async (req, res, next) => {
 // };
 
 /**
+ * TODO(=====================Model 1=====================)
  * When client is offline, pull it from the corresponding proxy
  * @param {Object} req request obj
  * @param {Object} res respond obj
  * @param {Object} next middleware
  */
-exports.clientOffline = async (req, res, next) => {
-	let { clientID, proxy } = req.body;
-
-	try {
-		if (await Mappings.updateOne({ proxy: proxy }, { $pull: { client: { ID: clientID } } })) {
-			res.send(errorCode.SUCCESS);
-		} else {
-			res.send(errorCode.DOCNOTFOUND);
-		}
-	} catch (err) {
-		console.log(err);
-		res.send(errorCode.FAILURE);
-	}
-};
-
 // exports.clientOffline = async (req, res, next) => {
 // 	let { clientID, proxy } = req.body;
 
 // 	try {
-// 		await ClientModel.deleteOne({ ID: clientID });
-// 		await ProxyModel.updateOne({ proxy: proxy }, { $inc: { size: -1 } });
-// 		res.send(errorCode.SUCCESS);
+// 		if (await Mappings.updateOne({ proxy: proxy }, { $pull: { client: { ID: clientID } } })) {
+// 			res.send(errorCode.SUCCESS);
+// 		} else {
+// 			res.send(errorCode.DOCNOTFOUND);
+// 		}
 // 	} catch (err) {
 // 		console.log(err);
 // 		res.send(errorCode.FAILURE);
@@ -201,6 +138,7 @@ exports.clientOffline = async (req, res, next) => {
 // };
 
 /**
+ * TODO(=====================Model 1=====================)
  * Get proxy ip from req.ip and add the proxy ip to trusted proxys,
  * Update database with empty clients array and proxy ip
  * TODO(Authentication of the request ip address)
@@ -239,6 +177,7 @@ exports.proxyRegister = async (req, res, next) => {
 };
 
 /**
+ * TODO(=====================Model 1=====================)
  * when a proxy request to shuffle because it is under attack
  * @param {Obj} req request: req.ip for proxy ip address
  * @param {Obj} res respond: respond to request
@@ -263,38 +202,40 @@ exports.requestShuffle = async (req, res, next) => {
 };
 
 /**
+ * TODO(=====================Model 1=====================)
  * 1.For each client, if the credit is already over the top, block it.
  * 2.Add credit scoring to all clients in this proxy
  * 3.Randomly redistribute through all proxys and inform clients
  * @param {String} proxy ip address of proxy
  */
-exports.shuffle = async attackVector => {
-	return new Promise(async (resolve, reject) => {
-		try {
-			// first remove
-			let result = await redistribute(attackVector);
-			console.log('redistribution over');
-			let proxy2Clients = result[1];
-			let resultMap = result[2];
-			let client2Proxy = result[3];
-			console.log(client2Proxy);
-			service.informClient(proxy2Clients, client2Proxy);
+// exports.shuffle = async attackVector => {
+// 	return new Promise(async (resolve, reject) => {
+// 		try {
+// 			// first remove
+// 			let result = await redistribute(attackVector);
+// 			console.log('redistribution over');
+// 			let proxy2Clients = result[1];
+// 			let resultMap = result[2];
+// 			let client2Proxy = result[3];
+// 			console.log(client2Proxy);
+// 			service.informClient(proxy2Clients, client2Proxy);
 
-			saveNewMap(proxy2Clients);
-			let resultJson = {};
-			resultMap.forEach((value, key) => {
-				resultJson[key] = value;
-			});
+// 			saveNewMap(proxy2Clients);
+// 			let resultJson = {};
+// 			resultMap.forEach((value, key) => {
+// 				resultJson[key] = value;
+// 			});
 
-			resolve(JSON.stringify(resultJson));
-		} catch (err) {
-			console.error(err);
-			reject(err);
-		}
-	});
-};
+// 			resolve(JSON.stringify(resultJson));
+// 		} catch (err) {
+// 			console.error(err);
+// 			reject(err);
+// 		}
+// 	});
+// };
 
 /**
+ * TODO(=====================Model 1=====================)
  * Add credit to client, now it's only a most simplified version,
  * implementing y = x model
  * @todo When to block the client
@@ -317,7 +258,7 @@ function addCredit(client, attackFrequency, attackStrength) {
 }
 
 /**
- * TODO()
+ * TODO(=====================Model 1=====================)
  * Redistribute all client through proxys.
  * This is done by randomly redistribute through all clients.
  * @param {JSON} the mappings of attacked proxy, attack strength and attack frequency
@@ -407,101 +348,75 @@ exports.redistribute = async attackVector => {
 };
 
 /**
+ * TODO(=====================Model 1=====================)
  * Save new mappings
  * @param {Map} newMap new proxy->clients[]
  */
-function saveNewMap(newMap) {
-	newMap.forEach((value, key) => {
-		Mappings.updateOne({ proxy: key }, { client: value }, (err, doc) => {
-			if (err) {
-				console.error('error updating database: ', err);
-			}
-			if (doc) {
-				// console.log('updating database succefully!')
-			}
-		});
-	});
-}
+// function saveNewMap(newMap) {
+// 	newMap.forEach((value, key) => {
+// 		Mappings.updateOne({ proxy: key }, { client: value }, (err, doc) => {
+// 			if (err) {
+// 				console.error('error updating database: ', err);
+// 			}
+// 			if (doc) {
+// 				// console.log('updating database succefully!')
+// 			}
+// 		});
+// 	});
+// }
 
 /**
+ * TODO(=====================Model 1=====================)
  * Receives attack frequency and strength from proxy
  * save it to all clients that shares the same proxy
  * @param {Obj} req req obj contains attack frequency, attack strength
  * @param {Obj} res response obj contains reaction to proxy
  * @param {next} next middleware
  */
-// exports.attacked = async (req, res, next) => {
-// 	let { attackVector } = req.body;
-
-// 	try {
-// 		console.time('redistribute');
-// 		let resultJson = await this.shuffle(attackVector);
-// 		if (resultJson) {
-// 			res.send(resultJson);
-// 		} else {
-// 			res.send(errorCode.DOCNOTFOUND);
-// 		}
-// 		console.timeEnd('redistribute');
-// 	} catch (err) {
-// 		console.error(err);
-// 	}
-// };
-
 exports.attacked = async (req, res, next) => {
-	try {
-		let clients = [];
-		for (let proxy of proxies) {
-			let doc = await Mappings.findOneAndUpdate({ proxy: proxy }, { client: [] });
-			clients.push(...doc.client);
-		}
+	let { attackVector } = req.body;
 
-		let client2Proxy = [];
-		for (let client of clients) {
-			let level = client.ID % 2;
-			let doc = await Mappings.findOneAndUpdate(
-				{ level: level, $where: 'this.client.length < this.maxSize' },
-				{ $push: { client: client } }
-			);
-			if (doc) {
-				client2Proxy.push([client.ID, doc.proxy]);
-			} else {
-				client2Proxy.push([client.ID, 'null']);
-			}
+	try {
+		console.time('redistribute');
+		let resultJson = await this.shuffle(attackVector);
+		if (resultJson) {
+			res.send(resultJson);
+		} else {
+			res.send(errorCode.DOCNOTFOUND);
 		}
-		service.informClient(client2Proxy);
-		// TODO()
-		res.send(errorCode.SUCCESS);
+		console.timeEnd('redistribute');
 	} catch (err) {
 		console.error(err);
-		res.send(errorCode.FAILURE);
 	}
 };
 
-// exports.attacked = async (req, res, next) => {
+/**
+ * TODO(=====================Model 1=====================)
+ */
+// exports.shuffle = async (req, res, next) => {
 // 	try {
 // 		let clients = [];
-// 		(await ClientModel.find({})).forEach(doc => {
-// 			clients.push(doc);
-// 		});
-// 		console.log('Length of Clients: ' + clients.length);
-
-// 		await ProxyModel.updateMany({}, { size: 0 });
-// 		console.log('Clear Proxies');
+// 		for (let proxy of proxyPool) {
+// 			let doc = await Mappings.findOneAndUpdate({ proxy: proxy }, { client: [] });
+// 			clients.push(...doc.client);
+// 		}
 
 // 		let client2Proxy = [];
-// 		clients.forEach(async client => {
-// 			let proxy = 'null';
-// 			// TODO(Replace by other function)
+// 		for (let client of clients) {
+// 			// TODO(Change the computation of level)
 // 			let level = client.ID % 2;
-// 			let doc = await ProxyModel.findOneAndUpdate({ level: level, $where: 'this.size < this.capacity' }, { $inc: { size: 1 } });
+// 			let doc = await Mappings.findOneAndUpdate(
+// 				{ level: level, $where: 'this.client.length < this.maxSize' },
+// 				{ $push: { client: client } }
+// 			);
 // 			if (doc) {
-// 				proxy = doc.proxy;
+// 				client2Proxy.push([client.ID, doc.proxy]);
+// 			} else {
+// 				client2Proxy.push([client.ID, 'null']);
 // 			}
-// 			console.log(client.ID + ', ' + proxy);
-// 			await ClientModel.updateOne({ ID: client.ID }, { proxy: proxy });
-// 			client2Proxy.push([client.ID, proxy]);
-// 		});
-
+// 		}
+// 		service.informClient(client2Proxy);
+// 		res.send(errorCode.SUCCESS);
 // 	} catch (err) {
 // 		console.error(err);
 // 		res.send(errorCode.FAILURE);
@@ -509,75 +424,78 @@ exports.attacked = async (req, res, next) => {
 // };
 
 /**
+ * TODO(=====================Model 1=====================)
  * Written for autonomous attackers to obtain spies.
  * @param {} req nothing in there
  * @param {JSON} res json containing the map of proxy and spy
  * @param {function} next middleware
  */
-exports.getSpy = (req, res, next) => {
-	Mappings.aggregate([
-		{
-			$project: {
-				client: {
-					$filter: {
-						input: '$client',
-						as: 'client',
-						cond: { $eq: ['$$client.spy', true] }
-					}
-				},
-				proxy: true
-			}
-		}
-	]).exec((err, doc) => {
-		if (err) {
-			res.send({
-				code: 403,
-				message: 'error while finding spies'
-			});
-		}
-		if (doc) {
-			res.send(JSON.stringify(doc));
-		}
-	});
-};
+// exports.getSpy = (req, res, next) => {
+// 	Mappings.aggregate([
+// 		{
+// 			$project: {
+// 				client: {
+// 					$filter: {
+// 						input: '$client',
+// 						as: 'client',
+// 						cond: { $eq: ['$$client.spy', true] }
+// 					}
+// 				},
+// 				proxy: true
+// 			}
+// 		}
+// 	]).exec((err, doc) => {
+// 		if (err) {
+// 			res.send({
+// 				code: 403,
+// 				message: 'error while finding spies'
+// 			});
+// 		}
+// 		if (doc) {
+// 			res.send(JSON.stringify(doc));
+// 		}
+// 	});
+// };
 
 /**
+ * TODO(=====================Model 1=====================)
  * This is a test function.
  * This is used to initialize before attack happened
  * @param {none} req plenty request object
  * @param {JSON} res data indicate whether successfully initialized
  * @param {function} next middleware
  */
-exports.initializeBeforeAttack = (req, res, next) => {
-	Mappings.updateMany(
-		{},
-		{
-			$set: {
-				'client.$[].credit': 0,
-				'client.$[].block': false,
-				'client.$[].attackFrequency': 0,
-				'client.$[].attackStrength': 0,
-				'client.$[].timeSlot': 0
-			}
-		}
-	).exec((err, doc) => {
-		if (err) {
-			console.error(err);
-			res.send({
-				code: 50000,
-				message: 'error occurred when updating'
-			});
-		}
-		if (doc) {
-			res.send({
-				code: 20000,
-				message: 'update successfully'
-			});
-		}
-	});
-};
+// exports.initializeBeforeAttack = (req, res, next) => {
+// 	Mappings.updateMany(
+// 		{},
+// 		{
+// 			$set: {
+// 				'client.$[].credit': 0,
+// 				'client.$[].block': false,
+// 				'client.$[].attackFrequency': 0,
+// 				'client.$[].attackStrength': 0,
+// 				'client.$[].timeSlot': 0
+// 			}
+// 		}
+// 	).exec((err, doc) => {
+// 		if (err) {
+// 			console.error(err);
+// 			res.send({
+// 				code: 50000,
+// 				message: 'error occurred when updating'
+// 			});
+// 		}
+// 		if (doc) {
+// 			res.send({
+// 				code: 20000,
+// 				message: 'update successfully'
+// 			});
+// 		}
+// 	});
+// };
 
 /**
+ * TODO(=====================Model 1=====================)
  * long poll request from client to resume wss connections
  * @param {int} req the id of client
  * @param {JSON} res the json document contains proxy and client
@@ -604,29 +522,200 @@ exports.getProxy = (req, res, next) => {
 };
 
 /**
+ * TODO(=====================Model 1=====================)
  * Request from client to acquire the information about whether the client is blocked
  * @param {string} req client id
  * @param {json} res the information about the client
  * @param {function } next middleware
  */
-exports.whetherBlock = (req, res, next) => {
-	let { clientID } = req.body;
-	Mappings.findOne({ 'client.ID': clientID })
-		.select('client proxy')
-		.select({ client: { $elemMatch: { ID: clientID } } })
-		.exec((err, client) => {
-			if (err) {
-				console.error(err);
-				res.send({
-					code: 50000,
-					message: "I don't know what the fuck is happening but it failed!"
-				});
-			}
-			if (client) {
-				res.send({
-					code: 20000,
-					message: client
-				});
-			}
+// exports.whetherBlock = async (req, res, next) => {
+// 	let { clientID } = req.body;
+// 	let doc = await Mappings.findOne({ 'client.ID': clientID }).select({ client: { $elemMatch: { ID: clientID } } });
+// 	if (doc) {
+// 		res.send({
+// 			code: 200,
+// 			message: doc[0].block
+// 		});
+// 	} else {
+// 		res.send(errorCode.FAILURE);
+// 	}
+// };
+
+/**
+ * TODO(=====================Model 2=====================)
+ */
+exports.distributeClient = async (req, res, next) => {
+	let clientID = global.ids++;
+	let proxy = 'null';
+
+	let doc = await ProxyModel.find({ $where: 'this.size < this.capacity' });
+	if (doc) {
+		proxy = doc[Math.floor(Math.random() * doc.length)].proxy;
+	}
+
+	res.send({
+		code: 200,
+		clientID: clientID,
+		proxy: proxy
+	});
+};
+
+/**
+ * TODO(=====================Model 2=====================)
+ * Redistribute proxy
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+exports.redistributeClient = (req, res, next) => {
+	let proxy = 'null';
+
+	let doc = await ProxyModel.find({ $where: 'this.size < this.capacity'});
+	if (doc) {
+		proxy = doc[Math.floor(Math.random() * doc.length)].proxy;
+	}
+
+	res.send({
+		code: 200,
+		proxy: proxy
+	});
+};
+
+/**
+ * TODO(=====================Model 2=====================)
+ */
+exports.clientOnline = async (req, res, next) => {
+	let { clientID, proxy, spy } = req.body;
+
+	try {
+		if (!(await ClientModel.findOne({ ID: clientID }))) {
+			await ClientModel({
+				ID: clientID,
+				proxy: proxy,
+				pass: '123456',
+				spy: spy
+			}).save();
+		}
+		let doc = await ProxyModel.findOneAndUpdate({ proxy: proxy }, { $inc: { size: 1 } }, { new: true });
+		if (doc.size <= doc.capacity) {
+			await ClientModel.updateOne({ ID: clientID }, { proxy: proxy });
+			console.log('ClientOnline Success: ' + clientID + ', ' + proxy);
+			res.send(errorCode.SUCCESS);
+		} else {
+			console.log('ClientOnline Failed: ' + clientID + ', ' + proxy);
+			await ClientModel.updateOne({ ID: clientID }, { proxy: 'null' });
+			res.send(errorCode.FAILURE);
+		}
+	} catch (err) {
+		console.error(err);
+		res.send(errorCode.FAILURE);
+	}
+};
+
+/**
+ * TODO(=====================Model 2=====================)
+ */
+exports.clientOffline = async (req, res, next) => {
+	let { clientID, proxy } = req.body;
+	try {
+		await ClientModel.updateOne({ ID: clientID }, { proxy: 'null' });
+		await ProxyModel.updateOne({ proxy: proxy }, { $inc: { size: -1 } });
+		console.log('ClientOffline Success: ' + clientID + ', ' + proxy);
+		res.send(errorCode.SUCCESS);
+	} catch (err) {
+		console.log(err);
+		console.log('ClientOffline Failed: ' + clientID + ', ' + proxy);
+		res.send(errorCode.FAILURE);
+	}
+};
+
+/**
+ * TODO(=====================Model 2=====================)
+ */
+exports.shuffle = async (req, res, next) => {
+	try {
+		let client2Proxy = [];
+
+		let clients = await ClientModel.find({ proxy: { $ne: 'null' } });
+		let proxies = {};
+		(await ProxyModel.find({})).forEach(e => {
+			proxies[e.proxy] = { size: 0, capacity: e.capacity, level: e.level };
 		});
+
+		clients.forEach(client => {
+			let level = client.ID % 2;
+			let proxy = 'null';
+			for (let i in proxies) {
+				if (proxies[i].level === level && proxies[i].size < proxies[i].capacity) {
+					proxy = i;
+					proxies[i].size++;
+					break;
+				}
+			}
+			client2Proxy.push([client.ID, proxy]);
+		});
+
+		console.log(client2Proxy);
+		service.informClient(client2Proxy);
+		res.send(errorCode.SUCCESS);
+	} catch (err) {
+		console.error(err);
+		res.send(errorCode.FAILURE);
+	}
+};
+
+/**
+ * TODO(=====================Model 2=====================)
+ * Request from client to acquire the information about whether the client is blocked
+ * @param {string} req client id
+ * @param {json} res the information about the client
+ * @param {function } next middleware
+ */
+exports.whetherBlock = async (req, res, next) => {
+	let { clientID } = req.body;
+	let doc = await ClientModel.findOne({ ID: clientID });
+	if (doc) {
+		res.send({
+			code: 200,
+			message: doc.block
+		});
+	} else {
+		res.send(errorCode.FAILURE);
+	}
+};
+
+/**
+ * TODO(=====================Model 2=====================)
+ * Written for autonomous attackers to obtain spies.
+ * @param {} req nothing in there
+ * @param {JSON} res json containing the map of proxy and spy
+ * @param {function} next middleware
+ */
+exports.getSpy = async (req, res, next) => {
+	let doc = await ClientModel.find({ spy: true });
+	if (doc) {
+		res.send({
+			code: 200,
+			message: doc
+		});
+	} else {
+		res.send(errorCode.FAILURE);
+	}
+};
+
+/**
+ * TODO(=====================Model 2=====================)
+ * This is a test function.
+ * This is used to initialize before attack happened
+ * @param {none} req plenty request object
+ * @param {JSON} res data indicate whether successfully initialized
+ * @param {function} next middleware
+ */
+exports.initializeBeforeAttack = async (req, res, next) => {
+	let doc = ClientModel.updateMany({}, { credit: 0, block: false, attackFrequency: 0, attackStrength: 0, timeSlot: 0 });
+	if (doc) {
+		res.send(errorCode.SUCCESS);
+	} else {
+		res.send(errorCode.FAILURE);
+	}
 };
