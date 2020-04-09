@@ -8,11 +8,11 @@ exports.sendShuffleRequest = function(proxy) {
 };
 
 // Client is online
-exports.clientOnline = function(clientID, type) {
+exports.clientOnline = function(clientID, spy) {
 	return axios.post(`${serverURL}/clientOnline`, {
 		clientID: clientID,
 		proxy: `${config.ip}:${config.port}`,
-		type: type
+		spy: spy
 	});
 };
 
