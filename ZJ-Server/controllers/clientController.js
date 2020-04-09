@@ -601,6 +601,7 @@ exports.clientOnline = async (req, res, next) => {
 				ID: clientID,
 				proxy: proxy,
 				pass: '123456',
+				accessTime: new Date(),
 				spy: spy
 			}).save();
 		}
