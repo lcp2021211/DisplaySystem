@@ -14,48 +14,55 @@ import {
   NbSelectModule,
   NbMenuModule,
   NbToastrModule,
-  NbToggleModule
+  NbToggleModule,
+  NbListModule,
 } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { AppRoutingModule } from './app-routing.module';
 import { NgxEchartsModule } from 'ngx-echarts';
+import { ClientComponent } from './pages/client/client.component';
 import { InformationComponent } from './pages/information/information.component';
-import { TopologyComponent } from './pages/topology/topology.component';
-import { VideoCardComponent } from './pages/information/video-card/video-card.component';
-import { DownloadCardComponent } from './pages/information/download-card/download-card.component';
+import { VideoCardComponent } from './pages/client/video-card/video-card.component';
+import { DownloadCardComponent } from './pages/client/download-card/download-card.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
-import { InformationService } from './utils/information.service';
+import { ProxyComponent } from './pages/proxy/proxy.component';
+import { ServerComponent } from './pages/server/server.component';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    InformationComponent,
-    TopologyComponent,
-    VideoCardComponent,
-    DownloadCardComponent,
-    NotFoundComponent
+   declarations: [
+      AppComponent,
+      ClientComponent,
+      InformationComponent,
+      VideoCardComponent,
+      DownloadCardComponent,
+      NotFoundComponent,
+      ProxyComponent,
+      ServerComponent,
+   ],
+   imports: [
+      BrowserModule,
+      BrowserAnimationsModule,
+      AppRoutingModule,
+      NbToastrModule.forRoot(),
+      NbMenuModule.forRoot(),
+      NbSidebarModule.forRoot(),
+      NbThemeModule.forRoot({ name: 'dark'}),
+      NbLayoutModule,
+      NbEvaIconsModule,
+      NbButtonModule,
+      NbCardModule,
+      NbIconModule,
+      NgxEchartsModule,
+      NbProgressBarModule,
+      NbSelectModule,
+      NbToggleModule,
+      HttpClientModule,
+      NbListModule,
+      Ng2SmartTableModule,
   ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    NbToastrModule.forRoot(),
-    NbMenuModule.forRoot(),
-    NbSidebarModule.forRoot(),
-    NbThemeModule.forRoot({ name: 'dark' }),
-    NbLayoutModule,
-    NbEvaIconsModule,
-    NbButtonModule,
-    NbCardModule,
-    NbIconModule,
-    NgxEchartsModule,
-    NbProgressBarModule,
-    NbSelectModule,
-    NbToggleModule,
-    HttpClientModule
-  ],
-  providers: [InformationService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
