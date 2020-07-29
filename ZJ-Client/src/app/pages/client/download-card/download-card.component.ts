@@ -3,18 +3,18 @@ import {
   OnInit,
   AfterViewInit,
   OnDestroy,
-  Input
+  Input,
 } from '@angular/core';
 import { EChartOption } from 'echarts';
 import { NbThemeService, NbToastrService } from '@nebular/theme';
 import { ClientService } from 'src/app/utils/client.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { chunkSize, sec } from '../../../utils/global';
+import { chunkSize, sec } from 'src/app/utils/global';
 
 @Component({
   selector: 'app-download-card',
   templateUrl: './download-card.component.html',
-  styleUrls: ['./download-card.component.css']
+  styleUrls: ['./download-card.component.css'],
 })
 export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
   private ws: WebSocket;
@@ -29,7 +29,6 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
   private start = 0;
   private end = 0;
   private fileSize = 0;
-  private switchInterval = 5 * sec;
 
   @Input() showChart: boolean;
   @Input() user: string;
@@ -112,7 +111,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     // Subscribe theme changed
-    this.theme.getJsTheme().subscribe(config => {
+    this.theme.getJsTheme().subscribe((config) => {
       // Update theme config
       this.config = config;
     });
@@ -127,12 +126,12 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
       let interval = performance.now() - this.t;
       this.speed.push({
         name: now,
-        value: [now, (1000 * chunkSize * this.chunkCount) / (1024 * interval)]
+        value: [now, (1000 * chunkSize * this.chunkCount) / (1024 * interval)],
       });
 
       this.delay.push({
         name: now,
-        value: [now, this.chunkCount === 0 ? 5000 : interval / this.chunkCount]
+        value: [now, this.chunkCount === 0 ? 5000 : interval / this.chunkCount],
       });
 
       // Compute download progress
@@ -151,7 +150,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
 
       // Get whether block
       this.service.getBlock(this.clientID).subscribe(
-        res => {
+        (res) => {
           if (res.code === 200) {
             this.block = res.message;
             console.log(this.block);
@@ -160,35 +159,37 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
             }
           }
         },
-        err => {
+        (err) => {
           console.error(err);
         }
       );
 
       this.speedOption = {
         grid: {
-          y: '8%',
-          y2: '8%'
+          left: '10%',
+          right: '10%',
+          top: '10%',
+          bottom: '10%'
         },
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
         },
         xAxis: {
           type: 'time',
           axisLabel: {
             textStyle: {
               color: this.config.variables.fgText,
-              fontSize: 15
-            }
+              fontSize: 15,
+            },
           },
           splitLine: {
-            show: false
+            show: false,
           },
           axisLine: {
             lineStyle: {
-              color: '#cccccc'
-            }
-          }
+              color: '#cccccc',
+            },
+          },
         },
         yAxis: {
           min: 0,
@@ -196,15 +197,15 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
           type: 'value',
           axisLine: {
             lineStyle: {
-              color: '#cccccc'
-            }
+              color: '#cccccc',
+            },
           },
           axisLabel: {
             textStyle: {
               color: this.config.variables.fgText,
-              fontSize: 15
-            }
-          }
+              fontSize: 15,
+            },
+          },
         },
         series: [
           {
@@ -213,37 +214,37 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
             color: '#3366FF',
             smooth: true,
             symbol: 'none',
-            areaStyle: {
-              normal: {}
-            }
-          }
-        ]
+            areaStyle: {},
+          },
+        ],
       };
 
       this.delayOption = {
         grid: {
-          y: '8%',
-          y2: '8%'
+          left: '10%',
+          right: '10%',
+          top: '10%',
+          bottom: '10%'
         },
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
         },
         xAxis: {
           type: 'time',
           axisLabel: {
             textStyle: {
               color: this.config.variables.fgText,
-              fontSize: 15
-            }
+              fontSize: 15,
+            },
           },
           splitLine: {
-            show: false
+            show: false,
           },
           axisLine: {
             lineStyle: {
-              color: '#cccccc'
-            }
-          }
+              color: '#cccccc',
+            },
+          },
         },
         yAxis: {
           min: 0,
@@ -251,15 +252,15 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
           type: 'value',
           axisLine: {
             lineStyle: {
-              color: '#cccccc'
-            }
+              color: '#cccccc',
+            },
           },
           axisLabel: {
             textStyle: {
               color: this.config.variables.fgText,
-              fontSize: 15
-            }
-          }
+              fontSize: 15,
+            },
+          },
         },
         series: [
           {
@@ -267,17 +268,17 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
             type: 'line',
             symbol: 'none',
             smooth: true,
-            areaStyle: {}
-          }
+            areaStyle: {},
+          },
         ],
         visualMap: {
           show: false,
           min: 0,
           max: 1500,
           inRange: {
-            color: ['#5bc49f', '#feb64d', '#ff7c7c']
-          }
-        }
+            color: ['#5bc49f', '#feb64d', '#ff7c7c'],
+          },
+        },
       };
     }, sec);
 
@@ -305,7 +306,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       this.switchFlag = false;
       this.autoSwitch();
-    }, this.switchInterval);
+    }, 5 * sec);
   }
 
   /**
@@ -341,7 +342,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
           this.download();
         }
       })
-      .catch(err => {
+      .catch((err) => {
         // Catch error and retry it after 3 seconds
         console.error(err);
         setTimeout(() => {
@@ -363,7 +364,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.ws.onopen = () => {
       console.log(`Websocket open: ${this.clientID}-->${this.ws.url}`);
     };
-    this.ws.onmessage = event => {
+    this.ws.onmessage = (event) => {
       let message = JSON.parse(event.data);
       switch (message.type) {
         case 'switch':

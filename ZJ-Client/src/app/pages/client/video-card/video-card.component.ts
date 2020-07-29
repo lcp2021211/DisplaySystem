@@ -5,18 +5,18 @@ import {
   AfterViewInit,
   ElementRef,
   OnDestroy,
-  Input
+  Input,
 } from '@angular/core';
 import { ClientService } from 'src/app/utils/client.service';
 import { EChartOption } from 'echarts';
 import { NbThemeService, NbToastrService } from '@nebular/theme';
 import { HttpErrorResponse } from '@angular/common/http';
-import { chunkSize, sec } from '../../../utils/global';
+import { chunkSize, sec } from 'src/app/utils/global';
 
 @Component({
   selector: 'app-video-card',
   templateUrl: './video-card.component.html',
-  styleUrls: ['./video-card.component.css']
+  styleUrls: ['./video-card.component.css'],
 })
 export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('video', { static: false }) private videoElement: ElementRef;
@@ -36,7 +36,6 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
   private start = 0;
   private end = 0;
   private fileSize = 0;
-  private switchInterval = 5 * sec;
 
   @Input() showChart: boolean;
   @Input() user: string;
@@ -88,7 +87,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
       (res: any) => {
         if (res.code === 200) {
           // Get clientID and proxy
-          this.clientID = res.id;
+          this.clientID = res.clientID;
           this.proxy = res.proxy;
 
           // Start download and websocket connection
@@ -123,7 +122,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
     // Get video element
     this.video = this.videoElement.nativeElement;
     // Subscribe theme changed
-    this.theme.getJsTheme().subscribe(config => {
+    this.theme.getJsTheme().subscribe((config) => {
       // Update theme config
       this.config = config;
     });
@@ -138,12 +137,12 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
       let interval = performance.now() - this.t;
       this.speed.push({
         name: now,
-        value: [now, (1000 * chunkSize * this.chunkCount) / (1024 * interval)]
+        value: [now, (1000 * chunkSize * this.chunkCount) / (1024 * interval)],
       });
 
       this.delay.push({
         name: now,
-        value: [now, this.chunkCount === 0 ? 5000 : interval / this.chunkCount]
+        value: [now, this.chunkCount === 0 ? 5000 : interval / this.chunkCount],
       });
 
       // Empty chunckCount
@@ -177,28 +176,30 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.speedOption = {
         grid: {
-          y: '8%',
-          y2: '8%'
+          left: '10%',
+          right: '10%',
+          top: '10%',
+          bottom: '10%'
         },
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
         },
         xAxis: {
           type: 'time',
           axisLabel: {
             textStyle: {
               color: this.config.variables.fgText,
-              fontSize: 15
-            }
+              fontSize: 15,
+            },
           },
           splitLine: {
-            show: false
+            show: false,
           },
           axisLine: {
             lineStyle: {
-              color: '#cccccc'
-            }
-          }
+              color: '#cccccc',
+            },
+          },
         },
         yAxis: {
           min: 0,
@@ -206,15 +207,15 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
           type: 'value',
           axisLine: {
             lineStyle: {
-              color: '#cccccc'
-            }
+              color: '#cccccc',
+            },
           },
           axisLabel: {
             textStyle: {
               color: this.config.variables.fgText,
-              fontSize: 15
-            }
-          }
+              fontSize: 15,
+            },
+          },
         },
         series: [
           {
@@ -223,37 +224,37 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
             color: '#3366FF',
             smooth: true,
             symbol: 'none',
-            areaStyle: {
-              normal: {}
-            }
-          }
-        ]
+            areaStyle: {},
+          },
+        ],
       };
 
       this.delayOption = {
         grid: {
-          y: '8%',
-          y2: '8%'
+          left: '10%',
+          right: '10%',
+          top: '10%',
+          bottom: '10%'
         },
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
         },
         xAxis: {
           type: 'time',
           axisLabel: {
             textStyle: {
               color: this.config.variables.fgText,
-              fontSize: 15
-            }
+              fontSize: 15,
+            },
           },
           splitLine: {
-            show: false
+            show: false,
           },
           axisLine: {
             lineStyle: {
-              color: '#cccccc'
-            }
-          }
+              color: '#cccccc',
+            },
+          },
         },
         yAxis: {
           min: 0,
@@ -261,15 +262,15 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
           type: 'value',
           axisLine: {
             lineStyle: {
-              color: '#cccccc'
-            }
+              color: '#cccccc',
+            },
           },
           axisLabel: {
             textStyle: {
               color: this.config.variables.fgText,
-              fontSize: 15
-            }
-          }
+              fontSize: 15,
+            },
+          },
         },
         series: [
           {
@@ -277,17 +278,17 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
             type: 'line',
             symbol: 'none',
             smooth: true,
-            areaStyle: {}
-          }
+            areaStyle: {},
+          },
         ],
         visualMap: {
           show: false,
           min: 0,
           max: 1500,
           inRange: {
-            color: ['#5bc49f', '#feb64d', '#ff7c7c']
-          }
-        }
+            color: ['#5bc49f', '#feb64d', '#ff7c7c'],
+          },
+        },
       };
     }, sec);
 
@@ -315,7 +316,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       this.switchFlag = false;
       this.autoSwitch();
-    }, this.switchInterval);
+    }, 5 * sec);
   }
 
   /**
@@ -367,7 +368,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
             }
           });
         })
-        .catch(err => {
+        .catch((err) => {
           // Catch error and retry it after 3 seconds
           console.log(err);
           setTimeout(() => {
@@ -390,7 +391,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.ws.onopen = () => {
       console.log(`Websocket open: ${this.clientID}-->${this.ws.url}`);
     };
-    this.ws.onmessage = event => {
+    this.ws.onmessage = (event) => {
       let message = JSON.parse(event.data);
       switch (message.type) {
         case 'switch':

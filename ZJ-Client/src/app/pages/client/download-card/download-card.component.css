@@ -1,3 +1,11 @@
 h5 {
-  margin: 10px 0px;
+  margin: 5px;
+}
+
+nb-card {
+  margin: 0px;
+}
+
+nb-card-body {
+  padding: 10px;
 }

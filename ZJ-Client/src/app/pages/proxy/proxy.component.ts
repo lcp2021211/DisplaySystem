@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./proxy.component.css']
 })
 export class ProxyComponent implements OnInit {
+  fuck = [1, 2, 3, 4];
 
   constructor() { }
 

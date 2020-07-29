@@ -18,8 +18,8 @@
   <h5>Chart</h5>
 </nb-toggle>
 
-<div style="display: flex; width: 100%; flex-wrap: wrap;" [ngSwitch]="type" *ngIf="show">
-  <div *ngFor="let _ of [].constructor(cardNumber)" style="width: 19%; margin: 10px">
+<div style="display: flex; width: 100%; flex-wrap: wrap; margin: 0px;" [ngSwitch]="type" *ngIf="show">
+  <div *ngFor="let _ of [].constructor(cardNumber)" style="width: calc(25% - 20px);">
     <app-video-card *ngSwitchCase="'video'" [showChart]="showChart" [user]="user"></app-video-card>
     <app-download-card *ngSwitchCase="'download'" [showChart]="showChart" [user]="user"></app-download-card>
   </div>
