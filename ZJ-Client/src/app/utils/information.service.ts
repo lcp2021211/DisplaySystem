@@ -15,6 +15,6 @@ export class InformationService {
    * @memberof InformationService
    */
   getTopologyInfo(): Observable<any> {
-    return this.http.get(`${serverIP}/users/getClientNetworkInfo`);
+    return this.http.get(`${serverIP}/getClientNetworkInfo`);
   }
 }

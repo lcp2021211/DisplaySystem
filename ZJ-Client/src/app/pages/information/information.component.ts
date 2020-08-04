@@ -2,6 +2,8 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { EChartOption } from 'echarts';
 import { InformationService } from 'src/app/utils/information.service';
 import { NbThemeService } from '@nebular/theme';
+import { HttpErrorResponse } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-information',
@@ -72,7 +74,7 @@ export class InformationComponent implements OnInit, AfterViewInit {
    */
   loadData() {
     this.service.getTopologyInfo().subscribe(
-      (res) => {
+      (res: any) => {
         if (res.code === 200) {
           // this.proxyToClients = res.data;
           this.clients = res.data;
@@ -83,7 +85,7 @@ export class InformationComponent implements OnInit, AfterViewInit {
           this.loadToplogy();
         }
       },
-      (err) => {
+      (err: HttpErrorResponse) => {
         console.error(err);
       }
     );

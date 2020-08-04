@@ -88,7 +88,7 @@ export class ClientService {
    */
   postInformation(clientID: number, speed: number, delay: number) {
     this.http
-      .post(`${serverIP}/users/setClientNetworkInfo`, {
+      .post(`${serverIP}/setClientNetworkInfo`, {
         clientID: clientID,
         networkSpeed: speed,
         networkDelay: delay

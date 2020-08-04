@@ -14,11 +14,6 @@ export class AppComponent implements OnInit {
       link: '/client',
       home: true
     },
-    {
-      title: 'Information',
-      icon: 'pie-chart-outline',
-      link: '/information'
-    }, 
     { 
       title: 'Proxy',
       icon: 'activity-outline',
@@ -28,6 +23,11 @@ export class AppComponent implements OnInit {
       title: 'Server',
       icon: 'hard-drive-outline',
       link: 'server'
+    },
+    {
+      title: 'Information',
+      icon: 'pie-chart-outline',
+      link: '/information'
     }
   ];
 

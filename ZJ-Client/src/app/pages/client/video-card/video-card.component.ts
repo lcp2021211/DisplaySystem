@@ -96,7 +96,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       (err: HttpErrorResponse) => {
         // Show error toast
-        console.log(err);
+        console.error(err);
         this.toast.show('', 'Get ClientID Error', { status: 'danger' });
 
         this.clientID = -1;
@@ -170,7 +170,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
       //     }
       //   },
       //   err => {
-      //     console.log(err);
+      //     console.error(err);
       //   }
       // );
 
@@ -310,7 +310,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
             }
           },
           (err: HttpErrorResponse) => {
-            console.log(err);
+            console.error(err);
           }
         );
       }
@@ -368,9 +368,9 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
             }
           });
         })
-        .catch((err) => {
+        .catch((err: HttpErrorResponse) => {
           // Catch error and retry it after 3 seconds
-          console.log(err);
+          console.error(err);
           setTimeout(() => {
             this.loadVideo();
           }, 3 * sec);

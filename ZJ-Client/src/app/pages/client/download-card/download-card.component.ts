@@ -90,7 +90,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
       },
       (err: HttpErrorResponse) => {
         // Show error toast
-        console.log(err);
+        console.error(err);
         this.toast.show('', 'Get ClientID Error', { status: 'danger' });
 
         this.clientID = -1;
@@ -150,7 +150,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
 
       // Get whether block
       this.service.getBlock(this.clientID).subscribe(
-        (res) => {
+        (res: any) => {
           if (res.code === 200) {
             this.block = res.message;
             console.log(this.block);
@@ -159,7 +159,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
             }
           }
         },
-        (err) => {
+        (err: HttpErrorResponse) => {
           console.error(err);
         }
       );
@@ -300,7 +300,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
             }
           },
           (err: HttpErrorResponse) => {
-            console.log(err);
+            console.error(err);
           }
         );
       }
@@ -342,7 +342,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
           this.download();
         }
       })
-      .catch((err) => {
+      .catch((err: HttpErrorResponse) => {
         // Catch error and retry it after 3 seconds
         console.error(err);
         setTimeout(() => {

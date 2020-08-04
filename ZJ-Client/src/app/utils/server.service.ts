@@ -1,46 +1,48 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { serverIP } from './global';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ServerService {
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
   /**
-   * @param {any[]} cpu
-   * @param {any[]} memory
-   * @param {any[]} bandwidth
-   * @param {any[]} delay
+   * @param {{}} data
    * @memberof ServerService
    */
-  initializeChartData(
-    cpu: any[],
-    memory: any[],
-    bandwidth: any[],
-    delay: any[]
-  ) {
+  initializeChartData(data: {}) {
     const DATA_LENGTH = 50;
     let now = new Date();
     now = new Date(now.getTime() - DATA_LENGTH * 1000);
+    data['cpuSpeed'] = [];
+    data['cpuLoad'] = [];
+    data['memUsed'] = [];
+    data['memActive'] = [];
+    data['memFree'] = [];
+    data['fsRX'] = [];
+    data['fsWX'] = [];
+    data['fsTX'] = [];
+    data['netRX'] = [];
+    data['netTX'] = [];
     for (var i = 0; i < DATA_LENGTH; ++i) {
-      // Push zero into array
-      cpu.push({
-        name: now,
-        value: [now, 0],
-      });
-      memory.push({
-        name: now,
-        value: [now, 0],
-      });
-      bandwidth.push({
-        name: now,
-        value: [now, 0],
-      });
-      delay.push({
-        name: now,
-        value: [now, 0],
-      });
+      for (var key in data) {
+        data[key].push({
+          name: now,
+          value: [now, 0],
+        });
+      }
       now = new Date(now.getTime() + 1000);
     }
+  }
+
+  /**
+   * @returns {Promise<any>}
+   * @memberof ServerService
+   */
+  getServerInfo(): Promise<any> {
+    return this.http.get(`${serverIP}/getServerInfo`).toPromise();
   }
 }
