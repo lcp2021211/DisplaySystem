@@ -17,7 +17,7 @@
     "http-errors": "^1.7.2",
     "mongoose": "^5.4.16",
     "morgan": "~1.9.0",
-    "systeminformation": "^4.11.6",
+    "systeminformation": "^4.26.10",
     "typescript": "^3.3.4000",
     "winston": "^3.2.1"
   }

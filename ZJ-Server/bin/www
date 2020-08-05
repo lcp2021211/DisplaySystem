@@ -10,7 +10,7 @@ const http = require('http');
 const app = require('../app');
 const proxies = require('../config/proxies');
 const debug = require('debug')('server2:server');
-const Mappings = require('../models/proxyToClient');
+// const Mappings = require('../models/proxyToClient');
 
 const ProxyModel = require('../models/proxy');
 const ClientModel = require('../models/client');
@@ -20,7 +20,6 @@ const ClientModel = require('../models/client');
  */
 let port = normalizePort(process.env.PORT || '5000');
 app.set('port', port);
-global.ids = 0;
 
 /**
  * Create HTTP server.
@@ -98,7 +97,8 @@ async function initialize() {
 	// 		maxSize: 10
 	// 	}).save();
 	// });
-	
+	global.ids = 0;
+
 	// TODO(=====================Model 2=====================)
 	await ClientModel.remove({});
 	await ProxyModel.remove({});
@@ -107,7 +107,7 @@ async function initialize() {
 		new ProxyModel({
 			proxy: value,
 			level: index,
-			capacity: 40
+			capacity: 40,
 		}).save();
-	})
+	});
 }

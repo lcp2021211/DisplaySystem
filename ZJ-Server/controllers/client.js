@@ -10,7 +10,7 @@
 const Mappings = require('../models/proxyToClient');
 const errorCode = require('../config/errorCode');
 const parameter = require('../config/basics');
-const service = require('../controllers/services');
+const service = require('./service');
 
 const ProxyModel = require('../models/proxy');
 const ClientModel = require('../models/client');
@@ -689,30 +689,6 @@ exports.whetherBlock = async (req, res, next) => {
 			res.send({
 				code: 200,
 				message: doc.block
-			});
-		} else {
-			res.send(errorCode.FAILURE);
-		}
-	} catch (err) {
-		console.error(err);
-		res.send(errorCode.FAILURE);
-	}
-};
-
-/**
- * TODO(=====================Model 2=====================)
- * Written for autonomous attackers to obtain spies.
- * @param {} req nothing in there
- * @param {JSON} res json containing the map of proxy and spy
- * @param {function} next middleware
- */
-exports.getSpy = async (req, res, next) => {
-	try {
-		let doc = await ClientModel.find({ spy: true });
-		if (doc) {
-			res.send({
-				code: 200,
-				message: doc
 			});
 		} else {
 			res.send(errorCode.FAILURE);

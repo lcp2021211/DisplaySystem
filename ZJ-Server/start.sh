@@ -1,1 +1,2 @@
-supervisor bin/www
+# supervisor bin/www
+npm start

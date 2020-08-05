@@ -1,25 +1,35 @@
 const router = require('express').Router();
-const clientController = require('../controllers/clientController');
+const client = require('../controllers/client');
+const service = require('../controllers/service')
 
 /** GET method */
 router.get('/', function(req, res, next) {
 	res.render('index', { title: 'Express' });
 });
-router.get('/getSpy', clientController.getSpy);
-router.get('/getProxy', clientController.getProxy);
-router.get('/distributeClient', clientController.distributeClient);
-router.get('/redistributeClient', clientController.redistributeClient);
+router.get('/getProxy', client.getProxy);
+router.get('/distributeClient', client.distributeClient);
+router.get('/redistributeClient', client.redistributeClient);
+
+router.get('/getSpy', service.getSpy);
+router.get('/getUserInfo', service.getUserInfo);
+router.get('/getProxyInfo', service.getProxyInfo);
+router.get('/getServerInfo', service.getServerInfo);
+router.get('/getClientNetworkInfo', service.getClientNetworkInfo);
+
 
 /** POST method */
-router.post('/attacked', clientController.attacked);
-router.post('/whetherBlock', clientController.whetherBlock);
-router.post('/clientOnline', clientController.clientOnline);
-router.post('/clientOffline', clientController.clientOffline);
-router.post('/proxyRegister', clientController.proxyRegister);
-router.post('/requestShuffle', clientController.requestShuffle);
-// router.post('/distributeClient', clientController.distributeClient);
-// router.post('/redistributeClient', clientController.redistributeClient);
-router.post('/initializeAttack', clientController.initializeBeforeAttack);
-router.post('/shuffle', clientController.shuffle);
+router.post('/shuffle', client.shuffle);
+router.post('/attacked', client.attacked);
+router.post('/whetherBlock', client.whetherBlock);
+router.post('/clientOnline', client.clientOnline);
+router.post('/clientOffline', client.clientOffline);
+router.post('/proxyRegister', client.proxyRegister);
+router.post('/requestShuffle', client.requestShuffle);
+// router.post('/distributeClient', client.distributeClient);
+// router.post('/redistributeClient', client.redistributeClient);
+router.post('/initializeAttack', client.initializeBeforeAttack);
+
+router.post('/LoginByUsername', service.LoginByUsername);
+router.post('/setClientNetworkInfo', service.setClientNetworkInfo);
 
 module.exports = router;
