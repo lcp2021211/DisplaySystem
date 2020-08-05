@@ -1,10 +1,11 @@
+// const utils = require('../utils/utils');
+// const config = require('../config/config');
+// const os = require('os');
 const fs = require('fs');
 const path = require('path');
-const EventEmitter = require('events').EventEmitter;
-const utils = require('../utils/utils');
-const config = require('../config/config');
-const os = require('os');
 const si = require('systeminformation');
+const EventEmitter = require('events').EventEmitter;
+
 
 /**
  *
@@ -152,73 +153,19 @@ exports.detectAttack = (req, res, next) => {
  * @param {*} next: Middleware
  */
 exports.getSysInfo = async (req, res, next) => {
-	// let cpuUsage = os.loadavg()[0]
-	// let totalmem = os.totalmem()
-	// let freemem = os.freemem()
-	// let memUsage = (totalmem - freemem) / totalmem
-	let cpu = await si.currentLoad();
-	let cpuUsage = cpu.currentload;
-	let mem = await si.mem();
-	let totalmem = mem.total;
-	let used = mem.free;
-	let memUsage = used / totalmem;
-	let network = await si.networkStats();
-	let networkSpeed = network[0].tx_sec / 1024;
-	let disk = await si.disksIO();
-	let diskUsage = disk.tIO_sec / 1024;
-	console.log(cpuUsage, memUsage, networkSpeed, diskUsage);
-	res.send({
-		code: 20000,
-		info: {
-			cpuUsage: cpuUsage,
-			memUsage: memUsage,
-			networkSpeed: networkSpeed,
-			diskUsage: diskUsage
-		}
-	});
-};
-
-/**
- * Get the information of CPU
- * @param {*} req: Request body
- * @param {*} res: Response body, {info}
- * @param {*} next: Middleware
- */
-exports.getCPUInfo = async (req, res, next) => {
-	let cpu = await si.currentLoad();
-	let cpuUsage = cpu.currentload;
-	res.send({
-		info: cpuUsage
-	});
-};
-
-/**
- * The client request in 1s interval to get system information
- * @param {*} req: Request body
- * @param {*} res: Response body, {info: {cpuUsage, memUsage, networkSpeed, diskIO, networkDropped, cpuSpeed, fsStats}}
- * @param {*} next: Middleware
- */
-exports.getInfo = async (req, res, next) => {
-	let cpu = await si.currentLoad();
-	let cpuUsage = cpu.currentload;
-	let cpuInfo = await si.cpuCurrentspeed();
-	let mem = await si.mem();
-	let memUsage = mem.free / mem.total;
-	let network = await si.networkStats();
-	let networkSpeed = network[0].tx_sec / 1024;
-	let networkDropped = network[0].tx_dropped / 1024;
-	let diskIO = await si.disksIO();
-	let fsstat = await si.fsStats();
-
-	res.send({
-		info: {
-			cpuUsage: cpuUsage,
-			memUsage: memUsage,
-			networkSpeed: networkSpeed,
-			diskIO: diskIO.tIO_sec,
-			networkDropped: networkDropped,
-			cpuSpeed: cpuInfo.avg,
-			fsStats: fsstat.tx_sec
-		}
+	si.getDynamicData().then((data) => {
+		res.send({
+			code: 200,
+			cpuSpeed: data.cpuCurrentspeed.avg,
+			cpuLoad: data.currentLoad.currentload,
+			memUsed: data.mem.used / 1073741824,
+			memActive: data.mem.active / 1073741824,
+			memFree: data.mem.free / 1073741824,
+			fsRX: data.fsStats.rx_sec / 1048576,
+			fsWX: data.fsStats.wx_sec / 1048576,
+			fsTX: data.fsStats.tx_sec / 1048576,
+			netRX: data.networkStats[0].rx_sec / 1048576,
+			netTX: data.networkStats[0].tx_sec / 1048576,
+		});
 	});
 };
