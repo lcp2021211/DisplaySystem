@@ -1,1 +1,12 @@
-<p *ngFor="let i of fuck">{{ i }}</p>
+<nb-radio-group [(value)]="selected">
+  <nb-radio style="display: inline;" value="cpu" [checked]="true">CPU</nb-radio>
+  <nb-radio style="display: inline;" value="mem">Memory</nb-radio>
+  <nb-radio style="display: inline;" value="fs">File System</nb-radio>
+  <nb-radio style="display: inline;" value="net">Network</nb-radio>
+</nb-radio-group>
+
+<div style="display: flex; flex-wrap: wrap; width: 100%; margin: 0px;">
+  <div *ngFor="let proxy of proxies" style="width: calc(25% - 20px);">
+    <app-proxy-card [config]="config" [selected]="selected" [proxy]="proxy" [info]="info[proxy]"></app-proxy-card>
+  </div>
+</div>

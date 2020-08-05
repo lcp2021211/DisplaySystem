@@ -111,7 +111,7 @@ export class ClientService {
     const DATA_LENGTH = 50;
     let now = new Date();
     now = new Date(now.getTime() - DATA_LENGTH * 1000);
-    for (var i = 0; i < DATA_LENGTH; ++i) {
+    for (let i = 0; i < DATA_LENGTH; ++i) {
       // Push zero into array
       speed.push({
         name: now,

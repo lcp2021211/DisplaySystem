@@ -16,6 +16,7 @@ import {
   NbToastrModule,
   NbToggleModule,
   NbListModule,
+  NbRadioModule,
 } from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { AppRoutingModule } from './app-routing.module';
@@ -29,40 +30,43 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { ProxyComponent } from './pages/proxy/proxy.component';
 import { ServerComponent } from './pages/server/server.component';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
+import { ProxyCardComponent } from './pages/proxy/proxy-card/proxy-card.component';
 
 @NgModule({
-   declarations: [
-      AppComponent,
-      ClientComponent,
-      InformationComponent,
-      VideoCardComponent,
-      DownloadCardComponent,
-      NotFoundComponent,
-      ProxyComponent,
-      ServerComponent,
-   ],
-   imports: [
-      BrowserModule,
-      BrowserAnimationsModule,
-      AppRoutingModule,
-      NbToastrModule.forRoot(),
-      NbMenuModule.forRoot(),
-      NbSidebarModule.forRoot(),
-      NbThemeModule.forRoot({ name: 'dark'}),
-      NbLayoutModule,
-      NbEvaIconsModule,
-      NbButtonModule,
-      NbCardModule,
-      NbIconModule,
-      NgxEchartsModule,
-      NbProgressBarModule,
-      NbSelectModule,
-      NbToggleModule,
-      HttpClientModule,
-      NbListModule,
-      Ng2SmartTableModule,
+  declarations: [
+    AppComponent,
+    ClientComponent,
+    InformationComponent,
+    VideoCardComponent,
+    DownloadCardComponent,
+    NotFoundComponent,
+    ProxyComponent,
+    ServerComponent,
+    ProxyCardComponent,
+  ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    NbToastrModule.forRoot(),
+    NbMenuModule.forRoot(),
+    NbSidebarModule.forRoot(),
+    NbThemeModule.forRoot({ name: 'dark' }),
+    NbLayoutModule,
+    NbEvaIconsModule,
+    NbButtonModule,
+    NbCardModule,
+    NbIconModule,
+    NgxEchartsModule,
+    NbProgressBarModule,
+    NbSelectModule,
+    NbToggleModule,
+    HttpClientModule,
+    NbListModule,
+    Ng2SmartTableModule,
+    NbRadioModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

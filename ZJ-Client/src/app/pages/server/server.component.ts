@@ -10,7 +10,8 @@ import { HttpErrorResponse } from '@angular/common/http';
   templateUrl: './server.component.html',
   styleUrls: ['./server.component.css'],
 })
-export class ServerComponent implements OnInit {
+export class ServerComponent implements OnInit, OnDestroy, AfterViewInit {
+  private data = {};
   private timer: any;
   private config: any;
 
@@ -18,8 +19,6 @@ export class ServerComponent implements OnInit {
   memOption: EChartOption;
   fsOption: EChartOption;
   netOption: EChartOption;
-
-  data = {};
 
   constructor(private service: ServerService, private theme: NbThemeService) {}
 
@@ -41,50 +40,49 @@ export class ServerComponent implements OnInit {
         .getServerInfo()
         .then((res: any) => {
           if (res.code === 200) {
-            for (var key in this.data) {
+            for (let key in this.data) {
               this.data[key].shift();
             }
-
             let now = new Date();
             this.data['cpuSpeed'].push({
               name: now,
-              value: [now, res.data.cpuCurrentspeed.avg],
+              value: [now, res.cpuSpeed],
             });
             this.data['cpuLoad'].push({
               name: now,
-              value: [now, res.data.currentLoad.currentload],
+              value: [now, res.cpuLoad],
             });
             this.data['memUsed'].push({
               name: now,
-              value: [now, res.data.mem.used / 1073741824],
+              value: [now, res.memUsed],
             });
             this.data['memActive'].push({
               name: now,
-              value: [now, res.data.mem.active / 1073741824],
+              value: [now, res.memActive],
             });
             this.data['memFree'].push({
               name: now,
-              value: [now, res.data.mem.free / 1073741824],
+              value: [now, res.memFree],
             });
             this.data['fsRX'].push({
               name: now,
-              value: [now, res.data.fsStats.rx_sec / 1048576],
+              value: [now, res.fsRX],
             });
             this.data['fsWX'].push({
               name: now,
-              value: [now, res.data.fsStats.wx_sec / 1048576],
+              value: [now, res.fsWX],
             });
             this.data['fsTX'].push({
               name: now,
-              value: [now, res.data.fsStats.tx_sec / 1048576],
+              value: [now, res.fsTX],
             });
             this.data['netRX'].push({
               name: now,
-              value: [now, res.data.networkStats[0].rx_sec / 1048576],
+              value: [now, res.netRX],
             });
             this.data['netTX'].push({
               name: now,
-              value: [now, res.data.networkStats[0].tx_sec / 1048576],
+              value: [now, res.netRX],
             });
 
             this.renderChart();

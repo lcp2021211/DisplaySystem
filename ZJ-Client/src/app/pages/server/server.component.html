@@ -1,7 +1,6 @@
 <div style="display: flex; flex-wrap: wrap; width: 100%; height: 100%; margin: 0px;">
   <nb-card style="width: calc(50% - 20px); height: 46%;">
     <nb-card-body>
-      <!-- <h5>CPU Usage: {{ cpu[cpu.length - 1].value[1] | number: '1.0-0' }}%</h5> -->
       <h5>CPU</h5>
       <div echarts [options]="cpuOption" class="echarts" style="width: 100%; height: 85%;"></div>
     </nb-card-body>
@@ -10,7 +9,6 @@
   <nb-card style="width: calc(50% - 20px); height: 46%;">
     <nb-card-body>
       <h5>Memory</h5>
-      <!-- <h5>Memory Usage: {{ memory[memory.length - 1].value[1] | number: '1.0-0' }}%</h5> -->
       <div echarts [options]="memOption" class="echarts" style="width: 100%; height: 85%;"></div>
     </nb-card-body>
   </nb-card>
@@ -18,7 +16,6 @@
   <nb-card style="width: calc(50% - 20px); height: 46%;">
     <nb-card-body>
       <h5>File System</h5>
-      <!-- <h5>Average Bandwidth: {{ bandwidth[bandwidth.length - 1].value[1] | number: '1.0-0' }}KB/s</h5> -->
       <div echarts [options]="fsOption" class="echarts" style="width: 100%; height: 85%;"></div>
     </nb-card-body>
   </nb-card>
@@ -26,7 +23,6 @@
   <nb-card style="width: calc(50% - 20px); height: 46%;">
     <nb-card-body>
       <h5>Network</h5>
-      <!-- <h5>Average Delay: {{ delay[delay.length - 1].value[1] | number: '1.0-0' }}ms</h5> -->
       <div echarts [options]="netOption" class="echarts" style="width: 100%; height: 85%;"></div>
     </nb-card-body>
   </nb-card>

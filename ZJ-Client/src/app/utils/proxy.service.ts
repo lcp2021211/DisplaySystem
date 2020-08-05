@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { serverIP } from './global';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ServerService {
+export class ProxyService {
   constructor(private http: HttpClient) {}
 
   /**
    * @param {{}} data
-   * @memberof ServerService
+   * @memberof ProxyService
    */
   initializeChartData(data: {}) {
     const DATA_LENGTH = 50;
@@ -40,9 +40,9 @@ export class ServerService {
 
   /**
    * @returns {Promise<any>}
-   * @memberof ServerService
+   * @memberof ProxyService
    */
-  getServerInfo(): Promise<any> {
-    return this.http.get(`${serverIP}/getServerInfo`).toPromise();
+  getProxyInfo(): Promise<any> {
+    return this.http.get(`${serverIP}/getProxyInfo`).toPromise();
   }
 }

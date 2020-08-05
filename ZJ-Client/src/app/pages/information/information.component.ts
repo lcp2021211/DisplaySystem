@@ -1,16 +1,15 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { EChartOption } from 'echarts';
 import { InformationService } from 'src/app/utils/information.service';
 import { NbThemeService } from '@nebular/theme';
 import { HttpErrorResponse } from '@angular/common/http';
-
 
 @Component({
   selector: 'app-information',
   templateUrl: './information.component.html',
   styleUrls: ['./information.component.css'],
 })
-export class InformationComponent implements OnInit, AfterViewInit {
+export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
   settings: any = {
     columns: {
       id: {
@@ -56,6 +55,8 @@ export class InformationComponent implements OnInit, AfterViewInit {
 
     this.loadData();
   }
+
+  ngOnDestroy() {}
 
   ngAfterViewInit() {}
 
@@ -142,19 +143,19 @@ export class InformationComponent implements OnInit, AfterViewInit {
               name: 'Normal',
               itemStyle: {
                 color: '#08D68F',
-                opacity: 0
-              }
+                opacity: 0,
+              },
             },
             {
               value: 40,
               name: 'Spy',
               itemStyle: {
-                color: '#FFB720'
+                color: '#FFB720',
               },
-            }
+            },
           ],
           label: {
-            show: false
+            show: false,
           },
         },
         {
@@ -166,16 +167,16 @@ export class InformationComponent implements OnInit, AfterViewInit {
               value: 60,
               name: 'Normal',
               itemStyle: {
-                color: '#08D68F'
-              }
+                color: '#08D68F',
+              },
             },
             {
               value: 40,
               name: 'Spy',
               itemStyle: {
-                color: '#FFB720'
+                color: '#FFB720',
               },
-            }
+            },
           ],
           label: {
             formatter: '{d}%',
