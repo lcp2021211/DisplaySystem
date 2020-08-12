@@ -26,7 +26,9 @@ let server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
-global.ip = config.ip + ':' + config.port;
+// global.ip = config.ip + ':' + config.port;
+global.ip = `127.0.0.1:${port}`;
+console.log(global.ip);
 
 /**
  * Normalize a port into a number, string or false.
@@ -90,7 +92,7 @@ function initialize() {
 	// websocket server
 	let wsServer = new websocketServer({
 		httpServer: server,
-		autoAcceptConnections: false
+		autoAcceptConnections: false,
 	});
 
 	function originIsAllowed(origin) {
@@ -100,7 +102,7 @@ function initialize() {
 	// initialize a map in memory to save all connections
 	global.ws = new Map();
 
-	wsServer.on('request', async request => {
+	wsServer.on('request', async (request) => {
 		// Validate
 		if (!originIsAllowed(request.origin)) {
 			request.reject();
@@ -119,25 +121,25 @@ function initialize() {
 		// Client is online
 		utils
 			.clientOnline(clientID, spy)
-			.then(res => {
+			.then((res) => {
 				if (res.data.code === 200) {
 					console.log('Update Successfully');
 				} else {
 					connection.sendUTF(
 						JSON.stringify({
 							type: 'switch',
-							content: 'null'
+							content: 'null',
 						})
 					);
 				}
 			})
-			.catch(err => {
+			.catch((err) => {
 				console.error(err);
 			});
 
 		console.log(`Client: ${clientID} connect! Connection size: ${global.ws.size}, -----------${new Date()}`);
 
-		connection.on('message', function(message) {
+		connection.on('message', function (message) {
 			if (message.type === 'utf8') {
 				console.log('Received UTF8 Message: ' + message.utf8Data);
 				connection.sendUTF(message.utf8Data);
@@ -147,17 +149,17 @@ function initialize() {
 			}
 		});
 
-		connection.on('close', function(reasonCode, description) {
+		connection.on('close', function (reasonCode, description) {
 			console.log(`Client: ${clientID} disconnect! Connection size: ${global.ws.size}, -----------${new Date()}`);
 			global.ws.delete(connection.id);
 			// Client is offline
 			console.log('offline');
 			utils
 				.clientOffline(connection.id)
-				.then(res => {
+				.then((res) => {
 					console.log(res.data);
 				})
-				.catch(err => {
+				.catch((err) => {
 					console.error(err);
 				});
 		});
@@ -171,15 +173,15 @@ function initialize() {
 	/**
 	 * Execute interval to detect whether send message to server
 	 */
-	setInterval(function() {
+	setInterval(function () {
 		if (global.attackFrequency !== 0 || global.attackStrength !== 0) {
 			console.log('send frequency:', global.attackFrequency, ' send strength: ', global.attackStrength);
 			utils
 				.sendAttackMessage(global.attackFrequency, global.attackStrength)
-				.then(res => {
+				.then((res) => {
 					console.log(res);
 				})
-				.catch(err => {
+				.catch((err) => {
 					console.error(err);
 				});
 			global.attackStrength = 0;

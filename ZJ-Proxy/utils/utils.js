@@ -1,26 +1,27 @@
 const axios = require('axios');
 const config = require('../config/config');
-const serverURL = `http://${config.serverIP}:5000`;
 
 // while detecting ddos attacks
 exports.sendShuffleRequest = function(proxy) {
-	return axios.post(`${serverURL}/requestShuffle`, { proxy: proxy });
+	return axios.post(`http://${config.serverIP}/requestShuffle`, { proxy: proxy });
 };
 
 // Client is online
 exports.clientOnline = function(clientID, spy) {
-	return axios.post(`${serverURL}/clientOnline`, {
+	return axios.post(`http://${config.serverIP}/clientOnline`, {
 		clientID: clientID,
-		proxy: `${config.ip}:${config.port}`,
+		// proxy: `${config.ip}:${config.port}`,
+		proxy: `${global.ip}`,
 		spy: spy
 	});
 };
 
 // Client is offline
 exports.clientOffline = function(clientID) {
-	return axios.post(`${serverURL}/clientOffline`, {
+	return axios.post(`http://${config.serverIP}/clientOffline`, {
 		clientID: clientID,
-		proxy: `${config.ip}:${config.port}`
+		// proxy: `${config.ip}:${config.port}`
+		proxy: `${global.ip}`,
 	});
 }
 
@@ -30,9 +31,8 @@ exports.clientOffline = function(clientID) {
  * @param {integer} attackStrength Strength of attack
  */
 exports.sendAttackMessage = function(attackFrequency, attackStrength) {
-	let proxy = `${config.serverIP}:${config.port}`;
-	return axios.post(`${serverURL}/attacked`, {
-		proxy: proxy,
+	return axios.post(`http://${config.serverIP}/attacked`, {
+		proxy: `${global.ip}`,
 		attackFrequency: attackFrequency,
 		attackStrength: attackStrength
 	});
