@@ -6,7 +6,7 @@
 const http = require('http');
 const app = require('../app');
 const utils = require('../utils/utils');
-const externalip = require('externalip');
+// const externalip = require('externalip');
 const config = require('../config/config');
 const debug = require('debug')('test:server');
 const websocketServer = require('websocket').server;
@@ -16,7 +16,6 @@ const websocketServer = require('websocket').server;
  */
 let CLIport = process.argv.slice(2)[0];
 let port = normalizePort(process.env.PORT || CLIport);
-port = 3000;
 app.set('port', port);
 
 /**
