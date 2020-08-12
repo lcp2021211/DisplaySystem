@@ -12,7 +12,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
   settings: any = {
     columns: {
-      id: {
+      ID: {
         title: 'ID',
       },
       proxy: {
@@ -21,17 +21,18 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
       credit: {
         title: 'Credit',
       },
-      strength: {
+      attackStrength: {
         title: 'Attack Strength',
       },
-      frequency: {
+      attackFrequency: {
         title: 'Attack Frequency',
       },
     },
     actions: false,
     hideSubHeader: true,
   };
-  datas: any;
+  spies: any;
+  spyPercent: number = 0;
   topologyOption: EChartOption;
   percentOption: EChartOption;
 
@@ -47,18 +48,18 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
     private theme: NbThemeService
   ) {}
 
-  ngOnInit() {
+  ngOnInit() {}
+
+  ngOnDestroy() {}
+
+  ngAfterViewInit() {
     // Subscribe theme changed
     this.theme.getJsTheme().subscribe((config) => {
       this.config = config;
     });
 
-    this.loadData();
+    this.getData();
   }
-
-  ngOnDestroy() {}
-
-  ngAfterViewInit() {}
 
   /**
    * Select to show all proxies or only one
@@ -67,13 +68,13 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   topologyChange(item: string) {
     this.selected = item;
-    this.loadToplogy();
+    this.renderToplogy();
   }
 
   /**
    * Load realtime information(speed, delay) from server
    */
-  loadData() {
+  private getData() {
     this.service.getTopologyInfo().subscribe(
       (res: any) => {
         if (res.code === 200) {
@@ -83,7 +84,7 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
             this.proxies.add(e.proxy);
           });
 
-          this.loadToplogy();
+          this.renderToplogy();
         }
       },
       (err: HttpErrorResponse) => {
@@ -91,37 +92,31 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     );
 
-    this.datas = [
-      {
-        proxy: '192.168.2.0',
-        id: 15,
-        credit: 1200,
-        strength: 10,
-        frequency: 1,
+    this.service.getSpy().subscribe(
+      (res: any) => {
+        if (res.code === 200) {
+          this.spies = res.data;
+        }
       },
-      {
-        proxy: '192.168.2.1',
-        id: 12,
-        credit: 200,
-        strength: 20,
-        frequency: 2,
-      },
-      {
-        proxy: '192.168.2.2',
-        id: 20,
-        credit: 800,
-        strength: 10,
-        frequency: 0,
-      },
-      {
-        proxy: '192.168.2.3',
-        id: 26,
-        credit: 2000,
-        strength: 200,
-        frequency: 10,
-      },
-    ];
+      (err: HttpErrorResponse) => {
+        console.error(err);
+      }
+    );
 
+    this.service.getSpyPercent().subscribe(
+      (res: any) => {
+        if (res.code === 200) {
+          this.spyPercent = res.data;
+          this.renderSpyPercent();
+        }
+      },
+      (err: HttpErrorResponse) => {
+        console.error(err);
+      }
+    );
+  }
+
+  private renderSpyPercent() {
     this.percentOption = {
       legend: {
         show: true,
@@ -139,7 +134,7 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
           radius: ['45%', '75%'],
           data: [
             {
-              value: 60,
+              value: 100 - this.spyPercent,
               name: 'Normal',
               itemStyle: {
                 color: '#08D68F',
@@ -147,7 +142,7 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
               },
             },
             {
-              value: 40,
+              value: this.spyPercent,
               name: 'Spy',
               itemStyle: {
                 color: '#FFB720',
@@ -164,14 +159,14 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
           radius: ['50%', '70%'],
           data: [
             {
-              value: 60,
+              value: 100 - this.spyPercent,
               name: 'Normal',
               itemStyle: {
                 color: '#08D68F',
               },
             },
             {
-              value: 40,
+              value: this.spyPercent,
               name: 'Spy',
               itemStyle: {
                 color: '#FFB720',
@@ -188,77 +183,11 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   /**
-   * Get the width of line according to current network speed
-   * @private
-   * @param {number} speed
-   * @param {boolean} [emphasis=false]
-   * @returns {number}
-   * @memberof InformationComponent
-   */
-  private getLineWidth(speed: number, emphasis = false): number {
-    let width: number;
-    if (speed <= 200) {
-      width = 3;
-    } else if (speed > 200 && speed <= 600) {
-      width = 6;
-    } else {
-      width = 9;
-    }
-    if (emphasis) {
-      width += 3;
-    }
-    return width;
-  }
-
-  /**
-   * Get the color of line according to current delay
-   * @private
-   * @param {number} delay
-   * @param {boolean} [emphasis=false]
-   * @returns {string}
-   * @memberof InformationComponent
-   */
-  private getLineColor(delay: number, emphasis = false): string {
-    let color: string;
-    if (delay <= 500) {
-      color = '#5bc49f';
-    } else if (delay > 500 && delay <= 1000) {
-      color = '#feb64d';
-    } else if (delay > 1000) {
-      color = '#ff7c7c';
-    }
-    if (emphasis) {
-      color += 'ff';
-    } else {
-      color += '99';
-    }
-    return color;
-  }
-
-  /**
-   * Get the force according to the selected item
-   * @private
-   * @returns {any}
-   * @memberof InformationComponent
-   */
-  private getForce(): any {
-    if (this.selected === 'all') {
-      return {
-        repulsion: 500,
-      };
-    } else {
-      return {
-        repulsion: 5000,
-      };
-    }
-  }
-
-  /**
    * Load the topology.
    * @private
    * @memberof InformationComponent
    */
-  private loadToplogy() {
+  private renderToplogy() {
     let nodes = [];
     let links = [];
 
@@ -474,5 +403,71 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
         },
       ],
     };
+  }
+
+  /**
+   * Get the width of line according to current network speed
+   * @private
+   * @param {number} speed
+   * @param {boolean} [emphasis=false]
+   * @returns {number}
+   * @memberof InformationComponent
+   */
+  private getLineWidth(speed: number, emphasis = false): number {
+    let width: number;
+    if (speed <= 200) {
+      width = 3;
+    } else if (speed > 200 && speed <= 600) {
+      width = 6;
+    } else {
+      width = 9;
+    }
+    if (emphasis) {
+      width += 3;
+    }
+    return width;
+  }
+
+  /**
+   * Get the color of line according to current delay
+   * @private
+   * @param {number} delay
+   * @param {boolean} [emphasis=false]
+   * @returns {string}
+   * @memberof InformationComponent
+   */
+  private getLineColor(delay: number, emphasis = false): string {
+    let color: string;
+    if (delay <= 500) {
+      color = '#5bc49f';
+    } else if (delay > 500 && delay <= 1000) {
+      color = '#feb64d';
+    } else if (delay > 1000) {
+      color = '#ff7c7c';
+    }
+    if (emphasis) {
+      color += 'ff';
+    } else {
+      color += '99';
+    }
+    return color;
+  }
+
+  /**
+   * Get the force according to the selected item
+   * @private
+   * @returns {any}
+   * @memberof InformationComponent
+   */
+  private getForce(): any {
+    if (this.selected === 'all') {
+      return {
+        repulsion: 500,
+      };
+    } else {
+      return {
+        repulsion: 5000,
+      };
+    }
   }
 }

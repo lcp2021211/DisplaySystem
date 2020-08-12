@@ -6,7 +6,6 @@
 </nb-radio-group>
 
 <div style="display: flex; flex-wrap: wrap; width: 100%; margin: 0px;">
-  <div *ngFor="let proxy of proxies" style="width: calc(25% - 20px);">
-    <app-proxy-card [config]="config" [selected]="selected" [proxy]="proxy" [info]="info[proxy]"></app-proxy-card>
-  </div>
+  <app-proxy-card *ngFor="let proxy of proxies" [config]="config" [selected]="selected" [proxy]="proxy"
+    [info]="info[proxy]" style="width: calc(25% - 20px);"></app-proxy-card>
 </div>

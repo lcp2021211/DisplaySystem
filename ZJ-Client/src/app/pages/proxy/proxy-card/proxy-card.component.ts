@@ -30,50 +30,15 @@ export class ProxyCardComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   @Input() set info(val: any) {
     this._info = val;
+    let now = new Date();
     for (let key in this.data) {
       this.data[key].shift();
+      this.data[key].push({
+        name: now,
+        value: [now, this.info[key]],
+      });
     }
-    let now = new Date();
-    this.data['cpuSpeed'].push({
-      name: now,
-      value: [now, this.info.cpuSpeed],
-    });
-    this.data['cpuLoad'].push({
-      name: now,
-      value: [now, this.info.cpuLoad],
-    });
-    this.data['memUsed'].push({
-      name: now,
-      value: [now, this.info.memUsed],
-    });
-    this.data['memActive'].push({
-      name: now,
-      value: [now, this.info.memActive],
-    });
-    this.data['memFree'].push({
-      name: now,
-      value: [now, this.info.memFree],
-    });
-    this.data['fsRX'].push({
-      name: now,
-      value: [now, this.info.fsRX],
-    });
-    this.data['fsWX'].push({
-      name: now,
-      value: [now, this.info.fsWX],
-    });
-    this.data['fsTX'].push({
-      name: now,
-      value: [now, this.info.fsTX],
-    });
-    this.data['netRX'].push({
-      name: now,
-      value: [now, this.info.netRX],
-    });
-    this.data['netTX'].push({
-      name: now,
-      value: [now, this.info.netRX],
-    });
+
     this.renderChart();
   }
   get info() {
@@ -100,8 +65,8 @@ export class ProxyCardComponent implements OnInit, OnDestroy, AfterViewInit {
       case 'cpu':
         this.option = {
           grid: {
-            left: '5%',
-            right: '5%',
+            left: '10%',
+            right: '10%',
             top: '10%',
             bottom: '10%',
           },
@@ -232,8 +197,8 @@ export class ProxyCardComponent implements OnInit, OnDestroy, AfterViewInit {
       case 'mem':
         this.option = {
           grid: {
-            left: '5%',
-            right: '5%',
+            left: '10%',
+            right: '10%',
             top: '10%',
             bottom: '10%',
           },
@@ -371,8 +336,8 @@ export class ProxyCardComponent implements OnInit, OnDestroy, AfterViewInit {
       case 'fs':
         this.option = {
           grid: {
-            left: '5%',
-            right: '5%',
+            left: '10%',
+            right: '10%',
             top: '10%',
             bottom: '10%',
           },
@@ -509,8 +474,8 @@ export class ProxyCardComponent implements OnInit, OnDestroy, AfterViewInit {
       case 'net':
         this.option = {
           grid: {
-            left: '5%',
-            right: '5%',
+            left: '10%',
+            right: '10%',
             top: '10%',
             bottom: '10%',
           },

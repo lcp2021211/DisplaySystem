@@ -152,7 +152,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
       this.service.getBlock(this.clientID).subscribe(
         (res: any) => {
           if (res.code === 200) {
-            this.block = res.message;
+            this.block = res.block;
             console.log(this.block);
             if (this.block) {
               this.ws.close();

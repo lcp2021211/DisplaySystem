@@ -157,22 +157,22 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.delay[this.delay.length - 1].value[1]
       );
 
-      // // Get whether block
-      // this.service.getBlock(this.clientID).subscribe(
-      //   res => {
-      //     if (res.code === 20000) {
-      //       this.block = res.message.client[0].block;
-      //       if (this.block) {
-      //         this.video.pause();
-      //         this.mediaSource.endOfStream();
-      //         this.ws.close();
-      //       }
-      //     }
-      //   },
-      //   err => {
-      //     console.error(err);
-      //   }
-      // );
+      // Get whether block
+      this.service.getBlock(this.clientID).subscribe(
+        res => {
+          if (res.code === 200) {
+            this.block = res.block;
+            if (this.block) {
+              this.video.pause();
+              this.mediaSource.endOfStream();
+              this.ws.close();
+            }
+          }
+        },
+        err => {
+          console.error(err);
+        }
+      );
 
       this.speedOption = {
         grid: {

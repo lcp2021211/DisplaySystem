@@ -40,50 +40,14 @@ export class ServerComponent implements OnInit, OnDestroy, AfterViewInit {
         .getServerInfo()
         .then((res: any) => {
           if (res.code === 200) {
+            let now = new Date();
             for (let key in this.data) {
               this.data[key].shift();
+              this.data[key].push({
+                name: now,
+                value: [now, res[key]],
+              });
             }
-            let now = new Date();
-            this.data['cpuSpeed'].push({
-              name: now,
-              value: [now, res.cpuSpeed],
-            });
-            this.data['cpuLoad'].push({
-              name: now,
-              value: [now, res.cpuLoad],
-            });
-            this.data['memUsed'].push({
-              name: now,
-              value: [now, res.memUsed],
-            });
-            this.data['memActive'].push({
-              name: now,
-              value: [now, res.memActive],
-            });
-            this.data['memFree'].push({
-              name: now,
-              value: [now, res.memFree],
-            });
-            this.data['fsRX'].push({
-              name: now,
-              value: [now, res.fsRX],
-            });
-            this.data['fsWX'].push({
-              name: now,
-              value: [now, res.fsWX],
-            });
-            this.data['fsTX'].push({
-              name: now,
-              value: [now, res.fsTX],
-            });
-            this.data['netRX'].push({
-              name: now,
-              value: [now, res.netRX],
-            });
-            this.data['netTX'].push({
-              name: now,
-              value: [now, res.netRX],
-            });
 
             this.renderChart();
           }
@@ -97,8 +61,8 @@ export class ServerComponent implements OnInit, OnDestroy, AfterViewInit {
   private renderChart() {
     this.cpuOption = {
       grid: {
-        left: '5%',
-        right: '5%',
+        left: '10%',
+        right: '10%',
         top: '10%',
         bottom: '10%',
       },
@@ -228,8 +192,8 @@ export class ServerComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.memOption = {
       grid: {
-        left: '5%',
-        right: '5%',
+        left: '10%',
+        right: '10%',
         top: '10%',
         bottom: '10%',
       },
@@ -366,8 +330,8 @@ export class ServerComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.fsOption = {
       grid: {
-        left: '5%',
-        right: '5%',
+        left: '10%',
+        right: '10%',
         top: '10%',
         bottom: '10%',
       },
@@ -503,8 +467,8 @@ export class ServerComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.netOption = {
       grid: {
-        left: '5%',
-        right: '5%',
+        left: '10%',
+        right: '10%',
         top: '10%',
         bottom: '10%',
       },
