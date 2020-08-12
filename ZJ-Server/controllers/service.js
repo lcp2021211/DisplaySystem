@@ -53,46 +53,46 @@ exports.informClient = (client2Proxy) => {
  * @param {string} res token that maintain session
  * @param {function} next middleware
  */
-exports.LoginByUsername = (req, res, next) => {
-	let { username, password } = req.body;
-	console.log(username, password);
-	Users.findOne({ username: username }, (err, user) => {
-		if (err) {
-			res.send({
-				code: 50001,
-				message: 'User not found',
-			});
-			console.error(err);
-		}
-		if (user) {
-			if (user.password === password) {
-				let token = crypto
-					.createHash('sha256')
-					.update(username + password + new Date())
-					.digest('hex');
-				Users.updateOne({ username: username }, { $set: { token: token } }, (err, doc) => {
-					if (err) {
-						res.send({
-							code: 50002,
-							message: 'Error while updating token!',
-						});
-					}
-					if (doc) {
-						res.send({
-							code: 20000,
-							message: token,
-						});
-					}
-				});
-			} else {
-				res.send({
-					code: 50002,
-					message: 'Wrong password!',
-				});
-			}
-		}
-	});
-};
+// exports.LoginByUsername = (req, res, next) => {
+// 	let { username, password } = req.body;
+// 	console.log(username, password);
+// 	Users.findOne({ username: username }, (err, user) => {
+// 		if (err) {
+// 			res.send({
+// 				code: 50001,
+// 				message: 'User not found',
+// 			});
+// 			console.error(err);
+// 		}
+// 		if (user) {
+// 			if (user.password === password) {
+// 				let token = crypto
+// 					.createHash('sha256')
+// 					.update(username + password + new Date())
+// 					.digest('hex');
+// 				Users.updateOne({ username: username }, { $set: { token: token } }, (err, doc) => {
+// 					if (err) {
+// 						res.send({
+// 							code: 50002,
+// 							message: 'Error while updating token!',
+// 						});
+// 					}
+// 					if (doc) {
+// 						res.send({
+// 							code: 20000,
+// 							message: token,
+// 						});
+// 					}
+// 				});
+// 			} else {
+// 				res.send({
+// 					code: 50002,
+// 					message: 'Wrong password!',
+// 				});
+// 			}
+// 		}
+// 	});
+// };
 
 /**
  * Get detailed user info through query parameters
@@ -100,34 +100,34 @@ exports.LoginByUsername = (req, res, next) => {
  * @param {JSON} res a JSON object contains the information of the user
  * @param {function} next middleware
  */
-exports.getUserInfo = (req, res, next) => {
-	let { token } = req.query;
-	console.log(token);
-	Users.findOne({ token: token }, (err, userInfo) => {
-		if (err) {
-			res.send({
-				code: 50001,
-				message: 'Error while finding user!',
-			});
-		}
-		if (userInfo) {
-			res.send({
-				code: 20000,
-				data: {
-					roles: userInfo.roles,
-					introduction: userInfo.introduction,
-					avatar: userInfo.avatar,
-					name: userInfo.name,
-				},
-			});
-		} else {
-			res.send({
-				code: 50002,
-				message: 'token expired!',
-			});
-		}
-	});
-};
+// exports.getUserInfo = (req, res, next) => {
+// 	let { token } = req.query;
+// 	console.log(token);
+// 	Users.findOne({ token: token }, (err, userInfo) => {
+// 		if (err) {
+// 			res.send({
+// 				code: 50001,
+// 				message: 'Error while finding user!',
+// 			});
+// 		}
+// 		if (userInfo) {
+// 			res.send({
+// 				code: 20000,
+// 				data: {
+// 					roles: userInfo.roles,
+// 					introduction: userInfo.introduction,
+// 					avatar: userInfo.avatar,
+// 					name: userInfo.name,
+// 				},
+// 			});
+// 		} else {
+// 			res.send({
+// 				code: 50002,
+// 				message: 'token expired!',
+// 			});
+// 		}
+// 	});
+// };
 
 /**
  * TODO(=====================Model 2=====================)
@@ -138,11 +138,34 @@ exports.getUserInfo = (req, res, next) => {
  */
 exports.getSpy = async (req, res, next) => {
 	try {
-		let doc = await ClientModel.find({ spy: true });
+		let doc = await ClientModel.find({ spy: true, proxy: { $ne: 'null' } });
 		if (doc) {
 			res.send({
 				code: 200,
-				message: doc,
+				data: doc,
+			});
+		} else {
+			res.send(errorCode.FAILURE);
+		}
+	} catch (err) {
+		console.error(err);
+		res.send(errorCode.FAILURE);
+	}
+};
+
+/**
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+exports.getSpyPercent = async (req, res, next) => {
+	try {
+		let total = await ClientModel.find({ proxy: { $ne: 'null' } });
+		let spy = await ClientModel.find({ spy: true, proxy: { $ne: 'null' } });
+		if (total && spy) {
+			res.send({
+				code: 200,
+				data: (100 * spy.length) / total.length,
 			});
 		} else {
 			res.send(errorCode.FAILURE);

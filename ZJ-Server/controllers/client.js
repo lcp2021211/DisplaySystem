@@ -146,35 +146,35 @@ const ClientModel = require('../models/client');
  * @param {Obj} res respond
  * @param {function} next middleware
  */
-exports.proxyRegister = async (req, res, next) => {
-	let proxy = req.body;
-	try {
-		if (await Mappings.findOne({ proxy: proxy })) {
-			res.send({
-				code: 50000,
-				message: 'already exists proxy'
-			});
-		} else {
-			if (await new Mappings({ proxy: proxy, client: [] }).save()) {
-				res.send({
-					code: 20000,
-					message: 'succefully inserted proxy: ' + proxy
-				});
-			} else {
-				res.send({
-					code: 50000,
-					message: 'failed inserting proxy'
-				});
-			}
-		}
-	} catch (err) {
-		console.error(err);
-		res.send({
-			code: 50000,
-			message: 'failed'
-		});
-	}
-};
+// exports.proxyRegister = async (req, res, next) => {
+// 	let proxy = req.body;
+// 	try {
+// 		if (await Mappings.findOne({ proxy: proxy })) {
+// 			res.send({
+// 				code: 50000,
+// 				message: 'already exists proxy'
+// 			});
+// 		} else {
+// 			if (await new Mappings({ proxy: proxy, client: [] }).save()) {
+// 				res.send({
+// 					code: 20000,
+// 					message: 'succefully inserted proxy: ' + proxy
+// 				});
+// 			} else {
+// 				res.send({
+// 					code: 50000,
+// 					message: 'failed inserting proxy'
+// 				});
+// 			}
+// 		}
+// 	} catch (err) {
+// 		console.error(err);
+// 		res.send({
+// 			code: 50000,
+// 			message: 'failed'
+// 		});
+// 	}
+// };
 
 /**
  * TODO(=====================Model 1=====================)
@@ -183,23 +183,23 @@ exports.proxyRegister = async (req, res, next) => {
  * @param {Obj} res respond: respond to request
  * @param {function} next middleware
  */
-exports.requestShuffle = async (req, res, next) => {
-	let proxy = req.body.proxy;
-	try {
-		if (await Mappings.findOne({ proxy: proxy })) {
-			// If proxy exists, invoke shuffle algorithm
-			let resultJson = await shuffle(proxy, result.client);
-			// after shuffle, send the results to every client so that they switch to anothor proxy
-			console.log(resultJson);
-			res.send(resultJson);
-		} else {
-			res.send(errorCode.DOCNOTFOUND);
-		}
-	} catch (err) {
-		console.error(err);
-		res.send(errorCode.DOCNOTFOUND);
-	}
-};
+// exports.requestShuffle = async (req, res, next) => {
+// 	let proxy = req.body.proxy;
+// 	try {
+// 		if (await Mappings.findOne({ proxy: proxy })) {
+// 			// If proxy exists, invoke shuffle algorithm
+// 			let resultJson = await shuffle(proxy, result.client);
+// 			// after shuffle, send the results to every client so that they switch to anothor proxy
+// 			console.log(resultJson);
+// 			res.send(resultJson);
+// 		} else {
+// 			res.send(errorCode.DOCNOTFOUND);
+// 		}
+// 	} catch (err) {
+// 		console.error(err);
+// 		res.send(errorCode.DOCNOTFOUND);
+// 	}
+// };
 
 /**
  * TODO(=====================Model 1=====================)
@@ -501,25 +501,25 @@ exports.attacked = async (req, res, next) => {
  * @param {JSON} res the json document contains proxy and client
  * @param {function} next middleware
  */
-exports.getProxy = (req, res, next) => {
-	let { id } = req.query;
-	id = parseInt(id);
-	Mappings.findOne({ 'client.ID': id })
-		.select('proxy client')
-		.select({ client: { $elemMatch: { ID: id } } })
-		.exec((err, doc) => {
-			if (err) {
-				console.error('error while getting proxy: ', err);
-			}
-			if (doc) {
-				res.send({
-					code: 200,
-					proxy: doc.proxy,
-					client: doc.client[0].ID
-				});
-			}
-		});
-};
+// exports.getProxy = (req, res, next) => {
+// 	let { id } = req.query;
+// 	id = parseInt(id);
+// 	Mappings.findOne({ 'client.ID': id })
+// 		.select('proxy client')
+// 		.select({ client: { $elemMatch: { ID: id } } })
+// 		.exec((err, doc) => {
+// 			if (err) {
+// 				console.error('error while getting proxy: ', err);
+// 			}
+// 			if (doc) {
+// 				res.send({
+// 					code: 200,
+// 					proxy: doc.proxy,
+// 					client: doc.client[0].ID
+// 				});
+// 			}
+// 		});
+// };
 
 /**
  * TODO(=====================Model 1=====================)
@@ -688,7 +688,7 @@ exports.whetherBlock = async (req, res, next) => {
 		if (doc) {
 			res.send({
 				code: 200,
-				message: doc.block
+				block: doc.block
 			});
 		} else {
 			res.send(errorCode.FAILURE);
