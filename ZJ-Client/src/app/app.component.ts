@@ -9,23 +9,23 @@ import { NbThemeService, NbSidebarService, NbMenuItem } from '@nebular/theme';
 export class AppComponent implements OnInit {
   menus: NbMenuItem[] = [
     {
-      title: 'Client',
+      title: '客户端',
       icon: 'person-outline',
       link: '/client',
       home: true
     },
     { 
-      title: 'Proxy',
+      title: '代理节点',
       icon: 'activity-outline',
-      link: 'proxy'
+      link: '/proxy'
     },
     { 
-      title: 'Server',
+      title: '内容服务器',
       icon: 'hard-drive-outline',
-      link: 'server'
+      link: '/server'
     },
     {
-      title: 'Information',
+      title: '其它信息',
       icon: 'pie-chart-outline',
       link: '/information'
     }

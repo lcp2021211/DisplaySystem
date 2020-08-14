@@ -136,7 +136,7 @@ export class ProxyCardComponent implements OnInit, OnDestroy, AfterViewInit {
           ],
           series: [
             {
-              name: 'Usage',
+              name: '使用率',
               data: this.data['cpuLoad'],
               type: 'line',
               color: '#2BE69B',
@@ -164,7 +164,7 @@ export class ProxyCardComponent implements OnInit, OnDestroy, AfterViewInit {
               },
             },
             {
-              name: 'Speed',
+              name: '频率',
               data: this.data['cpuSpeed'],
               type: 'line',
               color: '#598BFF',
@@ -249,7 +249,7 @@ export class ProxyCardComponent implements OnInit, OnDestroy, AfterViewInit {
           ],
           series: [
             {
-              name: 'Used',
+              name: '使用',
               data: this.data['memUsed'],
               type: 'line',
               color: '#FEC94D',
@@ -277,7 +277,7 @@ export class ProxyCardComponent implements OnInit, OnDestroy, AfterViewInit {
               },
             },
             {
-              name: 'Active',
+              name: '活跃',
               data: this.data['memActive'],
               type: 'line',
               color: '#FF708D',
@@ -304,7 +304,7 @@ export class ProxyCardComponent implements OnInit, OnDestroy, AfterViewInit {
               },
             },
             {
-              name: 'Free',
+              name: '空闲',
               data: this.data['memFree'],
               type: 'line',
               color: '#2BE69B',
@@ -388,7 +388,7 @@ export class ProxyCardComponent implements OnInit, OnDestroy, AfterViewInit {
           ],
           series: [
             {
-              name: 'RX',
+              name: '读取',
               data: this.data['fsRX'],
               type: 'line',
               color: '#FEC94D',
@@ -415,7 +415,7 @@ export class ProxyCardComponent implements OnInit, OnDestroy, AfterViewInit {
               },
             },
             {
-              name: 'WX',
+              name: '写入',
               data: this.data['fsWX'],
               type: 'line',
               color: '#FF708D',
@@ -442,7 +442,7 @@ export class ProxyCardComponent implements OnInit, OnDestroy, AfterViewInit {
               },
             },
             {
-              name: 'TX',
+              name: '总计',
               data: this.data['fsTX'],
               type: 'line',
               color: '#2BE69B',
@@ -528,7 +528,7 @@ export class ProxyCardComponent implements OnInit, OnDestroy, AfterViewInit {
           ],
           series: [
             {
-              name: 'RX',
+              name: '接收',
               data: this.data['netRX'],
               type: 'line',
               color: '#2BE69B',
@@ -555,7 +555,7 @@ export class ProxyCardComponent implements OnInit, OnDestroy, AfterViewInit {
               },
             },
             {
-              name: 'TX',
+              name: '发送',
               data: this.data['netTX'],
               type: 'line',
               color: '#598BFF',

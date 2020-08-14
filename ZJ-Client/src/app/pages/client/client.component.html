@@ -1,21 +1,21 @@
-<nb-select placeholder="Select type" [(selected)]="type" size="large">
-  <nb-option value="video">Video</nb-option>
-  <nb-option value="download">Download</nb-option>
+<nb-select placeholder="模拟类型" [(selected)]="type" size="large">
+  <nb-option value="video">视频</nb-option>
+  <nb-option value="download">下载</nb-option>
 </nb-select>
 
-<nb-select placeholder="Select number" [(selected)]="cardNumber" size="large">
+<nb-select placeholder="选择数量" [(selected)]="cardNumber" size="large">
   <nb-option *ngFor="let i of MAX_NUMBER" [value]="i">{{ i }}</nb-option>
 </nb-select>
 
-<nb-select placeholder="Select users" [(selected)]="user" size="large">
-  <nb-option value="client">Client</nb-option>
-  <nb-option value="spy">Spy</nb-option>
+<nb-select placeholder="用户类型" [(selected)]="user" size="large">
+  <nb-option value="client">普通</nb-option>
+  <nb-option value="spy">间谍</nb-option>
 </nb-select>
 
-<button nbButton (click)="register()">Register</button>
+<button nbButton (click)="register()">注册</button>
 
 <nb-toggle [(checked)]="showChart" status="success" labelPosition="left">
-  <h5>Chart</h5>
+  <h5>图表</h5>
 </nb-toggle>
 
 <div style="display: flex; width: 100%; flex-wrap: wrap; margin: 0px;" [ngSwitch]="type" *ngIf="show">

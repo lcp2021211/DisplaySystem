@@ -91,7 +91,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
           this.proxy = res.proxy;
 
           // Start download and websocket connection
-          this.loadVideo();
+          this.playVideo();
         }
       },
       (err: HttpErrorResponse) => {
@@ -324,7 +324,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
    * @private
    * @memberof VideoCardComponent
    */
-  private loadVideo() {
+  private playVideo() {
     // Initialize mediaSource
     this.mediaSource = new MediaSource();
     this.video.src = URL.createObjectURL(this.mediaSource);
@@ -364,7 +364,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
             // Then continue to download
             if (!this.block && this.isLive) {
               this.mediaSource.endOfStream();
-              this.loadVideo();
+              this.playVideo();
             }
           });
         })
@@ -372,7 +372,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
           // Catch error and retry it after 3 seconds
           console.error(err);
           setTimeout(() => {
-            this.loadVideo();
+            this.playVideo();
           }, 3 * sec);
         });
     });

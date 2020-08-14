@@ -13,19 +13,19 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
   settings: any = {
     columns: {
       ID: {
-        title: 'ID',
+        title: '用户ID',
       },
       proxy: {
-        title: 'Proxy',
+        title: '代理节点',
       },
       credit: {
-        title: 'Credit',
+        title: '评分',
       },
       attackStrength: {
-        title: 'Attack Strength',
+        title: '攻击烈度',
       },
       attackFrequency: {
-        title: 'Attack Frequency',
+        title: '攻击频率',
       },
     },
     actions: false,
@@ -135,7 +135,7 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
           data: [
             {
               value: 100 - this.spyPercent,
-              name: 'Normal',
+              name: '普通',
               itemStyle: {
                 color: '#08D68F',
                 opacity: 0,
@@ -143,7 +143,7 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
             },
             {
               value: this.spyPercent,
-              name: 'Spy',
+              name: '间谍',
               itemStyle: {
                 color: '#FFB720',
               },
@@ -160,14 +160,14 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
           data: [
             {
               value: 100 - this.spyPercent,
-              name: 'Normal',
+              name: '普通',
               itemStyle: {
                 color: '#08D68F',
               },
             },
             {
               value: this.spyPercent,
-              name: 'Spy',
+              name: '间谍',
               itemStyle: {
                 color: '#FFB720',
               },

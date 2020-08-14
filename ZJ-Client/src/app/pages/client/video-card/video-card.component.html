@@ -1,24 +1,24 @@
 <nb-card>
   <nb-card-body>
     <div style="display: flex; justify-content: space-between;">
-      <h5>ClientID: {{ clientID }}</h5>
-      <h5>Proxy: {{ proxy }}</h5>
+      <h5>用户ID: {{ clientID }}</h5>
+      <h5>代理节点: {{ proxy }}</h5>
     </div>
     <video controls #video width="100%" autoplay></video>
     <div style="display: flex; justify-content: space-between;">
-      <h5 style="margin-top: 10px; margin-bottom: 0;">Speed:
+      <h5 style="margin-top: 10px; margin-bottom: 0;">下载速度:
         {{ speed[speed.length - 1].value[1] | number: '1.0-0' }}KB/s
       </h5>
       <nb-toggle [checked]="block" style="margin: auto 10px;" status="success" labelPosition="left" disabled>
-        <h5>Block</h5>
+        <h5>封禁</h5>
       </nb-toggle>
     </div>
     <div echarts [options]="speedOption" class="echarts" style="height:300px" *ngIf="showChart"></div>
     <div style="display: flex; justify-content: space-between;">
-      <h5>Delay:
+      <h5>下载时延:
         {{ (delay[delay.length - 1].value[1] === 5000 ? 1/0 : delay[delay.length - 1].value[1]) | number: '1.2-2'}}ms
       </h5>
-      <h5 style="margin-right: 20px;">Switch: {{ switchCount }}</h5>
+      <h5 style="margin-right: 20px;">切换次数: {{ switchCount }}</h5>
     </div>
     <div echarts [options]="delayOption" class="echarts" style="height:300px" *ngIf="showChart"></div>
   </nb-card-body>
