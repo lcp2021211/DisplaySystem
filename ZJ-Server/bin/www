@@ -107,7 +107,7 @@ async function initialize() {
 		new ProxyModel({
 			proxy: value,
 			level: index,
-			capacity: 40,
+			capacity: 500,
 		}).save();
 	});
 }

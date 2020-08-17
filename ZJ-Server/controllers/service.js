@@ -136,7 +136,7 @@ exports.informClient = (client2Proxy) => {
  * @param {JSON} res json containing the map of proxy and spy
  * @param {function} next middleware
  */
-exports.getSpy = async (req, res, next) => {
+exports.getSpyInfo = async (req, res, next) => {
 	try {
 		let doc = await ClientModel.find({ spy: true, proxy: { $ne: 'null' } });
 		if (doc) {

@@ -373,22 +373,22 @@ function addCredit(client, attackFrequency, attackStrength) {
  * @param {Obj} res response obj contains reaction to proxy
  * @param {next} next middleware
  */
-exports.attacked = async (req, res, next) => {
-	let { attackVector } = req.body;
+// exports.attacked = async (req, res, next) => {
+// 	let { attackVector } = req.body;
 
-	try {
-		console.time('redistribute');
-		let resultJson = await this.shuffle(attackVector);
-		if (resultJson) {
-			res.send(resultJson);
-		} else {
-			res.send(errorCode.DOCNOTFOUND);
-		}
-		console.timeEnd('redistribute');
-	} catch (err) {
-		console.error(err);
-	}
-};
+// 	try {
+// 		console.time('redistribute');
+// 		let resultJson = await this.shuffle(attackVector);
+// 		if (resultJson) {
+// 			res.send(resultJson);
+// 		} else {
+// 			res.send(errorCode.DOCNOTFOUND);
+// 		}
+// 		console.timeEnd('redistribute');
+// 	} catch (err) {
+// 		console.error(err);
+// 	}
+// };
 
 /**
  * TODO(=====================Model 1=====================)
@@ -544,19 +544,58 @@ exports.attacked = async (req, res, next) => {
 /**
  * TODO(=====================Model 2=====================)
  */
+exports.attacked = async (req, res, next) => {
+	let { attackVector } = req.body;
+
+	attackVector.forEach(v => {
+		await ClientModel.updateMany({ 
+			proxy: v.proxy
+		}, {
+			$inc: {
+				attackFrequency: v.attackFrequency, 
+				attackStrength: v.attackStrength,
+				credit: parameter.alpha * v.attackFrequency + parameter.gamma * v.attackStrength
+			}
+		});
+
+		await ClientModel.updateMany({}, {
+			$inc: { 
+				credit: -parameter.beta
+			}
+		});
+	});
+
+	try {
+		console.time('redistribute');
+		let resultJson = await this.shuffle(attackVector);
+		if (resultJson) {
+			res.send(resultJson);
+		} else {
+			res.send(errorCode.DOCNOTFOUND);
+		}
+		console.timeEnd('redistribute');
+	} catch (err) {
+		console.error(err);
+	}
+};
+
+/**
+ * TODO(=====================Model 2=====================)
+ */
 exports.distributeClient = async (req, res, next) => {
 	let clientID = global.ids++;
 	let proxy = 'null';
 
 	try {
-		let doc = await ProxyModel.find({ $where: 'this.size < this.capacity' });
+		// let doc = await ProxyModel.find({ $where: 'this.size < this.capacity' });
+		let doc = await ProxyModel.find({});
 		if (doc) {
 			proxy = doc[Math.floor(Math.random() * doc.length)].proxy;
 		}
 		res.send({
 			code: 200,
 			clientID: clientID,
-			proxy: proxy
+			proxy: proxy,
 		});
 	} catch (err) {
 		console.error(err);
@@ -575,13 +614,14 @@ exports.redistributeClient = async (req, res, next) => {
 	let proxy = 'null';
 
 	try {
-		let doc = await ProxyModel.find({ $where: 'this.size < this.capacity' });
+		// let doc = await ProxyModel.find({ $where: 'this.size < this.capacity' });
+		let doc = await ProxyModel.find({});
 		if (doc) {
 			proxy = doc[Math.floor(Math.random() * doc.length)].proxy;
 		}
 		res.send({
 			code: 200,
-			proxy: proxy
+			proxy: proxy,
 		});
 	} catch (err) {
 		console.error(err);
@@ -602,19 +642,21 @@ exports.clientOnline = async (req, res, next) => {
 				proxy: proxy,
 				pass: '123456',
 				accessTime: new Date(),
-				spy: spy
+				spy: spy,
 			}).save();
 		}
-		let doc = await ProxyModel.findOneAndUpdate({ proxy: proxy }, { $inc: { size: 1 } }, { new: true });
-		if (doc.size <= doc.capacity) {
-			await ClientModel.updateOne({ ID: clientID }, { proxy: proxy });
-			// console.log('ClientOnline Success: ' + clientID + ', ' + proxy);
-			res.send(errorCode.SUCCESS);
-		} else {
-			// console.log('ClientOnline Failed: ' + clientID + ', ' + proxy);
-			await ClientModel.updateOne({ ID: clientID }, { proxy: 'null' });
-			res.send(errorCode.FAILURE);
-		}
+		// let doc = await ProxyModel.findOneAndUpdate({ proxy: proxy }, { $inc: { size: 1 } }, { new: true });
+		await ClientModel.updateOne({ ID: clientID }, { proxy: proxy });
+		res.send(errorCode.SUCCESS);
+		// if (doc.size <= doc.capacity) {
+		// 	await ClientModel.updateOne({ ID: clientID }, { proxy: proxy });
+		// 	// console.log('ClientOnline Success: ' + clientID + ', ' + proxy);
+		// 	res.send(errorCode.SUCCESS);
+		// } else {
+		// 	// console.log('ClientOnline Failed: ' + clientID + ', ' + proxy);
+		// 	await ClientModel.updateOne({ ID: clientID }, { proxy: 'null' });
+		// 	res.send(errorCode.FAILURE);
+		// }
 	} catch (err) {
 		console.error(err);
 		res.send(errorCode.FAILURE);
@@ -628,7 +670,7 @@ exports.clientOffline = async (req, res, next) => {
 	let { clientID, proxy } = req.body;
 	try {
 		await ClientModel.updateOne({ ID: clientID }, { proxy: 'null' });
-		await ProxyModel.updateOne({ proxy: proxy }, { $inc: { size: -1 } });
+		// await ProxyModel.updateOne({ proxy: proxy }, { $inc: { size: -1 } });
 		// console.log('ClientOffline Success: ' + clientID + ', ' + proxy);
 		res.send(errorCode.SUCCESS);
 	} catch (err) {
@@ -642,27 +684,33 @@ exports.clientOffline = async (req, res, next) => {
  * TODO(=====================Model 2=====================)
  */
 exports.shuffle = async (req, res, next) => {
-	let client2Proxy = [];
-	let proxies = {};
-
 	try {
 		let clients = await ClientModel.find({ proxy: { $ne: 'null' } });
-		(await ProxyModel.find({})).forEach(e => {
-			proxies[e.proxy] = { size: 0, capacity: e.capacity, level: e.level };
+		let proxies = [];
+		(await ProxyModel.find({})).forEach((e) => {
+			proxies.push(e.proxy);
 		});
 
-		clients.forEach(client => {
-			let level = client.ID % 2;
-			let proxy = 'null';
-			for (let i in proxies) {
-				if (proxies[i].level === level && proxies[i].size < proxies[i].capacity) {
-					proxy = i;
-					proxies[i].size++;
-					break;
-				}
-			}
-			client2Proxy.push([client.ID, proxy]);
+		let client2Proxy = [];
+		clients.forEach((client) => {
+			client2Proxy.push[(client.ID, proxies[Math.floor(Math.random() * proxies.length)])];
 		});
+		// (await ProxyModel.find({})).forEach(e => {
+		// 	proxies[e.proxy] = { size: 0, capacity: e.capacity, level: e.level };
+		// });
+
+		// clients.forEach(client => {
+		// 	let level = client.ID % 2;
+		// 	let proxy = 'null';
+		// 	for (let i in proxies) {
+		// 		if (proxies[i].level === level && proxies[i].size < proxies[i].capacity) {
+		// 			proxy = i;
+		// 			proxies[i].size++;
+		// 			break;
+		// 		}
+		// 	}
+		// 	client2Proxy.push([client.ID, proxy]);
+		// });
 
 		console.log(client2Proxy);
 		service.informClient(client2Proxy);
@@ -688,7 +736,7 @@ exports.whetherBlock = async (req, res, next) => {
 		if (doc) {
 			res.send({
 				code: 200,
-				block: doc.block
+				block: doc.block,
 			});
 		} else {
 			res.send(errorCode.FAILURE);
