@@ -264,88 +264,88 @@ function addCredit(client, attackFrequency, attackStrength) {
  * @param {JSON} the mappings of attacked proxy, attack strength and attack frequency
  * @returns {Array} [old proxy->old clients[], new proxy->new clients[], old proxy->[(old clients, new proxy)]]
  */
-exports.redistribute = async attackVector => {
-	// console.log('input vector type: ', typeof (attackVector))
+// exports.redistribute = async attackVector => {
+// 	// console.log('input vector type: ', typeof (attackVector))
 
-	if (typeof attackVector === 'string') {
-		attackVector = attackVector.replace(/\'/g, '"');
-		attackVector = JSON.parse(attackVector);
-	}
+// 	if (typeof attackVector === 'string') {
+// 		attackVector = attackVector.replace(/\'/g, '"');
+// 		attackVector = JSON.parse(attackVector);
+// 	}
 
-	// attackVector = JSON.parse(attackVector)
-	// console.log(typeof(attackVector))
-	return new Promise(async (resolve, reject) => {
-		let clientArray = [];
-		let proxyArray = [];
-		// proxy->new clients[]
-		let proxy2Clients = new Map();
-		// client->proxy
-		let client2Proxy = new Map();
-		try {
-			let before = await Mappings.find({});
-			before.forEach(element => {
-				// if(element.proxy === proxyIP){
-				//   element.client.forEach(singleClient => {
-				//     addCredit(singleClient, attackFrequency, attackStrength)
-				//   })
-				// }
-				element.client.forEach(singleClient => {
-					attackVector.forEach(vector => {
-						if (vector.proxy === element.proxy) {
-							addCredit(singleClient, vector.attackFrequency, vector.attackStrength);
-						}
-					});
-					singleClient.timeSlot++;
-					singleClient.credit -= parameter.beta;
-					if (singleClient.credit < 0) {
-						singleClient.credit = 0;
-					}
-				});
-				proxyArray.push(element.proxy);
-				element.client.forEach(client2 => {
-					clientArray.push(client2);
-				});
-			});
-			clientArray.sort((a, b) => {
-				return Math.random() > 0.5 ? -1 : 1;
-			});
-			let evenly = Math.round(clientArray.length / proxyArray.length);
-			let clientCount = 0;
-			proxyArray.forEach(proxy => {
-				let tempClient = [];
-				for (let i = 0; i < evenly; i++) {
-					if (clientCount < clientArray.length) {
-						tempClient.push(clientArray[clientCount]);
-						client2Proxy.set(clientArray[clientCount].ID, proxy);
-						clientCount++;
-					} else break;
-				}
-				proxy2Clients.set(proxy, tempClient);
-			});
-			// for those remaining clients
-			while (clientCount < clientArray.length) {
-				proxy2Clients.get(proxyArray[proxyArray.length - 1]).push(clientArray[clientCount]);
-				client2Proxy.set(clientArray[clientCount].ID, proxyArray[proxyArray.length - 1]);
-				clientCount++;
-			}
-			// old proxy->(clientID, newProxy)
-			let resultMap = new Map();
-			before.forEach(element => {
-				let tempClient = [];
-				element.client.forEach(client => {
-					let newProxy = client2Proxy.get(client.ID);
-					tempClient.push({ clientID: client.ID, newProxy: newProxy, block: client.block });
-				});
-				resultMap.set(element.proxy, tempClient);
-			});
+// 	// attackVector = JSON.parse(attackVector)
+// 	// console.log(typeof(attackVector))
+// 	return new Promise(async (resolve, reject) => {
+// 		let clientArray = [];
+// 		let proxyArray = [];
+// 		// proxy->new clients[]
+// 		let proxy2Clients = new Map();
+// 		// client->proxy
+// 		let client2Proxy = new Map();
+// 		try {
+// 			let before = await Mappings.find({});
+// 			before.forEach(element => {
+// 				// if(element.proxy === proxyIP){
+// 				//   element.client.forEach(singleClient => {
+// 				//     addCredit(singleClient, attackFrequency, attackStrength)
+// 				//   })
+// 				// }
+// 				element.client.forEach(singleClient => {
+// 					attackVector.forEach(vector => {
+// 						if (vector.proxy === element.proxy) {
+// 							addCredit(singleClient, vector.attackFrequency, vector.attackStrength);
+// 						}
+// 					});
+// 					singleClient.timeSlot++;
+// 					singleClient.credit -= parameter.beta;
+// 					if (singleClient.credit < 0) {
+// 						singleClient.credit = 0;
+// 					}
+// 				});
+// 				proxyArray.push(element.proxy);
+// 				element.client.forEach(client2 => {
+// 					clientArray.push(client2);
+// 				});
+// 			});
+// 			clientArray.sort((a, b) => {
+// 				return Math.random() > 0.5 ? -1 : 1;
+// 			});
+// 			let evenly = Math.round(clientArray.length / proxyArray.length);
+// 			let clientCount = 0;
+// 			proxyArray.forEach(proxy => {
+// 				let tempClient = [];
+// 				for (let i = 0; i < evenly; i++) {
+// 					if (clientCount < clientArray.length) {
+// 						tempClient.push(clientArray[clientCount]);
+// 						client2Proxy.set(clientArray[clientCount].ID, proxy);
+// 						clientCount++;
+// 					} else break;
+// 				}
+// 				proxy2Clients.set(proxy, tempClient);
+// 			});
+// 			// for those remaining clients
+// 			while (clientCount < clientArray.length) {
+// 				proxy2Clients.get(proxyArray[proxyArray.length - 1]).push(clientArray[clientCount]);
+// 				client2Proxy.set(clientArray[clientCount].ID, proxyArray[proxyArray.length - 1]);
+// 				clientCount++;
+// 			}
+// 			// old proxy->(clientID, newProxy)
+// 			let resultMap = new Map();
+// 			before.forEach(element => {
+// 				let tempClient = [];
+// 				element.client.forEach(client => {
+// 					let newProxy = client2Proxy.get(client.ID);
+// 					tempClient.push({ clientID: client.ID, newProxy: newProxy, block: client.block });
+// 				});
+// 				resultMap.set(element.proxy, tempClient);
+// 			});
 
-			resolve([before, proxy2Clients, resultMap, client2Proxy]);
-		} catch (err) {
-			console.error('redistributing error: ' + err);
-			reject(err);
-		}
-	});
-};
+// 			resolve([before, proxy2Clients, resultMap, client2Proxy]);
+// 		} catch (err) {
+// 			console.error('redistributing error: ' + err);
+// 			reject(err);
+// 		}
+// 	});
+// };
 
 /**
  * TODO(=====================Model 1=====================)
