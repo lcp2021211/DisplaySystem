@@ -6,7 +6,6 @@
 const http = require('http');
 const app = require('../app');
 const utils = require('../utils/utils');
-// const externalip = require('externalip');
 const config = require('../config/config');
 const debug = require('debug')('test:server');
 const websocketServer = require('websocket').server;
