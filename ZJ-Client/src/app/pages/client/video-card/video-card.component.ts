@@ -31,7 +31,8 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
   private isLive = true;
   private switchFlag = false;
 
-  private t: DOMHighResTimeStamp;
+  private t1: DOMHighResTimeStamp;
+  private t2: DOMHighResTimeStamp;
   private chunkCount = 0;
   private start = 0;
   private end = 0;
@@ -78,7 +79,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     // Initialize time record
-    this.t = performance.now();
+    this.t1 = performance.now();
     // Initialize data of chart
     this.service.initializeChartData(this.speed, this.delay);
 
@@ -134,7 +135,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
 
       // Push new data
       let now = new Date();
-      let interval = performance.now() - this.t;
+      let interval = performance.now() - this.t1;
       this.speed.push({
         name: now,
         value: [now, (1000 * chunkSize * this.chunkCount) / (1024 * interval)],
@@ -142,13 +143,14 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.delay.push({
         name: now,
-        value: [now, this.chunkCount === 0 ? 5000 : interval / this.chunkCount],
+        // value: [now, this.chunkCount === 0 ? 5000 : interval / this.chunkCount],
+        value: [now, this.t2]
       });
 
       // Empty chunckCount
       this.chunkCount = 0;
       // Update time record
-      this.t = performance.now();
+      this.t1 = performance.now();
 
       // Post current speed and delay to server
       this.service.postInformation(
@@ -258,7 +260,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
         },
         yAxis: {
           min: 0,
-          max: 1500,
+          max: 500,
           type: 'value',
           axisLine: {
             lineStyle: {
@@ -284,7 +286,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
         visualMap: {
           show: false,
           min: 0,
-          max: 1500,
+          max: 500,
           inRange: {
             color: ['#5bc49f', '#feb64d', '#ff7c7c'],
           },
@@ -344,6 +346,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
           this.end = Math.min(this.start + chunkSize, this.fileSize);
           // Downloading
           while (this.start < this.fileSize && !this.block && this.isLive) {
+            let temp = performance.now();
             await this.service
               .getVideoByRange(this.proxy, this.start, this.end)
               .then((res: any) => {
@@ -355,6 +358,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.start = this.end;
                 this.end = Math.min(this.start + chunkSize, this.fileSize);
               });
+            this.t2 = temp - performance.now();
           }
 
           this.sourceBuffer.addEventListener('updateend', () => {

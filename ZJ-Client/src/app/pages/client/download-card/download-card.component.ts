@@ -24,7 +24,8 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
   private isLive = true;
   private switchFlag = false;
 
-  private t: DOMHighResTimeStamp;
+  private t1: DOMHighResTimeStamp;
+  private t2: DOMHighResTimeStamp;
   private chunkCount = 0;
   private start = 0;
   private end = 0;
@@ -72,7 +73,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     // Initialize time record
-    this.t = performance.now();
+    this.t1 = performance.now();
     // Initialize data of chart
     this.service.initializeChartData(this.speed, this.delay);
 
@@ -123,7 +124,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
 
       // Push new data
       let now = new Date();
-      let interval = performance.now() - this.t;
+      let interval = performance.now() - this.t1;
       this.speed.push({
         name: now,
         value: [now, (1000 * chunkSize * this.chunkCount) / (1024 * interval)],
@@ -131,7 +132,8 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
 
       this.delay.push({
         name: now,
-        value: [now, this.chunkCount === 0 ? 5000 : interval / this.chunkCount],
+        value: [now, this.t2],
+        // value: [now, this.chunkCount === 0 ? 5000 : interval / this.chunkCount],
       });
 
       // Compute download progress
@@ -139,7 +141,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
       // Empty chunckCount
       this.chunkCount = 0;
       // Update time record
-      this.t = performance.now();
+      this.t1 = performance.now();
 
       // Post current speed and delay to server
       this.service.postInformation(
@@ -156,7 +158,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
             if (this.block) {
               this.ws.close();
             }
-          } 
+          }
           console.log(res);
         },
         (err: HttpErrorResponse) => {
@@ -248,7 +250,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
         },
         yAxis: {
           min: 0,
-          max: 1500,
+          max: 500,
           type: 'value',
           axisLine: {
             lineStyle: {
@@ -274,7 +276,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
         visualMap: {
           show: false,
           min: 0,
-          max: 1500,
+          max: 500,
           inRange: {
             color: ['#5bc49f', '#feb64d', '#ff7c7c'],
           },
@@ -324,6 +326,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
         this.end = Math.min(this.start + chunkSize, this.fileSize);
         // Downloading
         while (this.start < this.fileSize && !this.block && this.isLive) {
+          let temp = performance.now();
           await this.service
             .getVideoByRange(this.proxy, this.start, this.end)
             .then(() => {
@@ -333,6 +336,8 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
               this.start = this.end;
               this.end = Math.min(this.start + chunkSize, this.fileSize);
             });
+          this.t2 = performance.now() - temp;
+          console.log(this.t2);
         }
         // Download completion
         // If current client isn't block and card component isn't destroyed
@@ -346,7 +351,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
         console.error(err);
         setTimeout(() => {
           this.download();
-        }, 3 * sec);
+        }, sec);
       });
   }
 

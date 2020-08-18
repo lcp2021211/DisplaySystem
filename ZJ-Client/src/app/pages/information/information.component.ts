@@ -22,9 +22,12 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
       credit: {
         title: '评分',
       },
-      attackStrength: {
-        title: '攻击强度',
+      timeSlot: {
+        title: '时隙',
       },
+      // attackStrength: {
+      //   title: '攻击强度',
+      // },
       // attackFrequency: {
       //   title: '攻击频率',
       // },
@@ -76,149 +79,13 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.timer = setInterval(() => {
-      this.service.getAttackInfo().subscribe((res: any) => {
-        if (res.code === 200) {
-          let now = new Date();
-          this.attackFrequency.shift();
-          this.attackFrequency.push({
-            name: now,
-            value: [now, res.attackFrequency],
-          });
-          this.attackStrength.shift();
-          this.attackStrength.push({
-            name: now,
-            value: [now, res.attackStrength],
-          });
+      this.loadAttackInfo();
+    }, sec);
 
-          this.attackOption = {
-            grid: {
-              left: '10%',
-              right: '10%',
-              top: '10%',
-              bottom: '10%',
-            },
-            legend: {
-              icon: 'roundRect',
-              itemGap: 100,
-              textStyle: {
-                color: this.config.variables.fgText,
-                fontSize: 15,
-              },
-            },
-            tooltip: {
-              trigger: 'axis',
-            },
-            xAxis: {
-              type: 'time',
-              axisLabel: {
-                textStyle: {
-                  color: this.config.variables.fgText,
-                  fontSize: 15,
-                },
-              },
-              splitLine: {
-                show: false,
-              },
-              axisLine: {
-                lineStyle: {
-                  color: '#cccccc',
-                },
-              },
-            },
-            yAxis: [
-              {
-                type: 'value',
-                axisLine: {
-                  lineStyle: {
-                    color: '#cccccc',
-                  },
-                },
-                axisLabel: {
-                  textStyle: {
-                    color: this.config.variables.fgText,
-                    fontSize: 15,
-                  },
-                },
-              },
-              {
-                type: 'value',
-                axisLine: {
-                  lineStyle: {
-                    color: '#cccccc',
-                  },
-                },
-                axisLabel: {
-                  textStyle: {
-                    color: this.config.variables.fgText,
-                    fontSize: 15,
-                  },
-                },
-              },
-            ],
-            series: [
-              {
-                name: '攻击频率',
-                data: this.attackFrequency,
-                type: 'line',
-                color: '#2BE69B',
-                smooth: true,
-                symbol: 'none',
-                yAxisIndex: 0,
-                areaStyle: {
-                  color: {
-                    type: 'linear',
-                    x0: 0,
-                    y0: 0,
-                    x2: 0,
-                    y2: 1,
-                    colorStops: [
-                      {
-                        offset: 0,
-                        color: 'rgba(43,230,155,1.0)',
-                      },
-                      {
-                        offset: 1,
-                        color: 'rgba(43,230,155,0.0)',
-                      },
-                    ],
-                  },
-                },
-              },
-              {
-                name: '攻击强度',
-                data: this.attackStrength,
-                type: 'line',
-                color: '#598BFF',
-                smooth: true,
-                symbol: 'none',
-                yAxisIndex: 1,
-                areaStyle: {
-                  color: {
-                    type: 'linear',
-                    x0: 0,
-                    y0: 0,
-                    x2: 0,
-                    y2: 1,
-                    colorStops: [
-                      {
-                        offset: 0,
-                        color: 'rgba(89,139,255,1.0)',
-                      },
-                      {
-                        offset: 1,
-                        color: 'rgba(89,139,255,0.0)',
-                      },
-                    ],
-                  },
-                },
-              },
-            ],
-          };
-        }
-      });
-    }, 3 * sec);
+    this.loadSpyInfo();
+    this.loadSpyPercent();
+    this.loadTopologyInfo();
 
-    this.getData();
   }
 
   /**
@@ -231,27 +98,154 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
     this.renderToplogy();
   }
 
-  /**
-   * Load realtime information(speed, delay) from server
-   */
-  private getData() {
-    this.service.getTopologyInfo().subscribe(
-      (res: any) => {
-        if (res.code === 200) {
-          // this.proxyToClients = res.data;
-          this.clients = res.data;
-          this.clients.forEach((e: any) => {
-            this.proxies.add(e.proxy);
-          });
+  private loadAttackInfo() {
+    this.service.getAttackInfo().subscribe((res: any) => {
+      if (res.code === 200) {
+        let now = new Date();
+        this.attackFrequency.shift();
+        this.attackFrequency.push({
+          name: now,
+          value: [now, res.attackFrequency],
+        });
+        this.attackStrength.shift();
+        this.attackStrength.push({
+          name: now,
+          value: [now, res.attackStrength],
+        });
 
-          this.renderToplogy();
-        }
-      },
-      (err: HttpErrorResponse) => {
-        console.error(err);
+        this.renderAttackInfo();
       }
-    );
+    });
+  }
 
+  private renderAttackInfo() {
+    this.attackOption = {
+      grid: {
+        left: '10%',
+        right: '10%',
+        top: '10%',
+        bottom: '10%',
+      },
+      legend: {
+        icon: 'roundRect',
+        itemGap: 100,
+        textStyle: {
+          color: this.config.variables.fgText,
+          fontSize: 15,
+        },
+      },
+      tooltip: {
+        trigger: 'axis',
+      },
+      xAxis: {
+        type: 'time',
+        axisLabel: {
+          textStyle: {
+            color: this.config.variables.fgText,
+            fontSize: 15,
+          },
+        },
+        splitLine: {
+          show: false,
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#cccccc',
+          },
+        },
+      },
+      yAxis: [
+        {
+          type: 'value',
+          axisLine: {
+            lineStyle: {
+              color: '#cccccc',
+            },
+          },
+          axisLabel: {
+            textStyle: {
+              color: this.config.variables.fgText,
+              fontSize: 15,
+            },
+          },
+        },
+        {
+          type: 'value',
+          axisLine: {
+            lineStyle: {
+              color: '#cccccc',
+            },
+          },
+          axisLabel: {
+            textStyle: {
+              color: this.config.variables.fgText,
+              fontSize: 15,
+            },
+          },
+        },
+      ],
+      series: [
+        {
+          name: '攻击频率',
+          data: this.attackFrequency,
+          type: 'line',
+          color: '#2BE69B',
+          smooth: true,
+          symbol: 'none',
+          yAxisIndex: 0,
+          areaStyle: {
+            color: {
+              type: 'linear',
+              x0: 0,
+              y0: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                {
+                  offset: 0,
+                  color: 'rgba(43,230,155,1.0)',
+                },
+                {
+                  offset: 1,
+                  color: 'rgba(43,230,155,0.0)',
+                },
+              ],
+            },
+          },
+        },
+        {
+          name: '攻击强度',
+          data: this.attackStrength,
+          type: 'line',
+          color: '#598BFF',
+          smooth: true,
+          symbol: 'none',
+          yAxisIndex: 1,
+          areaStyle: {
+            color: {
+              type: 'linear',
+              x0: 0,
+              y0: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                {
+                  offset: 0,
+                  color: 'rgba(89,139,255,1.0)',
+                },
+                {
+                  offset: 1,
+                  color: 'rgba(89,139,255,0.0)',
+                },
+              ],
+            },
+          },
+        },
+      ],
+    };
+  }
+
+  private loadSpyInfo() {
     this.service.getSpyInfo().subscribe(
       (res: any) => {
         if (res.code === 200) {
@@ -262,7 +256,9 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
         console.error(err);
       }
     );
+  }
 
+  private loadSpyPercent() {
     this.service.getSpyPercent().subscribe(
       (res: any) => {
         if (res.code === 200) {
@@ -342,8 +338,31 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
+
   /**
-   * Load the topology.
+   * @private
+   * @memberof InformationComponent
+   */
+  private loadTopologyInfo() {
+    this.service.getTopologyInfo().subscribe(
+      (res: any) => {
+        if (res.code === 200) {
+          // this.proxyToClients = res.data;
+          this.clients = res.data;
+          this.clients.forEach((e: any) => {
+            this.proxies.add(e.proxy);
+          });
+
+          this.renderToplogy();
+        }
+      },
+      (err: HttpErrorResponse) => {
+        console.error(err);
+      }
+    );
+  }
+
+  /**
    * @private
    * @memberof InformationComponent
    */
