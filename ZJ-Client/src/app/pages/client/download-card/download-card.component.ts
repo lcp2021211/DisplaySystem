@@ -153,7 +153,6 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
         (res: any) => {
           if (res.code === 200) {
             this.block = res.block;
-            console.log(this.block);
             if (this.block) {
               this.ws.close();
             }
@@ -161,7 +160,6 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
           console.log(res);
         },
         (err: HttpErrorResponse) => {
-          console.log('fuck');
           console.error(err);
         }
       );

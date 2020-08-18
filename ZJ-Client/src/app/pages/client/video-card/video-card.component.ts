@@ -108,7 +108,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     // Manually destroy timer, webSocket and mediaSource
     clearInterval(this.timer1);
-    clearTimeout(this.timer2);
+    clearInterval(this.timer2);
     this.isLive = false;
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       this.ws.close();
@@ -301,7 +301,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
    * @memberof DownloadCardComponent
    */
   private autoSwitch() {
-    this.timer2 = setTimeout(() => {
+    this.timer2 = setInterval(() => {
       if (!this.switchFlag && !this.block) {
         this.service.redistributeClient().subscribe(
           (res: any) => {
@@ -315,8 +315,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
         );
       }
       this.switchFlag = false;
-      this.autoSwitch();
-    }, 5 * sec);
+    }, 3 * sec);
   }
 
   /**
