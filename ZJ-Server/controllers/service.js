@@ -185,8 +185,10 @@ exports.getSpyInfo = async (req, res, next) => {
  */
 exports.getSpyPercent = async (req, res, next) => {
 	try {
-		let total = await ClientModel.find({ proxy: { $ne: 'null' } });
-		let spy = await ClientModel.find({ spy: true, proxy: { $ne: 'null' } });
+		// let total = await ClientModel.find({ proxy: { $ne: 'null' } });
+		// let spy = await ClientModel.find({ spy: true, proxy: { $ne: 'null' } });
+		let total = await ClientModel.find({});
+		let spy = await ClientModel.find({ spy: true });
 		if (total && spy) {
 			res.send({
 				code: 200,
@@ -321,7 +323,7 @@ exports.setClientNetworkInfo = async (req, res, next) => {
  */
 exports.getClientNetworkInfo = async (req, res, next) => {
 	try {
-		let doc = await ClientModel.find({ proxy: { $ne: 'null' } });
+		let doc = await ClientModel.find({});
 		if (doc) {
 			res.send({
 				code: 200,

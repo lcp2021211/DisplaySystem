@@ -25,28 +25,31 @@ exports.attacked = async (req, res, next) => {
 			attackVector = attackVector.replace(/\'/g, '"');
 			attackVector = JSON.parse(attackVector);
 		}
-		
-		attackVector.forEach(async (v) => {
-			await ClientModel.updateMany(
-				{ proxy: v.proxy, block: false },
-				{
-					$inc: {
-						attackFrequency: v.attackFrequency,
-						attackStrength: v.attackStrength,
-						credit: parameter.alpha * v.attackFrequency + parameter.gamma * v.attackStrength,
-					},
+
+		let clients = await ClientModel.find({});
+
+		clients.forEach(async (client) => {
+			for (let v of attackVector) {
+				if (client.block === false && client.proxy === v.proxy) {
+					client.attackStrength += v.attackStrength;
+					client.attackFrequency += v.attackFrequency;
+					client.credit += parameter.alpha * v.attackFrequency + parameter.gamma * v.attackStrength;
+					if (client.timeSlot >= parameter.waitSlot && client.credit >= parameter.maxCredit) {
+						client.block = true;
+					}
+					break;
 				}
-			);
+			}
+			if (client.block === false) {
+				client.credit = Math.max(client.credit - parameter.beta, 0);
+				client.timeSlot++;
+			}
+			await client.save();
 		});
 
-		await ClientModel.updateMany({ block: false }, { $inc: { credit: -parameter.beta } });
-		await ClientModel.updateMany({ credit: { $lt: 0 } }, { credit: 0 });
-		await ClientModel.updateMany({ credit: { $gt: parameter.threhold } }, { block: true });
-
-		let clients = await ClientModel.find({ proxy: { $ne: 'null' } });
-		let proxies = [];
+		let proxise = [];
 		(await ProxyModel.find({})).forEach((e) => {
-			proxies.push(e.proxy);
+			proxise.push(e.proxy);
 		});
 
 		let client2Proxy = [];
@@ -54,7 +57,6 @@ exports.attacked = async (req, res, next) => {
 			client2Proxy.push([client.ID, proxies[Math.floor(Math.random() * proxies.length)]]);
 		});
 
-		console.log(client2Proxy);
 		service.informClient(client2Proxy);
 		res.send(errorCode.SUCCESS);
 	} catch (err) {
@@ -68,7 +70,6 @@ exports.attacked = async (req, res, next) => {
  */
 exports.distributeClient = async (req, res, next) => {
 	let clientID = global.ids++;
-	let proxy = 'null';
 
 	try {
 		// let doc = await ProxyModel.find({ $where: 'this.size < this.capacity' });
@@ -95,19 +96,18 @@ exports.distributeClient = async (req, res, next) => {
  * @param {*} next
  */
 exports.redistributeClient = async (req, res, next) => {
-	let proxy = 'null';
-
 	try {
 		// let doc = await ProxyModel.find({ $where: 'this.size < this.capacity' });
 		let doc = await ProxyModel.find({});
 		if (doc) {
-			proxy = doc[Math.floor(Math.random() * doc.length)].proxy;
+			let proxy = doc[Math.floor(Math.random() * doc.length)].proxy;
+			res.send({
+				code: 200,
+				proxy: proxy,
+			});
+		} else {
+			res.send(errorCode.FAILURE);
 		}
-		console.log(proxy);
-		res.send({
-			code: 200,
-			proxy: proxy,
-		});
 	} catch (err) {
 		console.error(err);
 		res.send(errorCode.FAILURE);
@@ -154,7 +154,7 @@ exports.clientOnline = async (req, res, next) => {
 exports.clientOffline = async (req, res, next) => {
 	let { clientID, proxy } = req.body;
 	try {
-		await ClientModel.updateOne({ ID: clientID }, { proxy: 'null' });
+		// await ClientModel.updateOne({ ID: clientID }, { proxy: 'null' });
 		// await ProxyModel.updateOne({ proxy: proxy }, { $inc: { size: -1 } });
 		// console.log('ClientOffline Success: ' + clientID + ', ' + proxy);
 		res.send(errorCode.SUCCESS);
@@ -170,7 +170,7 @@ exports.clientOffline = async (req, res, next) => {
  */
 exports.shuffle = async (req, res, next) => {
 	try {
-		let clients = await ClientModel.find({ proxy: { $ne: 'null' } });
+		let clients = await ClientModel.find({});
 		let proxies = [];
 		(await ProxyModel.find({})).forEach((e) => {
 			proxies.push(e.proxy);
