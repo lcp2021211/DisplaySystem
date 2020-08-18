@@ -1,12 +1,5 @@
-const axios = require('axios');
-const proxies = require('../config/proxies');
+let fuck = { a: 1 };
 
-let requests = [];
-for (let proxy of proxies) {
-	requests.push(axios.get(`http://${proxy}/getSysInfo`));
+for (let key in fuck) {
+  console.log(key);
 }
-axios.all(requests).then(
-	axios.spread((...responses) => {
-		console.log(responses);
-	})
-);

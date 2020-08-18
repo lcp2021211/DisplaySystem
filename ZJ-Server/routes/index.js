@@ -10,6 +10,7 @@ router.get('/', function(req, res, next) {
 router.get('/distributeClient', client.distributeClient);
 router.get('/redistributeClient', client.redistributeClient);
 
+router.get('/getSpy', service.getSpy);
 router.get('/getSpyInfo', service.getSpyInfo);
 // router.get('/getUserInfo', service.getUserInfo);
 router.get('/getProxyInfo', service.getProxyInfo);

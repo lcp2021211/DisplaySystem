@@ -128,7 +128,32 @@ exports.informClient = (client2Proxy) => {
 // 		}
 // 	});
 // };
+exports.getSpy = async (req, res, next) => {
+	try {
+		let doc = await ClientModel.find({ spy: true });
+		if (doc) {
+			let data = {};
+			doc.forEach((e) => {
+				if (e.proxy in data) {
+					data[e.proxy].push(e);
+				} else {
+					data[e.proxy] = [e];
+				}
+			});
+			let result = [];
+			for (let key in data) {
+				result.push({ proxy: key, client: data[key] });
+			}
 
+			res.send(JSON.stringify(result));
+		} else {
+			res.send(errorCode.FAILURE);
+		}
+	} catch (err) {
+		console.error(err);
+		res.send(errorCode.FAILURE);
+	}
+};
 /**
  * TODO(=====================Model 2=====================)
  * Written for autonomous attackers to obtain spies.
@@ -138,7 +163,7 @@ exports.informClient = (client2Proxy) => {
  */
 exports.getSpyInfo = async (req, res, next) => {
 	try {
-		let doc = await ClientModel.find({ spy: true, proxy: { $ne: 'null' } });
+		let doc = await ClientModel.find({ spy: true });
 		if (doc) {
 			res.send({
 				code: 200,

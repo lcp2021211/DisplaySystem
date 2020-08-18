@@ -1,0 +1,710 @@
+[
+  {
+      "_id": "5f3b3accdbfec93a2c9f0773",
+      "proxy": "39.101.189.179:3000",
+      "client": [
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07a8",
+              "ID": "38",
+              "pass": "123456",
+              "credit": 415,
+              "block": false,
+              "attackFrequency": 22,
+              "attackStrength": 93,
+              "accessTime": "2020-08-18T02:21:21.677Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07ad",
+              "ID": "43",
+              "pass": "123456",
+              "credit": 990,
+              "block": false,
+              "attackFrequency": 27,
+              "attackStrength": 136,
+              "accessTime": "2020-08-18T02:21:21.693Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f079f",
+              "ID": "27",
+              "pass": "123456",
+              "credit": 1220,
+              "block": false,
+              "attackFrequency": 32,
+              "attackStrength": 157,
+              "accessTime": "2020-08-18T02:21:21.572Z",
+              "timeSlot": 69,
+              "spy": true
+          }
+      ]
+  },
+  {
+      "_id": "5f3b3accdbfec93a2c9f0774",
+      "proxy": "39.99.146.88:3000",
+      "client": [
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07a9",
+              "ID": "39",
+              "pass": "123456",
+              "credit": 7980,
+              "block": false,
+              "attackFrequency": 96,
+              "attackStrength": 417,
+              "accessTime": "2020-08-18T02:21:21.685Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f079e",
+              "ID": "26",
+              "pass": "123456",
+              "credit": 7050,
+              "block": false,
+              "attackFrequency": 86,
+              "attackStrength": 383,
+              "accessTime": "2020-08-18T02:21:21.556Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f078a",
+              "ID": "4",
+              "pass": "123456",
+              "credit": 0,
+              "block": false,
+              "attackFrequency": 25,
+              "attackStrength": 83,
+              "accessTime": "2020-08-18T02:21:21.429Z",
+              "timeSlot": 69,
+              "spy": true
+          }
+      ]
+  },
+  {
+      "_id": "5f3b3accdbfec93a2c9f0775",
+      "proxy": "39.101.162.79:3000",
+      "client": [
+          {
+              "_id": "5f3b3b21dbfec93a2c9f0787",
+              "ID": "14",
+              "pass": "123456",
+              "credit": 1735,
+              "block": false,
+              "attackFrequency": 39,
+              "attackStrength": 174,
+              "accessTime": "2020-08-18T02:21:21.420Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07b3",
+              "ID": "48",
+              "pass": "123456",
+              "credit": 525,
+              "block": false,
+              "attackFrequency": 33,
+              "attackStrength": 119,
+              "accessTime": "2020-08-18T02:21:21.759Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f078d",
+              "ID": "3",
+              "pass": "123456",
+              "credit": 1735,
+              "block": false,
+              "attackFrequency": 35,
+              "attackStrength": 179,
+              "accessTime": "2020-08-18T02:21:21.437Z",
+              "timeSlot": 69,
+              "spy": true
+          }
+      ]
+  },
+  {
+      "_id": "5f3b3accdbfec93a2c9f0776",
+      "proxy": "39.103.135.6:3000",
+      "client": [
+          {
+              "_id": "5f3b3b21dbfec93a2c9f078b",
+              "ID": "6",
+              "pass": "123456",
+              "credit": 1105,
+              "block": false,
+              "attackFrequency": 28,
+              "attackStrength": 129,
+              "accessTime": "2020-08-18T02:21:21.429Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f0786",
+              "ID": "8",
+              "pass": "123456",
+              "credit": 495,
+              "block": false,
+              "attackFrequency": 35,
+              "attackStrength": 115,
+              "accessTime": "2020-08-18T02:21:21.420Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f0795",
+              "ID": "20",
+              "pass": "123456",
+              "credit": 6450,
+              "block": false,
+              "attackFrequency": 86,
+              "attackStrength": 353,
+              "accessTime": "2020-08-18T02:21:21.512Z",
+              "timeSlot": 69,
+              "spy": true
+          }
+      ]
+  },
+  {
+      "_id": "5f3b3accdbfec93a2c9f0777",
+      "proxy": "39.103.133.247:3000",
+      "client": [
+          {
+              "_id": "5f3b3b21dbfec93a2c9f0798",
+              "ID": "21",
+              "pass": "123456",
+              "credit": 6860,
+              "block": false,
+              "attackFrequency": 88,
+              "attackStrength": 371,
+              "accessTime": "2020-08-18T02:21:21.527Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f0796",
+              "ID": "11",
+              "pass": "123456",
+              "credit": 1880,
+              "block": false,
+              "attackFrequency": 40,
+              "attackStrength": 180,
+              "accessTime": "2020-08-18T02:21:21.512Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07a5",
+              "ID": "36",
+              "pass": "123456",
+              "credit": 270,
+              "block": false,
+              "attackFrequency": 26,
+              "attackStrength": 117,
+              "accessTime": "2020-08-18T02:21:21.629Z",
+              "timeSlot": 69,
+              "spy": true
+          }
+      ]
+  },
+  {
+      "_id": "5f3b3accdbfec93a2c9f0779",
+      "proxy": "39.103.135.191:3000",
+      "client": [
+          {
+              "_id": "5f3b3b21dbfec93a2c9f079d",
+              "ID": "28",
+              "pass": "123456",
+              "credit": 870,
+              "block": false,
+              "attackFrequency": 26,
+              "attackStrength": 131,
+              "accessTime": "2020-08-18T02:21:21.543Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f078c",
+              "ID": "12",
+              "pass": "123456",
+              "credit": 580,
+              "block": false,
+              "attackFrequency": 32,
+              "attackStrength": 121,
+              "accessTime": "2020-08-18T02:21:21.435Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07b2",
+              "ID": "44",
+              "pass": "123456",
+              "credit": 200,
+              "block": false,
+              "attackFrequency": 28,
+              "attackStrength": 109,
+              "accessTime": "2020-08-18T02:21:21.749Z",
+              "timeSlot": 69,
+              "spy": true
+          }
+      ]
+  },
+  {
+      "_id": "5f3b3accdbfec93a2c9f077a",
+      "proxy": "39.103.133.150:3000",
+      "client": [
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07a0",
+              "ID": "29",
+              "pass": "123456",
+              "credit": 6510,
+              "block": false,
+              "attackFrequency": 86,
+              "attackStrength": 356,
+              "accessTime": "2020-08-18T02:21:21.574Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07a6",
+              "ID": "41",
+              "pass": "123456",
+              "credit": 560,
+              "block": false,
+              "attackFrequency": 26,
+              "attackStrength": 101,
+              "accessTime": "2020-08-18T02:21:21.671Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f079c",
+              "ID": "18",
+              "pass": "123456",
+              "credit": 10,
+              "block": false,
+              "attackFrequency": 23,
+              "attackStrength": 99,
+              "accessTime": "2020-08-18T02:21:21.540Z",
+              "timeSlot": 69,
+              "spy": true
+          }
+      ]
+  },
+  {
+      "_id": "5f3b3accdbfec93a2c9f077b",
+      "proxy": "39.103.134.147:3000",
+      "client": [
+          {
+              "_id": "5f3b3b21dbfec93a2c9f0784",
+              "ID": "1",
+              "pass": "123456",
+              "credit": 235,
+              "block": false,
+              "attackFrequency": 27,
+              "attackStrength": 112,
+              "accessTime": "2020-08-18T02:21:21.214Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07b4",
+              "ID": "45",
+              "pass": "123456",
+              "credit": 5975,
+              "block": false,
+              "attackFrequency": 83,
+              "attackStrength": 333,
+              "accessTime": "2020-08-18T02:21:21.776Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f0788",
+              "ID": "7",
+              "pass": "123456",
+              "credit": 1540,
+              "block": false,
+              "attackFrequency": 36,
+              "attackStrength": 170,
+              "accessTime": "2020-08-18T02:21:21.420Z",
+              "timeSlot": 69,
+              "spy": true
+          }
+      ]
+  },
+  {
+      "_id": "5f3b3accdbfec93a2c9f0778",
+      "proxy": "39.103.136.28:3000",
+      "client": [
+          {
+              "_id": "5f3b3b21dbfec93a2c9f079b",
+              "ID": "25",
+              "pass": "123456",
+              "credit": 160,
+              "block": false,
+              "attackFrequency": 28,
+              "attackStrength": 109,
+              "accessTime": "2020-08-18T02:21:21.539Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f0785",
+              "ID": "2",
+              "pass": "123456",
+              "credit": 590,
+              "block": false,
+              "attackFrequency": 30,
+              "attackStrength": 128,
+              "accessTime": "2020-08-18T02:21:21.398Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f0790",
+              "ID": "17",
+              "pass": "123456",
+              "credit": 5480,
+              "block": false,
+              "attackFrequency": 76,
+              "attackStrength": 317,
+              "accessTime": "2020-08-18T02:21:21.493Z",
+              "timeSlot": 69,
+              "spy": true
+          }
+      ]
+  },
+  {
+      "_id": "5f3b3accdbfec93a2c9f077c",
+      "proxy": "39.103.136.122:3000",
+      "client": [
+          {
+              "_id": "5f3b3b21dbfec93a2c9f0789",
+              "ID": "10",
+              "pass": "123456",
+              "credit": 340,
+              "block": false,
+              "attackFrequency": 27,
+              "attackStrength": 102,
+              "accessTime": "2020-08-18T02:21:21.424Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f078f",
+              "ID": "5",
+              "pass": "123456",
+              "credit": 545,
+              "block": false,
+              "attackFrequency": 29,
+              "attackStrength": 120,
+              "accessTime": "2020-08-18T02:21:21.443Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f0797",
+              "ID": "22",
+              "pass": "123456",
+              "credit": 950,
+              "block": false,
+              "attackFrequency": 27,
+              "attackStrength": 144,
+              "accessTime": "2020-08-18T02:21:21.519Z",
+              "timeSlot": 69,
+              "spy": true
+          }
+      ]
+  },
+  {
+      "_id": "5f3b3accdbfec93a2c9f077d",
+      "proxy": "39.99.229.184:3000",
+      "client": [
+          {
+              "_id": "5f3b4120dbfec93a2c9f29b1",
+              "ID": "45",
+              "pass": "123456",
+              "credit": 0,
+              "block": false,
+              "attackFrequency": 3,
+              "attackStrength": 12,
+              "accessTime": "2020-08-18T02:46:56.380Z",
+              "timeSlot": 11,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07aa",
+              "ID": "34",
+              "pass": "123456",
+              "credit": 6020,
+              "block": false,
+              "attackFrequency": 80,
+              "attackStrength": 339,
+              "accessTime": "2020-08-18T02:21:21.685Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07ab",
+              "ID": "35",
+              "pass": "123456",
+              "credit": 1545,
+              "block": false,
+              "attackFrequency": 37,
+              "attackStrength": 167,
+              "accessTime": "2020-08-18T02:21:21.690Z",
+              "timeSlot": 69,
+              "spy": true
+          }
+      ]
+  },
+  {
+      "_id": "5f3b3accdbfec93a2c9f077e",
+      "proxy": "39.103.136.27:3000",
+      "client": [
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07b0",
+              "ID": "40",
+              "pass": "123456",
+              "credit": 1580,
+              "block": false,
+              "attackFrequency": 40,
+              "attackStrength": 153,
+              "accessTime": "2020-08-18T02:21:21.742Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07af",
+              "ID": "42",
+              "pass": "123456",
+              "credit": 820,
+              "block": false,
+              "attackFrequency": 33,
+              "attackStrength": 119,
+              "accessTime": "2020-08-18T02:21:21.701Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07ac",
+              "ID": "47",
+              "pass": "123456",
+              "credit": 1010,
+              "block": false,
+              "attackFrequency": 30,
+              "attackStrength": 125,
+              "accessTime": "2020-08-18T02:21:21.690Z",
+              "timeSlot": 69,
+              "spy": true
+          }
+      ]
+  },
+  {
+      "_id": "5f3b3accdbfec93a2c9f0780",
+      "proxy": "39.103.134.249:3000",
+      "client": [
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07ae",
+              "ID": "49",
+              "pass": "123456",
+              "credit": 1560,
+              "block": false,
+              "attackFrequency": 44,
+              "attackStrength": 161,
+              "accessTime": "2020-08-18T02:21:21.699Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f0794",
+              "ID": "15",
+              "pass": "123456",
+              "credit": 650,
+              "block": false,
+              "attackFrequency": 34,
+              "attackStrength": 122,
+              "accessTime": "2020-08-18T02:21:21.507Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f079a",
+              "ID": "23",
+              "pass": "123456",
+              "credit": 7005,
+              "block": false,
+              "attackFrequency": 85,
+              "attackStrength": 382,
+              "accessTime": "2020-08-18T02:21:21.529Z",
+              "timeSlot": 69,
+              "spy": true
+          }
+      ]
+  },
+  {
+      "_id": "5f3b3accdbfec93a2c9f0782",
+      "proxy": "121.89.206.82:3000",
+      "client": [
+          {
+              "_id": "5f3b3b21dbfec93a2c9f0792",
+              "ID": "9",
+              "pass": "123456",
+              "credit": 1375,
+              "block": false,
+              "attackFrequency": 32,
+              "attackStrength": 156,
+              "accessTime": "2020-08-18T02:21:21.496Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f0783",
+              "ID": "0",
+              "pass": "123456",
+              "credit": 3125,
+              "block": false,
+              "attackFrequency": 53,
+              "attackStrength": 226,
+              "accessTime": "2020-08-18T02:21:21.209Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07a4",
+              "ID": "32",
+              "pass": "123456",
+              "credit": 1865,
+              "block": false,
+              "attackFrequency": 34,
+              "attackStrength": 162,
+              "accessTime": "2020-08-18T02:21:21.625Z",
+              "timeSlot": 69,
+              "spy": true
+          }
+      ]
+  },
+  {
+      "_id": "5f3b3accdbfec93a2c9f0781",
+      "proxy": "39.103.129.104:3000",
+      "client": [
+          {
+              "_id": "5f3b3b21dbfec93a2c9f078e",
+              "ID": "16",
+              "pass": "123456",
+              "credit": 2165,
+              "block": false,
+              "attackFrequency": 44,
+              "attackStrength": 174,
+              "accessTime": "2020-08-18T02:21:21.442Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f0791",
+              "ID": "19",
+              "pass": "123456",
+              "credit": 2475,
+              "block": false,
+              "attackFrequency": 43,
+              "attackStrength": 198,
+              "accessTime": "2020-08-18T02:21:21.493Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07a2",
+              "ID": "33",
+              "pass": "123456",
+              "credit": 585,
+              "block": false,
+              "attackFrequency": 29,
+              "attackStrength": 127,
+              "accessTime": "2020-08-18T02:21:21.586Z",
+              "timeSlot": 69,
+              "spy": true
+          }
+      ]
+  },
+  {
+      "_id": "5f3b3accdbfec93a2c9f077f",
+      "proxy": "121.89.192.5:3000",
+      "client": [
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07b1",
+              "ID": "46",
+              "pass": "123456",
+              "credit": 6890,
+              "block": false,
+              "attackFrequency": 86,
+              "attackStrength": 375,
+              "accessTime": "2020-08-18T02:21:21.744Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f0793",
+              "ID": "13",
+              "pass": "123456",
+              "credit": 3165,
+              "block": false,
+              "attackFrequency": 49,
+              "attackStrength": 233,
+              "accessTime": "2020-08-18T02:21:21.502Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07a1",
+              "ID": "30",
+              "pass": "123456",
+              "credit": 580,
+              "block": false,
+              "attackFrequency": 32,
+              "attackStrength": 125,
+              "accessTime": "2020-08-18T02:21:21.575Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07a7",
+              "ID": "37",
+              "pass": "123456",
+              "credit": 1130,
+              "block": false,
+              "attackFrequency": 34,
+              "attackStrength": 148,
+              "accessTime": "2020-08-18T02:21:21.672Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f07a3",
+              "ID": "31",
+              "pass": "123456",
+              "credit": 1350,
+              "block": false,
+              "attackFrequency": 33,
+              "attackStrength": 135,
+              "accessTime": "2020-08-18T02:21:21.624Z",
+              "timeSlot": 69,
+              "spy": true
+          },
+          {
+              "_id": "5f3b3b21dbfec93a2c9f0799",
+              "ID": "24",
+              "pass": "123456",
+              "credit": 905,
+              "block": false,
+              "attackFrequency": 33,
+              "attackStrength": 136,
+              "accessTime": "2020-08-18T02:21:21.527Z",
+              "timeSlot": 69,
+              "spy": true
+          }
+      ]
+  }
+]
