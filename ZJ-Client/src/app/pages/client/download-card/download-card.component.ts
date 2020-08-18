@@ -102,7 +102,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     // Manually destroy timer and webSocket
     clearInterval(this.timer1);
-    clearTimeout(this.timer2);
+    clearInterval(this.timer2);
     this.isLive = false;
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       this.ws.close();
@@ -157,9 +157,11 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
             if (this.block) {
               this.ws.close();
             }
-          }
+          } 
+          console.log(res);
         },
         (err: HttpErrorResponse) => {
+          console.log('fuck');
           console.error(err);
         }
       );
@@ -169,7 +171,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
           left: '10%',
           right: '10%',
           top: '10%',
-          bottom: '10%'
+          bottom: '10%',
         },
         tooltip: {
           trigger: 'axis',
@@ -224,7 +226,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
           left: '10%',
           right: '10%',
           top: '10%',
-          bottom: '10%'
+          bottom: '10%',
         },
         tooltip: {
           trigger: 'axis',
@@ -282,7 +284,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
       };
     }, sec);
 
-    // this.autoSwitch();
+    this.autoSwitch();
   }
 
   /**
@@ -291,7 +293,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
    * @memberof DownloadCardComponent
    */
   private autoSwitch() {
-    this.timer2 = setTimeout(() => {
+    this.timer2 = setInterval(() => {
       if (!this.switchFlag && !this.block) {
         this.service.redistributeClient().subscribe(
           (res: any) => {
@@ -305,8 +307,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
         );
       }
       this.switchFlag = false;
-      this.autoSwitch();
-    }, 5 * sec);
+    }, 3 * sec);
   }
 
   /**
@@ -362,7 +363,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
       'echo-protocol'
     );
     this.ws.onopen = () => {
-      console.log(`Websocket open: ${this.clientID}-->${this.ws.url}`);
+      // console.log(`Websocket open: ${this.clientID}-->${this.ws.url}`);
     };
     this.ws.onmessage = (event) => {
       let message = JSON.parse(event.data);

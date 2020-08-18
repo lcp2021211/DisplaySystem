@@ -92,7 +92,7 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     );
 
-    this.service.getSpy().subscribe(
+    this.service.getSpyInfo().subscribe(
       (res: any) => {
         if (res.code === 200) {
           this.spies = res.data;

@@ -14,8 +14,8 @@ export class InformationService {
    * @returns {Observable<any>}
    * @memberof InformationService
    */
-  getSpy(): Observable<any> {
-    return this.http.get(`${serverIP}/getSpy`);
+  getSpyInfo(): Observable<any> {
+    return this.http.get(`${serverIP}/getSpyInfo`);
   }
 
   /**

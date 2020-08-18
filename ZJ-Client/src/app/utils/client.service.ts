@@ -28,7 +28,7 @@ export class ClientService {
    * @memberof ClientService
    */
   redistributeClient(): Observable<any> {
-    return this.http.post(`${serverIP}/redistributeClient`, {});
+    return this.http.get(`${serverIP}/redistributeClient`, {});
   }
 
   /**
