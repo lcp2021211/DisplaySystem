@@ -1,5 +1,12 @@
 <div style="display: flex; flex-wrap: wrap; width: 100%; margin: 0px;">
-  <nb-card style="width: calc(70% - 20px);">
+  <nb-card style="width: calc(30% - 20px);">
+    <nb-card-body>
+      <h5>攻击信息</h5>
+      <div echarts [options]="attackOption" class="echarts"></div>
+    </nb-card-body>
+  </nb-card>
+  
+  <nb-card style="width: calc(40% - 20px);">
     <nb-card-body>
       <h5>间谍信息</h5>
       <ng2-smart-table [settings]='settings' [source]='spies'></ng2-smart-table>

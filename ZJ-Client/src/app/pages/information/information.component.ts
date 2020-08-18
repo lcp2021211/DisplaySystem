@@ -3,6 +3,7 @@ import { EChartOption } from 'echarts';
 import { InformationService } from 'src/app/utils/information.service';
 import { NbThemeService } from '@nebular/theme';
 import { HttpErrorResponse } from '@angular/common/http';
+import { sec } from 'src/app/utils/global';
 
 @Component({
   selector: 'app-information',
@@ -22,10 +23,16 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
         title: '评分',
       },
       attackStrength: {
-        title: '攻击烈度',
+        title: '攻击强度',
       },
-      attackFrequency: {
-        title: '攻击频率',
+      // attackFrequency: {
+      //   title: '攻击频率',
+      // },
+      block: {
+        title: '封禁',
+        valuePrepareFunction: (value) => {
+          return value ? '是' : '否';
+        },
       },
     },
     actions: false,
@@ -33,8 +40,9 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
   };
   spies: any;
   spyPercent: number = 0;
-  topologyOption: EChartOption;
+  attackOption: EChartOption;
   percentOption: EChartOption;
+  topologyOption: EChartOption;
 
   private config: any;
   private selected = 'all';
@@ -43,20 +51,172 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
   private clients: any;
   // private proxyToClients: any;
 
+  private attackStrength = [];
+  private attackFrequency = [];
+
+  private timer: any;
+
   constructor(
     private service: InformationService,
     private theme: NbThemeService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.service.initializeChartData(this.attackFrequency, this.attackStrength);
+  }
 
-  ngOnDestroy() {}
+  ngOnDestroy() {
+    clearInterval(this.timer);
+  }
 
   ngAfterViewInit() {
     // Subscribe theme changed
     this.theme.getJsTheme().subscribe((config) => {
       this.config = config;
     });
+
+    this.timer = setInterval(() => {
+      this.service.getAttackInfo().subscribe((res: any) => {
+        if (res.code === 200) {
+          let now = new Date();
+          this.attackFrequency.shift();
+          this.attackFrequency.push({
+            name: now,
+            value: [now, res.attackFrequency],
+          });
+          this.attackStrength.shift();
+          this.attackStrength.push({
+            name: now,
+            value: [now, res.attackStrength],
+          });
+
+          this.attackOption = {
+            grid: {
+              left: '10%',
+              right: '10%',
+              top: '10%',
+              bottom: '10%',
+            },
+            legend: {
+              icon: 'roundRect',
+              itemGap: 100,
+              textStyle: {
+                color: this.config.variables.fgText,
+                fontSize: 15,
+              },
+            },
+            tooltip: {
+              trigger: 'axis',
+            },
+            xAxis: {
+              type: 'time',
+              axisLabel: {
+                textStyle: {
+                  color: this.config.variables.fgText,
+                  fontSize: 15,
+                },
+              },
+              splitLine: {
+                show: false,
+              },
+              axisLine: {
+                lineStyle: {
+                  color: '#cccccc',
+                },
+              },
+            },
+            yAxis: [
+              {
+                type: 'value',
+                axisLine: {
+                  lineStyle: {
+                    color: '#cccccc',
+                  },
+                },
+                axisLabel: {
+                  textStyle: {
+                    color: this.config.variables.fgText,
+                    fontSize: 15,
+                  },
+                },
+              },
+              {
+                type: 'value',
+                axisLine: {
+                  lineStyle: {
+                    color: '#cccccc',
+                  },
+                },
+                axisLabel: {
+                  textStyle: {
+                    color: this.config.variables.fgText,
+                    fontSize: 15,
+                  },
+                },
+              },
+            ],
+            series: [
+              {
+                name: '攻击频率',
+                data: this.attackFrequency,
+                type: 'line',
+                color: '#2BE69B',
+                smooth: true,
+                symbol: 'none',
+                yAxisIndex: 0,
+                areaStyle: {
+                  color: {
+                    type: 'linear',
+                    x0: 0,
+                    y0: 0,
+                    x2: 0,
+                    y2: 1,
+                    colorStops: [
+                      {
+                        offset: 0,
+                        color: 'rgba(43,230,155,1.0)',
+                      },
+                      {
+                        offset: 1,
+                        color: 'rgba(43,230,155,0.0)',
+                      },
+                    ],
+                  },
+                },
+              },
+              {
+                name: '攻击强度',
+                data: this.attackStrength,
+                type: 'line',
+                color: '#598BFF',
+                smooth: true,
+                symbol: 'none',
+                yAxisIndex: 1,
+                areaStyle: {
+                  color: {
+                    type: 'linear',
+                    x0: 0,
+                    y0: 0,
+                    x2: 0,
+                    y2: 1,
+                    colorStops: [
+                      {
+                        offset: 0,
+                        color: 'rgba(89,139,255,1.0)',
+                      },
+                      {
+                        offset: 1,
+                        color: 'rgba(89,139,255,0.0)',
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          };
+        }
+      });
+    }, 3 * sec);
 
     this.getData();
   }
