@@ -358,7 +358,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.start = this.end;
                 this.end = Math.min(this.start + chunkSize, this.fileSize);
               });
-            this.t2 = temp - performance.now();
+            this.t2 = performance.now() - temp;
           }
 
           this.sourceBuffer.addEventListener('updateend', () => {
