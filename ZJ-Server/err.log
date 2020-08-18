@@ -1,108 +1,34 @@
-(node:18551) DeprecationWarning: current URL string parser is deprecated, and will be removed in a future version. To use the new parser, pass option { useNewUrlParser: true } to MongoClient.connect.
-(node:18551) DeprecationWarning: collection.ensureIndex is deprecated. Use createIndexes instead.
-(node:18551) DeprecationWarning: collection.remove is deprecated. Use deleteOne, deleteMany, or bulkWrite instead.
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
-ReferenceError: proxies is not defined
-    at clients.forEach (/root/ZJ-Server/controllers/client.js:57:34)
-    at Array.forEach (<anonymous>)
-    at exports.attacked (/root/ZJ-Server/controllers/client.js:56:11)
-    at process._tickCallback (internal/process/next_tick.js:68:7)
+TypeError: attackVector is not iterable
+    at exports.attacked (/root/ZJ-Server/controllers/client.js:31:17)
+    at Layer.handle [as handle_request] (/root/ZJ-Server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/root/ZJ-Server/node_modules/express/lib/router/route.js:137:13)
+    at Route.dispatch (/root/ZJ-Server/node_modules/express/lib/router/route.js:112:3)
+    at Layer.handle [as handle_request] (/root/ZJ-Server/node_modules/express/lib/router/layer.js:95:5)
+    at /root/ZJ-Server/node_modules/express/lib/router/index.js:281:22
+    at Function.process_params (/root/ZJ-Server/node_modules/express/lib/router/index.js:335:12)
+    at next (/root/ZJ-Server/node_modules/express/lib/router/index.js:275:10)
+    at Function.handle (/root/ZJ-Server/node_modules/express/lib/router/index.js:174:3)
+    at router (/root/ZJ-Server/node_modules/express/lib/router/index.js:47:12)
+    at Layer.handle [as handle_request] (/root/ZJ-Server/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/root/ZJ-Server/node_modules/express/lib/router/index.js:317:13)
+    at /root/ZJ-Server/node_modules/express/lib/router/index.js:284:7
+    at Function.process_params (/root/ZJ-Server/node_modules/express/lib/router/index.js:335:12)
+    at next (/root/ZJ-Server/node_modules/express/lib/router/index.js:275:10)
+    at serveStatic (/root/ZJ-Server/node_modules/serve-static/index.js:75:16)
+TypeError: attackVector is not iterable
+    at exports.attacked (/root/ZJ-Server/controllers/client.js:31:17)
+    at Layer.handle [as handle_request] (/root/ZJ-Server/node_modules/express/lib/router/layer.js:95:5)
+    at next (/root/ZJ-Server/node_modules/express/lib/router/route.js:137:13)
+    at Route.dispatch (/root/ZJ-Server/node_modules/express/lib/router/route.js:112:3)
+    at Layer.handle [as handle_request] (/root/ZJ-Server/node_modules/express/lib/router/layer.js:95:5)
+    at /root/ZJ-Server/node_modules/express/lib/router/index.js:281:22
+    at Function.process_params (/root/ZJ-Server/node_modules/express/lib/router/index.js:335:12)
+    at next (/root/ZJ-Server/node_modules/express/lib/router/index.js:275:10)
+    at Function.handle (/root/ZJ-Server/node_modules/express/lib/router/index.js:174:3)
+    at router (/root/ZJ-Server/node_modules/express/lib/router/index.js:47:12)
+    at Layer.handle [as handle_request] (/root/ZJ-Server/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/root/ZJ-Server/node_modules/express/lib/router/index.js:317:13)
+    at /root/ZJ-Server/node_modules/express/lib/router/index.js:284:7
+    at Function.process_params (/root/ZJ-Server/node_modules/express/lib/router/index.js:335:12)
+    at next (/root/ZJ-Server/node_modules/express/lib/router/index.js:275:10)
+    at serveStatic (/root/ZJ-Server/node_modules/serve-static/index.js:75:16)

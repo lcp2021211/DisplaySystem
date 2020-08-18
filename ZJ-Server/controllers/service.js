@@ -13,6 +13,7 @@ const crypto = require('crypto');
 const si = require('systeminformation');
 const Users = require('../models/users');
 const proxies = require('../config/proxies');
+const ProxyModel = require('../models/proxy');
 const ClientModel = require('../models/client');
 const errorCode = require('../config/errorCode');
 
@@ -332,6 +333,31 @@ exports.getClientNetworkInfo = async (req, res, next) => {
 		} else {
 			res.send(errorCode.FAILURE);
 		}
+	} catch (err) {
+		console.error(err);
+		res.send(errorCode.FAILURE);
+	}
+};
+
+/**
+ * TODO(=====================Model 2=====================)
+ */
+exports.getAttackInfo = async (req, res, next) => {
+	try {
+		let attackStrength = [];
+		let attackFrequency = [];
+		(await ProxyModel.find({})).forEach((e) => {
+			attackStrength.push(e.attackStrength);
+			attackFrequency.push(e.attackFrequency);
+		});
+
+		let doc = await ClientModel.findOne({});
+
+		res.send({
+			code: 200,
+			attackStrength: attackStrength.reduce((a, b) => a + b) / doc.timeSlot,
+			attackFrequency: attackFrequency.reduce((a, b) => a + b) / doc.timeSlot,
+		});
 	} catch (err) {
 		console.error(err);
 		res.send(errorCode.FAILURE);

@@ -1,5 +1,7 @@
-let fuck = { a: 1 };
+const si = require('systeminformation');
 
-for (let key in fuck) {
-  console.log(key);
-}
+setInterval(() => {
+	si.cpuTemperature().then((data) => {
+		console.log(data);
+	});
+}, 1000);

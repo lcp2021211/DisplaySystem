@@ -26,6 +26,15 @@ exports.attacked = async (req, res, next) => {
 			attackVector = JSON.parse(attackVector);
 		}
 
+		console.log(attackVector);
+
+		for (let v of attackVector) {
+			await ProxyModel.findOneAndUpdate(
+				{ proxy: v.proxy },
+				{ $inc: { attackFrequency: v.attackFrequency, attackStrength: v.attackStrength } }
+			);
+		}
+
 		let clients = await ClientModel.find({});
 
 		clients.forEach(async (client) => {
@@ -47,9 +56,9 @@ exports.attacked = async (req, res, next) => {
 			await client.save();
 		});
 
-		let proxise = [];
+		let proxies = [];
 		(await ProxyModel.find({})).forEach((e) => {
-			proxise.push(e.proxy);
+			proxies.push(e.proxy);
 		});
 
 		let client2Proxy = [];
@@ -178,7 +187,7 @@ exports.shuffle = async (req, res, next) => {
 
 		let client2Proxy = [];
 		clients.forEach((client) => {
-			client2Proxy.push[(client.ID, proxies[Math.floor(Math.random() * proxies.length)])];
+			client2Proxy.push([client.ID, proxies[Math.floor(Math.random() * proxies.length)]]);
 		});
 		// (await ProxyModel.find({})).forEach(e => {
 		// 	proxies[e.proxy] = { size: 0, capacity: e.capacity, level: e.level };

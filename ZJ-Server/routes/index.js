@@ -16,6 +16,7 @@ router.get('/getSpyInfo', service.getSpyInfo);
 router.get('/getProxyInfo', service.getProxyInfo);
 router.get('/getServerInfo', service.getServerInfo);
 router.get('/getSpyPercent', service.getSpyPercent);
+router.get('/getAttackInfo', service.getAttackInfo);
 router.get('/getClientNetworkInfo', service.getClientNetworkInfo);
 
 
