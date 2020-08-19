@@ -6,7 +6,19 @@ const path = require('path');
 const si = require('systeminformation');
 const EventEmitter = require('events').EventEmitter;
 
-
+exports.getImage = (req, res, next) => {
+	res.writeHead(200, { 'Content-Type': 'image/png' });
+	let file = path.join(__dirname, '../public/images/10M.png');
+	let rs = fs.createReadStream(file);
+	let resData = [];
+	rs.on('data', function (chunk) {
+		resData.push(chunk);
+	});
+	rs.on('end', function () {
+		res.write(Buffer.concat(resData));
+		res.end();
+	});
+};
 /**
  *
  * Read mp4 from local, return in stream
@@ -25,10 +37,10 @@ exports.readMp4 = (req, res, next) => {
 	rs.on('open', () => {
 		console.log('file opened');
 	});
-	rs.on('data', chunk => {
+	rs.on('data', (chunk) => {
 		console.log(chunk);
 	});
-	rs.on('end', function() {
+	rs.on('end', function () {
 		res.end();
 		let emitter = new EventEmitter();
 		emitter.emit('open', rs);
@@ -59,13 +71,13 @@ exports.rangeMp4 = (req, res, next) => {
 			'Content-Range': `bytes ${start}-${end}/${fileSize}`,
 			'Accept-Ranges': 'bytes',
 			'Content-Length': chunksize,
-			'Content-Type': 'video/mp4'
+			'Content-Type': 'video/mp4',
 		};
 		res.writeHead(206, head);
 		mp4.pipe(res);
 	} else {
 		res.send({
-			fileSize: fileSize
+			fileSize: fileSize,
 		});
 	}
 };
@@ -91,13 +103,13 @@ exports.getWebmVideo = (req, res, next) => {
 			'Content-Range': `bytes ${start}-${end}/${fileSize}`,
 			'Accept-Ranges': 'bytes',
 			'Content-Length': chunksize,
-			'Content-Type': 'video/webm'
+			'Content-Type': 'video/webm',
 		};
 		res.writeHead(206, head);
 		mp4.pipe(res);
 	} else {
 		res.send({
-			fileSize: fileSize
+			fileSize: fileSize,
 		});
 	}
 };
@@ -114,7 +126,7 @@ exports.reconnect = (req, res, next) => {
 	global.ws.forEach((conn, id) => {
 		let message = JSON.stringify({
 			type: 'switch',
-			content: client2Proxy.get(id)
+			content: client2Proxy.get(id),
 		});
 		console.log(message);
 		conn.sendUTF(message);
@@ -123,7 +135,7 @@ exports.reconnect = (req, res, next) => {
 	global.ws = new Map();
 	res.send({
 		code: 200,
-		message: 'sent all active users'
+		message: 'sent all active users',
 	});
 };
 
@@ -144,7 +156,7 @@ exports.detectAttack = (req, res, next) => {
 		global.attackStrength += attackStrength;
 		res.render('test');
 	}
-}
+};
 
 /**
  * The client request in 1s interval to get system information
