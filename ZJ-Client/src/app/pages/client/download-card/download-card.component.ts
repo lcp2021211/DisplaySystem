@@ -351,7 +351,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
         console.error(err);
         setTimeout(() => {
           this.download();
-        }, sec);
+        }, 3 * sec);
       });
   }
 

@@ -55,7 +55,7 @@ export class ServerComponent implements OnInit, OnDestroy, AfterViewInit {
         .catch((err: HttpErrorResponse) => {
           console.error(err);
         });
-    }, 3 * sec);
+    }, sec);
   }
 
   private renderChart() {

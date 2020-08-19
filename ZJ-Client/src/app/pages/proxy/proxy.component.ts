@@ -44,6 +44,6 @@ export class ProxyComponent implements OnInit, AfterViewInit, OnDestroy {
         .catch((err: HttpErrorResponse) => {
           console.error(err);
         });
-    }, 3 * sec);
+    }, sec);
   }
 }
