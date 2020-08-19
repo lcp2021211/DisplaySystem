@@ -29,7 +29,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
   private timer2: any;
   private config: any;
   private isLive = true;
-  private switchFlag = false;
+  // private switchFlag = false;
 
   private t1: DOMHighResTimeStamp;
   private t2: DOMHighResTimeStamp;
@@ -54,7 +54,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
       // Update proxy
       this._proxy = val;
       // Update switchFlag and switchCount
-      this.switchFlag = true;
+      // this.switchFlag = true;
       this.switchCount += 1;
       // Close websocket
       if (this.ws && this.ws.readyState === WebSocket.OPEN) {
@@ -304,7 +304,8 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private autoSwitch() {
     this.timer2 = setInterval(() => {
-      if (!this.switchFlag && !this.block) {
+      // if (!this.switchFlag && !this.block) {
+      if (!this.block) {
         this.service.redistributeClient().subscribe(
           (res: any) => {
             if (res.code === 200) {
@@ -316,7 +317,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         );
       }
-      this.switchFlag = false;
+      // this.switchFlag = false;
     }, 3 * sec);
   }
 

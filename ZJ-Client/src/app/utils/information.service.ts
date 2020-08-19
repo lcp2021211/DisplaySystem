@@ -47,25 +47,17 @@ export class InformationService {
 
     /**
    * Initialize array of speed and delay
-   * @param {any[]} attackFrequency
    * @param {any[]} attackStrength
    * @memberof InformationService
    */
-  initializeChartData(attackFrequency: any[], attackStrength: any[]) {
+  initializeChartData(attackStrength: any[]) {
     const DATA_LENGTH = 50;
-    let now = new Date();
-    now = new Date(now.getTime() - DATA_LENGTH * 1000);
     for (let i = 0; i < DATA_LENGTH; ++i) {
       // Push zero into array
-      attackFrequency.push({
-        name: now,
-        value: [now, 0]
-      });
       attackStrength.push({
-        name: now,
-        value: [now, 0]
+        value: [i - DATA_LENGTH, 0]
       });
-      now = new Date(now.getTime() + 1000);
     }
+
   }
 }

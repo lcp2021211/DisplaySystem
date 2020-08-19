@@ -22,7 +22,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
   private timer2: any;
   private config: any;
   private isLive = true;
-  private switchFlag = false;
+  // private switchFlag = false;
 
   private t1: DOMHighResTimeStamp;
   private t2: DOMHighResTimeStamp;
@@ -48,7 +48,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
       // Update proxy
       this._proxy = val;
       // Update switchFlag and switchCount
-      this.switchFlag = true;
+      // this.switchFlag = true;
       this.switchCount += 1;
       // Close websocket
       if (this.ws && this.ws.readyState === WebSocket.OPEN) {
@@ -159,7 +159,6 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
               this.ws.close();
             }
           }
-          console.log(res);
         },
         (err: HttpErrorResponse) => {
           console.error(err);
@@ -294,7 +293,8 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   private autoSwitch() {
     this.timer2 = setInterval(() => {
-      if (!this.switchFlag && !this.block) {
+      // if (!this.switchFlag && !this.block) {
+      if (!this.block) {
         this.service.redistributeClient().subscribe(
           (res: any) => {
             if (res.code === 200) {
@@ -306,7 +306,7 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         );
       }
-      this.switchFlag = false;
+      // this.switchFlag = false;
     }, 3 * sec);
   }
 
@@ -337,7 +337,6 @@ export class DownloadCardComponent implements OnInit, OnDestroy, AfterViewInit {
               this.end = Math.min(this.start + chunkSize, this.fileSize);
             });
           this.t2 = performance.now() - temp;
-          console.log(this.t2);
         }
         // Download completion
         // If current client isn't block and card component isn't destroyed

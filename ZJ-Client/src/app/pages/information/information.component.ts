@@ -52,10 +52,8 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private proxies = new Set();
   private clients: any;
-  // private proxyToClients: any;
 
   private attackStrength = [];
-  private attackFrequency = [];
 
   private timer: any;
 
@@ -65,7 +63,7 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.service.initializeChartData(this.attackFrequency, this.attackStrength);
+    this.service.initializeChartData(this.attackStrength);
   }
 
   ngOnDestroy() {
@@ -85,7 +83,6 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadSpyInfo();
     this.loadSpyPercent();
     this.loadTopologyInfo();
-
   }
 
   /**
@@ -101,17 +98,15 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
   private loadAttackInfo() {
     this.service.getAttackInfo().subscribe((res: any) => {
       if (res.code === 200) {
-        let now = new Date();
-        this.attackFrequency.shift();
-        this.attackFrequency.push({
-          name: now,
-          value: [now, res.attackFrequency],
-        });
-        this.attackStrength.shift();
-        this.attackStrength.push({
-          name: now,
-          value: [now, res.attackStrength],
-        });
+        if (
+          this.attackStrength[this.attackStrength.length - 1].value[0] !==
+          res.timeSlot
+        ) {
+          this.attackStrength.shift();
+          this.attackStrength.push({
+            value: [res.timeSlot, res.attackStrength],
+          });
+        }
 
         this.renderAttackInfo();
       }
@@ -138,7 +133,7 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
         trigger: 'axis',
       },
       xAxis: {
-        type: 'time',
+        type: 'value',
         axisLabel: {
           textStyle: {
             color: this.config.variables.fgText,
@@ -154,73 +149,30 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
           },
         },
       },
-      yAxis: [
-        {
-          type: 'value',
-          axisLine: {
-            lineStyle: {
-              color: '#cccccc',
-            },
-          },
-          axisLabel: {
-            textStyle: {
-              color: this.config.variables.fgText,
-              fontSize: 15,
-            },
+      yAxis: {
+        min: 0,
+        max: 100,
+        type: 'value',
+        axisLine: {
+          lineStyle: {
+            color: '#cccccc',
           },
         },
-        {
-          type: 'value',
-          axisLine: {
-            lineStyle: {
-              color: '#cccccc',
-            },
-          },
-          axisLabel: {
-            textStyle: {
-              color: this.config.variables.fgText,
-              fontSize: 15,
-            },
+        axisLabel: {
+          textStyle: {
+            color: this.config.variables.fgText,
+            fontSize: 15,
           },
         },
-      ],
+      },
       series: [
-        {
-          name: '攻击频率',
-          data: this.attackFrequency,
-          type: 'line',
-          color: '#2BE69B',
-          smooth: true,
-          symbol: 'none',
-          yAxisIndex: 0,
-          areaStyle: {
-            color: {
-              type: 'linear',
-              x0: 0,
-              y0: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [
-                {
-                  offset: 0,
-                  color: 'rgba(43,230,155,1.0)',
-                },
-                {
-                  offset: 1,
-                  color: 'rgba(43,230,155,0.0)',
-                },
-              ],
-            },
-          },
-        },
         {
           name: '攻击强度',
           data: this.attackStrength,
           type: 'line',
-          color: '#598BFF',
+          color: '#FF708D',
           smooth: true,
           symbol: 'none',
-          yAxisIndex: 1,
           areaStyle: {
             color: {
               type: 'linear',
@@ -231,11 +183,11 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
               colorStops: [
                 {
                   offset: 0,
-                  color: 'rgba(89,139,255,1.0)',
+                  color: 'rgba(255,112,141,1.0)',
                 },
                 {
                   offset: 1,
-                  color: 'rgba(89,139,255,0.0)',
+                  color: 'rgba(255,112,141,0.0)',
                 },
               ],
             },
@@ -338,7 +290,6 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
-
   /**
    * @private
    * @memberof InformationComponent
@@ -347,7 +298,6 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
     this.service.getTopologyInfo().subscribe(
       (res: any) => {
         if (res.code === 200) {
-          // this.proxyToClients = res.data;
           this.clients = res.data;
           this.clients.forEach((e: any) => {
             this.proxies.add(e.proxy);
@@ -369,94 +319,6 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
   private renderToplogy() {
     let nodes = [];
     let links = [];
-
-    // TODO(=====================Model 1=====================)
-    // if (this.selected == 'all') {
-    //   // Add Server
-    //   nodes.push({
-    //     name: 'Server',
-    //     category: 'Server'
-    //   });
-
-    //   this.proxyToClients.forEach((e: any) => {
-    //     // Add proxy nodes
-    //     this.proxies.add(e.proxy);
-
-    //     nodes.push({
-    //       name: e.proxy,
-    //       category: 'Proxy'
-    //     });
-
-    //     links.push({
-    //       source: e.proxy,
-    //       target: 'Server'
-    //     });
-
-    //     // Add client nodes and links
-    //     e.client.forEach((client: any) => {
-    //       nodes.push({
-    //         name: `${client.ID}`,
-    //         category: 'Client'
-    //       });
-    //       links.push({
-    //         source: e.proxy,
-    //         target: `${client.ID}`,
-    //         lineStyle: {
-    //           width: this.getLineWidth(client.networkSpeed),
-    //           color: this.getLineColor(client.networkDelay)
-    //         },
-    //         emphasis: {
-    //           lineStyle: {
-    //             width: this.getLineWidth(client.networkSpeed, true),
-    //             color: this.getLineColor(client.networkDelay, true)
-    //           }
-    //         }
-    //       });
-    //     });
-    //   });
-
-    // } else {
-    //   // Add proxy node
-    //   nodes.push({
-    //     name: this.selected,
-    //     category: 'Proxy'
-    //   });
-
-    //   this.proxyToClients.forEach((e: any) => {
-    //     if (e.proxy === this.selected) {
-    //       // Add client nodes
-    //       e.client.forEach((client: any) => {
-    //         nodes.push({
-    //           name: `${client.ID}`,
-    //           category: 'Client'
-    //         });
-    //         links.push({
-    //           source: e.proxy,
-    //           target: `${client.ID}`,
-    //           lineStyle: {
-    //             width: this.getLineWidth(client.networkSpeed),
-    //             color: this.getLineColor(client.networkDelay)
-    //           },
-    //           label: {
-    //             show: true,
-    //             formatter: `Speed: ${client.networkSpeed.toFixed(2)}KB/s\nDelay: ${client.networkDelay.toFixed(2)}ms`,
-    //             fontSize: 20,
-    //             color: this.getLineColor(client.networkDelay)
-    //           },
-    //           emphasis: {
-    //             lineStyle: {
-    //               width: this.getLineWidth(client.networkSpeed, true),
-    //               color: this.getLineColor(client.networkDelay, true)
-    //             },
-    //             label: {
-    //               color: this.getLineColor(client.networkDelay, true)
-    //             }
-    //           }
-    //         })
-    //       })
-    //     }
-    //   });
-    // }
 
     // TODO(=====================Model 2=====================)
     if (this.selected === 'all') {
