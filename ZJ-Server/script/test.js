@@ -1,7 +1,6 @@
+const os = require('os');
 const si = require('systeminformation');
 
 setInterval(() => {
-	si.cpuTemperature().then((data) => {
-		console.log(data);
-	});
+	si.cpu().then((data) => console.log(data));
 }, 1000);

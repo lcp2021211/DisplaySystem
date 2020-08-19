@@ -14,6 +14,7 @@ const si = require('systeminformation');
 const Users = require('../models/users');
 const proxies = require('../config/proxies');
 const ProxyModel = require('../models/proxy');
+const parameter = require('../config/basics');
 const ClientModel = require('../models/client');
 const errorCode = require('../config/errorCode');
 
@@ -344,19 +345,29 @@ exports.getClientNetworkInfo = async (req, res, next) => {
  */
 exports.getAttackInfo = async (req, res, next) => {
 	try {
-		let attackStrength = [];
-		let attackFrequency = [];
+		let temp = [];
 		(await ProxyModel.find({})).forEach((e) => {
-			attackStrength.push(e.attackStrength);
-			attackFrequency.push(e.attackFrequency);
+			temp.push(e.attackStrength);
 		});
 
+		let timeSlot = 0;
+		let attackStrength = 0;
+
 		let doc = await ClientModel.findOne({});
+		if (doc) {
+			timeSlot = doc.timeSlot;
+			if (timeSlot) {
+				attackStrength += temp.reduce((a, b) => a + b) / timeSlot;
+			}
+		}
+		if (attackStrength) {
+			attackStrength += parameter.bias;
+		}
 
 		res.send({
 			code: 200,
-			attackStrength: attackStrength.reduce((a, b) => a + b) / doc.timeSlot,
-			attackFrequency: attackFrequency.reduce((a, b) => a + b) / doc.timeSlot,
+			timeSlot: timeSlot,
+			attackStrength: attackStrength,
 		});
 	} catch (err) {
 		console.error(err);
