@@ -29,10 +29,8 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
   private timer2: any;
   private config: any;
   private isLive = true;
-  // private switchFlag = false;
 
-  private t1: DOMHighResTimeStamp;
-  private t2: DOMHighResTimeStamp;
+  private t: DOMHighResTimeStamp;
   private chunkCount = 0;
   private start = 0;
   private end = 0;
@@ -53,8 +51,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this._proxy !== val) {
       // Update proxy
       this._proxy = val;
-      // Update switchFlag and switchCount
-      // this.switchFlag = true;
+      // Update switchCount
       this.switchCount += 1;
       // Close websocket
       if (this.ws && this.ws.readyState === WebSocket.OPEN) {
@@ -79,7 +76,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     // Initialize time record
-    this.t1 = performance.now();
+    this.t = performance.now();
     // Initialize data of chart
     this.service.initializeChartData(this.speed, this.delay);
 
@@ -135,7 +132,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
 
       // Push new data
       let now = new Date();
-      let interval = performance.now() - this.t1;
+      let interval = performance.now() - this.t;
       this.speed.push({
         name: now,
         value: [now, (1000 * chunkSize * this.chunkCount) / (1024 * interval)],
@@ -143,45 +140,20 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.delay.push({
         name: now,
-        // value: [now, this.chunkCount === 0 ? 5000 : interval / this.chunkCount],
-        value: [now, this.t2]
+        value: [now, this.chunkCount === 0 ? 5000 : interval / this.chunkCount],
       });
 
       // Empty chunckCount
       this.chunkCount = 0;
       // Update time record
-      this.t1 = performance.now();
-
-      // Post current speed and delay to server
-      this.service.postInformation(
-        this.clientID,
-        this.speed[this.speed.length - 1].value[1],
-        this.delay[this.delay.length - 1].value[1]
-      );
-
-      // Get whether block
-      this.service.getBlock(this.clientID).subscribe(
-        res => {
-          if (res.code === 200) {
-            this.block = res.block;
-            if (this.block) {
-              this.video.pause();
-              this.mediaSource.endOfStream();
-              this.ws.close();
-            }
-          }
-        },
-        err => {
-          console.error(err);
-        }
-      );
+      this.t = performance.now();
 
       this.speedOption = {
         grid: {
           left: '10%',
           right: '10%',
           top: '10%',
-          bottom: '10%'
+          bottom: '10%',
         },
         tooltip: {
           trigger: 'axis',
@@ -205,7 +177,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
         },
         yAxis: {
           min: 0,
-          max: 300,
+          max: 500,
           type: 'value',
           axisLine: {
             lineStyle: {
@@ -236,7 +208,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
           left: '10%',
           right: '10%',
           top: '10%',
-          bottom: '10%'
+          bottom: '10%',
         },
         tooltip: {
           trigger: 'axis',
@@ -260,7 +232,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
         },
         yAxis: {
           min: 0,
-          max: 500,
+          max: 800,
           type: 'value',
           axisLine: {
             lineStyle: {
@@ -286,7 +258,7 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
         visualMap: {
           show: false,
           min: 0,
-          max: 500,
+          max: 800,
           inRange: {
             color: ['#5bc49f', '#feb64d', '#ff7c7c'],
           },
@@ -304,7 +276,30 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
    */
   private autoSwitch() {
     this.timer2 = setInterval(() => {
-      // if (!this.switchFlag && !this.block) {
+      // Post current speed and delay to server
+      this.service.postInformation(
+        this.clientID,
+        this.speed[this.speed.length - 1].value[1],
+        this.delay[this.delay.length - 1].value[1]
+      );
+
+      // Get whether block
+      this.service.getBlock(this.clientID).subscribe(
+        (res) => {
+          if (res.code === 200) {
+            this.block = res.block;
+            if (this.block) {
+              this.video.pause();
+              this.mediaSource.endOfStream();
+              this.ws.close();
+            }
+          }
+        },
+        (err) => {
+          console.error(err);
+        }
+      );
+
       if (!this.block) {
         this.service.redistributeClient().subscribe(
           (res: any) => {
@@ -317,7 +312,6 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         );
       }
-      // this.switchFlag = false;
     }, 3 * sec);
   }
 
@@ -347,7 +341,6 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
           this.end = Math.min(this.start + chunkSize, this.fileSize);
           // Downloading
           while (this.start < this.fileSize && !this.block && this.isLive) {
-            let temp = performance.now();
             await this.service
               .getVideoByRange(this.proxy, this.start, this.end)
               .then((res: any) => {
@@ -358,8 +351,11 @@ export class VideoCardComponent implements OnInit, AfterViewInit, OnDestroy {
                 // Update range(start, end)
                 this.start = this.end;
                 this.end = Math.min(this.start + chunkSize, this.fileSize);
+              })
+              .catch((err: HttpErrorResponse) => {
+                console.error(`${this.clientID}: Download Failed, ${err}`);
+                setTimeout(() => {}, 3 * sec);
               });
-            this.t2 = performance.now() - temp;
           }
 
           this.sourceBuffer.addEventListener('updateend', () => {

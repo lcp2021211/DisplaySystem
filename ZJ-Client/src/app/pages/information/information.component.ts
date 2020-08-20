@@ -63,7 +63,6 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.service.initializeChartData(this.attackStrength);
   }
 
   ngOnDestroy() {
@@ -95,17 +94,25 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
     this.renderToplogy();
   }
 
+  private clearAttackInfo() {
+    this.attackStrength = [];
+  }
+
   private loadAttackInfo() {
     this.service.getAttackInfo().subscribe((res: any) => {
       if (res.code === 200) {
         if (
+          this.attackStrength.length === 0 ||
           this.attackStrength[this.attackStrength.length - 1].value[0] !==
-          res.timeSlot
+            res.timeSlot
         ) {
-          this.attackStrength.shift();
           this.attackStrength.push({
             value: [res.timeSlot, res.attackStrength],
           });
+        }
+
+        if (this.attackStrength.length >= 50) {
+          this.attackStrength.shift();
         }
 
         this.renderAttackInfo();
@@ -133,7 +140,10 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
         trigger: 'axis',
       },
       xAxis: {
+        min: 'dataMin',
+        max: 'dataMax',
         type: 'value',
+        scale: true,
         axisLabel: {
           textStyle: {
             color: this.config.variables.fgText,
@@ -171,7 +181,6 @@ export class InformationComponent implements OnInit, AfterViewInit, OnDestroy {
           data: this.attackStrength,
           type: 'line',
           color: '#FF708D',
-          smooth: true,
           symbol: 'none',
           areaStyle: {
             color: {

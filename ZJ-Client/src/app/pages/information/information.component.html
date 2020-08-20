@@ -1,7 +1,10 @@
 <div style="display: flex; flex-wrap: wrap; width: 100%; margin: 0px;">
   <nb-card style="width: calc(30% - 20px);">
     <nb-card-body>
-      <h5>攻击信息</h5>
+      <div style="width: 100%; margin: 0px; display: flex; justify-content: space-between;">
+        <h5>攻击信息</h5>
+        <button nbButton (click)="clearAttackInfo()">刷新</button>
+      </div>
       <div echarts [options]="attackOption" class="echarts"></div>
     </nb-card-body>
   </nb-card>
@@ -18,12 +21,15 @@
 
   <nb-card style="width: calc(30% - 20px);">
     <nb-card-body>
-      <h5>间谍比例</h5>
+      <div style="width: 100%; margin: 0px; display: flex; justify-content: space-between;">
+        <h5>间谍比例</h5>
+        <button nbButton (click)="loadSpyPercent()">刷新</button>
+      </div>
       <div echarts [options]="percentOption" class="echarts"></div>
     </nb-card-body>
   </nb-card>
 
-  <nb-card style="width: calc(100% - 20px); height: 1000px;">
+  <nb-card style="width: calc(100% - 20px); height: 2000px;">
     <nb-card-body>
       <div style="width: 100%; margin: 0px; display: flex; justify-content: space-between;">
         <h5>网络拓扑</h5>

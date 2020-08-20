@@ -45,19 +45,4 @@ export class InformationService {
     return this.http.get(`${serverIP}/getAttackInfo`);
   }
 
-    /**
-   * Initialize array of speed and delay
-   * @param {any[]} attackStrength
-   * @memberof InformationService
-   */
-  initializeChartData(attackStrength: any[]) {
-    const DATA_LENGTH = 50;
-    for (let i = 0; i < DATA_LENGTH; ++i) {
-      // Push zero into array
-      attackStrength.push({
-        value: [i - DATA_LENGTH, 0]
-      });
-    }
-
-  }
 }

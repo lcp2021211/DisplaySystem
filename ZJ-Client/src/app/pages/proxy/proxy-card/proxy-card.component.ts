@@ -510,7 +510,7 @@ export class ProxyCardComponent implements OnInit, OnDestroy, AfterViewInit {
           yAxis: [
             {
               min: 0,
-              max: 10,
+              max: 5,
               type: 'value',
               axisLine: {
                 lineStyle: {
