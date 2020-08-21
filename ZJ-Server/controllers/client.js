@@ -39,7 +39,7 @@ exports.attacked = async (req, res, next) => {
 
 		clients.forEach(async (client) => {
 			for (let v of attackVector) {
-				if (client.block === false && client.proxy === v.proxy) {
+				if (client.proxy === v.proxy) {
 					client.attackStrength += v.attackStrength;
 					client.attackFrequency += v.attackFrequency;
 					client.credit += parameter.alpha * v.attackFrequency + parameter.gamma * v.attackStrength;
@@ -49,9 +49,9 @@ exports.attacked = async (req, res, next) => {
 					break;
 				}
 			}
+			client.timeSlot++;
 			if (client.block === false) {
 				client.credit = Math.max(client.credit - parameter.beta, 0);
-				client.timeSlot++;
 			}
 			await client.save();
 		});
@@ -66,6 +66,7 @@ exports.attacked = async (req, res, next) => {
 			client2Proxy.push([client.ID, proxies[Math.floor(Math.random() * proxies.length)]]);
 		});
 
+		// TODO(不切换)
 		service.informClient(client2Proxy);
 		res.send(errorCode.SUCCESS);
 	} catch (err) {
@@ -254,7 +255,7 @@ exports.whetherBlock = async (req, res, next) => {
  */
 exports.initializeBeforeAttack = async (req, res, next) => {
 	try {
-		let doc = ClientModel.updateMany(
+		let doc = await ClientModel.updateMany(
 			{},
 			{ credit: 0, block: false, attackFrequency: 0, attackStrength: 0, timeSlot: 0 }
 		);

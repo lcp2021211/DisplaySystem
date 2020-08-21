@@ -17,6 +17,7 @@ const ProxyModel = require('../models/proxy');
 const parameter = require('../config/basics');
 const ClientModel = require('../models/client');
 const errorCode = require('../config/errorCode');
+const { ConsoleTransportOptions } = require('winston/lib/winston/transports');
 
 /**
  * inform all clients that's connected to old proxy
@@ -146,7 +147,7 @@ exports.getSpy = async (req, res, next) => {
 			for (let key in data) {
 				result.push({ proxy: key, client: data[key] });
 			}
-
+			console.log('Fuck');
 			res.send(JSON.stringify(result));
 		} else {
 			res.send(errorCode.FAILURE);

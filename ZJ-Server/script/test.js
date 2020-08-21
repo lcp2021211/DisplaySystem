@@ -1,6 +1,4 @@
-const os = require('os');
-const si = require('systeminformation');
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/Motag');
 
-setInterval(() => {
-	si.cpu().then((data) => console.log(data));
-}, 1000);
+const ClientModel = require('../models/client');

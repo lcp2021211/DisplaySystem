@@ -1,471 +1,0 @@
-Script started on 2019-06-21 17:26:06+0800
-[1m[7m#[27m[1m[0m                                                                                                                       ]2;root@iZ8vbc0j8dkzi7ywb61o10Z: ~/server2]1;~/server2[0m[27m[24m[J[01;32m➜  [36mserver2[00m [K[?1h=[?2004hllsl  ccd script[1m/[0m[0m [?1l>[?2004l
-]2;cd script]1;cd[1m[7m#[27m[1m[0m                                                                                                                       ]2;root@iZ8vbc0j8dkzi7ywb61o10Z: ~/server2/script]1;..erver2/script[0m[27m[24m[J[01;32m➜  [36mscript[00m [K[?1h=[?2004hlls[?1l>[?2004l
-]2;ls --color=tty]1;lsaction.js  addDomain.js  backThread.js  creditToZero.js  selectSpy.js  selectTest.js  testSysInfo.js
-[1m[7m#[27m[1m[0m                                                                                                                       ]2;root@iZ8vbc0j8dkzi7ywb61o10Z: ~/server2/script]1;..erver2/script[0m[27m[24m[J[01;32m➜  [36mscript[00m [K[?1h=[?2004hwwhate   w  nnpm sin   install systeminformation[?1l>[?2004l
-]2;npm install systeminformation]1;npm[?25l[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] / rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] - rollbackFailedOptional: [34;40mverb[0m [35mnpm-session[0m d2c28b1becfec867[0m[K[[90m..................[0m] | loadIdealTree:loadAllDepsIntoIdealTree: [7msill[0m [35minstall[0m loadIdealTree[0m[K[[7m   [27m[90m...............[0m] \ loadDep:negotiator: [7msill[0m [35mresolveWithNewModule[0m systeminformation@4.11.6 checking installable sta[0m[K[[7m      [27m[90m............[0m] \ loadExtraneous: [7msill[0m [35mresolveWithNewModule[0m systeminformation@4.11.6 checking installable status[0m[K[[7m      [27m[90m............[0m] | diffTrees: [7msill[0m [35minstall[0m generateActionsToTake[0m[K[[7m       [27m[90m...........[0m] | extract:systeminformation: [34;40mverb[0m [35mlock[0m using /root/.npm/_locks/staging-3ecf26284e4fe7eb.lock for[0m[K[[7m       [27m[90m...........[0m] | extract:systeminformation: [34;40mverb[0m [35mlock[0m using /root/.npm/_locks/staging-3ecf26284e4fe7eb.lock for[0m[K[[7m       [27m[90m...........[0m] | extract:systeminformation: [34;40mverb[0m [35mlock[0m using /root/.npm/_locks/staging-3ecf26284e4fe7eb.lock for[0m[K[[7m       [27m[90m...........[0m] | extract:systeminformation: [34;40mverb[0m [35mlock[0m using /root/.npm/_locks/staging-3ecf26284e4fe7eb.lock for[0m[K[[7m       [27m[90m...........[0m] | extract:systeminformation: [34;40mverb[0m [35mlock[0m using /root/.npm/_locks/staging-3ecf26284e4fe7eb.lock for[0m[K[[7m       [27m[90m...........[0m] | extract:systeminformation: [34;40mverb[0m [35mlock[0m using /root/.npm/_locks/staging-3ecf26284e4fe7eb.lock for[0m[K[[7m       [27m[90m...........[0m] | extract:systeminformation: [34;40mverb[0m [35mlock[0m using /root/.npm/_locks/staging-3ecf26284e4fe7eb.lock for[0m[K[[7m       [27m[90m...........[0m] \ extract:systeminformation: [34;40mverb[0m [35mlock[0m using /root/.npm/_locks/staging-3ecf26284e4fe7eb.lock for[0m[K[[7m       [27m[90m...........[0m] \ extract:systeminformation: [34;40mverb[0m [35mlock[0m using /root/.npm/_locks/staging-3ecf26284e4fe7eb.lock for[0m[K[[7m       [27m[90m...........[0m] \ extract:systeminformation: [34;40mverb[0m [35mlock[0m using /root/.npm/_locks/staging-3ecf26284e4fe7eb.lock for[0m[K[[7m       [27m[90m...........[0m] \ extract:systeminformation: [34;40mverb[0m [35mlock[0m using /root/.npm/_locks/staging-3ecf26284e4fe7eb.lock for[0m[K[[7m       [27m[90m...........[0m] \ extract:systeminformation: [34;40mverb[0m [35mlock[0m using /root/.npm/_locks/staging-3ecf26284e4fe7eb.lock for[0m[K[[7m       [27m[90m...........[0m] \ extract:systeminformation: [34;40mverb[0m [35mlock[0m using /root/.npm/_locks/staging-3ecf26284e4fe7eb.lock for[0m[K[[7m       [27m[90m...........[0m] \ extract:systeminformation: [34;40mverb[0m [35mlock[0m using /root/.npm/_locks/staging-3ecf26284e4fe7eb.lock for[0m[K[[7m       [27m[90m...........[0m] \ extract:systeminformation: [34;40mverb[0m [35mlock[0m using /root/.npm/_locks/staging-3ecf26284e4fe7eb.lock for[0m[K[[7m       [27m[90m...........[0m] \ extract:systeminformation: [34;40mverb[0m [35mlock[0m using /root/.npm/_locks/staging-3ecf26284e4fe7eb.lock for[0m[K[[7m       [27m[90m...........[0m] \ extract:systeminformation: [34;40mverb[0m [35mlock[0m using /root/.npm/_locks/staging-3ecf26284e4fe7eb.lock for[0m[K[[7m       [27m[90m...........[0m] \ extract:systeminformation: [34;40mverb[0m [35mlock[0m using /root/.npm/_locks/staging-3ecf26284e4fe7eb.lock for[0m[K[[7m       [27m[90m...........[0m] \ extract:systeminformation: [34;40mverb[0m [35mlock[0m using /root/.npm/_locks/staging-3ecf26284e4fe7eb.lock for[0m[K[[7m            [27m[90m......[0m] | postinstall: [32minfo[0m [35mlifecycle[0m systeminformation@4.11.6~postinstall: systeminformation@4.11.6[0m[K[K[?25h+ systeminformation@4.11.6
-added 1 package from 1 contributor and audited 220 packages in 3.52s
-found 1 [93mmoderate[0m severity vulnerability
-  run `npm audit fix` to fix them, or `npm audit` for details
-[1m[7m#[27m[1m[0m                                                                                                                       ]2;root@iZ8vbc0j8dkzi7ywb61o10Z: ~/server2/script]1;..erver2/script[0m[27m[24m[J[01;32m➜  [36mscript[00m [K[?1h=[?2004hnpm install systeminformation[29D                             [29Dnnode testSysInfo.js[1m [0m[0m [?1l>[?2004l
-]2;node testSysInfo.js]1;node{ manufacturer: [32m'Intel®'[39m,
-  brand: [32m'Xeon® Platinum 8163'[39m,
-  vendor: [32m'GenuineIntel'[39m,
-  family: [32m'6'[39m,
-  model: [32m'85'[39m,
-  stepping: [32m'4'[39m,
-  revision: [32m''[39m,
-  voltage: [32m''[39m,
-  speed: [32m'2.50'[39m,
-  speedmin: [32m''[39m,
-  speedmax: [32m''[39m,
-  cores: [33m2[39m,
-  physicalCores: [33m1[39m,
-  processors: [33m1[39m,
-  socket: [32m''[39m,
-  cache: { l1d: [33m32768[39m, l1i: [33m32768[39m, l2: [33m1048576[39m, l3: [33m34603008[39m } }
-[1m[7m#[27m[1m[0m                                                                                                                       ]2;root@iZ8vbc0j8dkzi7ywb61o10Z: ~/server2/script]1;..erver2/script[0m[27m[24m[J[01;32m➜  [36mscript[00m [K[?1h=[?2004hffwf  wwhate   w  node testSysInfo.js[?1l>[?2004l
-]2;node testSysInfo.js]1;node{ avgload: [33m0[39m,
-  currentload: [33m0.7773144035248967[39m,
-  currentload_user: [33m0.5146924599584225[39m,
-  currentload_system: [33m0.26262194356647417[39m,
-  currentload_nice: [33m0[39m,
-  currentload_idle: [33m99.2226855964751[39m,
-  currentload_irq: [33m0[39m,
-  raw_currentload: [33m232779700[39m,
-  raw_currentload_user: [33m154133200[39m,
-  raw_currentload_system: [33m78646500[39m,
-  raw_currentload_nice: [33m0[39m,
-  raw_currentload_idle: [33m29713880100[39m,
-  raw_currentload_irq: [33m0[39m,
-  cpus:
-   [ { load: [33m0.7742948105561462[39m,
-       load_user: [33m0.5133727577818803[39m,
-       load_system: [33m0.2609220527742659[39m,
-       load_nice: [33m0[39m,
-       load_idle: [33m99.22570518944386[39m,
-       load_irq: [33m0[39m,
-       raw_load: [33m115933800[39m,
-       raw_load_user: [33m76866400[39m,
-       raw_load_system: [33m39067400[39m,
-       raw_load_nice: [33m0[39m,
-       raw_load_idle: [33m14856890300[39m,
-       raw_load_irq: [33m0[39m },
-     { load: [33m0.7803337924964676[39m,
-       load_user: [33m0.5160120729787357[39m,
-       load_system: [33m0.26432171951773187[39m,
-       load_nice: [33m0[39m,
-       load_idle: [33m99.21966620750354[39m,
-       load_irq: [33m0[39m,
-       raw_load: [33m116845900[39m,
-       raw_load_user: [33m77266800[39m,
-       raw_load_system: [33m39579100[39m,
-       raw_load_nice: [33m0[39m,
-       raw_load_idle: [33m14856989800[39m,
-       raw_load_irq: [33m0[39m } ] }
-[1m[7m#[27m[1m[0m                                                                                                                       ]2;root@iZ8vbc0j8dkzi7ywb61o10Z: ~/server2/script]1;..erver2/script[0m[27m[24m[J[01;32m➜  [36mscript[00m [K[?1h=[?2004h[?1l>[?2004l
-[1m[7m#[27m[1m[0m                                                                                                                       ]2;root@iZ8vbc0j8dkzi7ywb61o10Z: ~/server2/script]1;..erver2/script[0m[27m[24m[J[01;32m➜  [36mscript[00m [K[?1h=[?2004hnnode testSysInfo.js[?1l>[?2004l
-]2;node testSysInfo.js]1;node[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698868218[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1871864877[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m-1[39m,
-    tx_sec: [33m-1[39m,
-    ms: [33m0[39m } ]
-[1m[7m#[27m[1m[0m                                                                                                                       ]2;root@iZ8vbc0j8dkzi7ywb61o10Z: ~/server2/script]1;..erver2/script[0m[27m[24m[J[01;32m➜  [36mscript[00m [K[?1h=[?2004hnode testSysInfo.js[?1l>[?2004l
-]2;node testSysInfo.js]1;node[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698882578[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1871953146[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m-1[39m,
-    tx_sec: [33m-1[39m,
-    ms: [33m0[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698882638[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1871953292[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m60.36217303822938[39m,
-    tx_sec: [33m146.88128772635815[39m,
-    ms: [33m994[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698882698[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1871953718[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m59.940059940059946[39m,
-    tx_sec: [33m425.5744255744256[39m,
-    ms: [33m1001[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698882818[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1871954634[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m119.88011988011989[39m,
-    tx_sec: [33m915.0849150849152[39m,
-    ms: [33m1001[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698882878[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1871959368[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m59.940059940059946[39m,
-    tx_sec: [33m4729.27072927073[39m,
-    ms: [33m1001[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698882998[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1871960284[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m119.76047904191617[39m,
-    tx_sec: [33m914.1716566866268[39m,
-    ms: [33m1002[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698883058[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1871964762[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m59.82053838484547[39m,
-    tx_sec: [33m4464.606181455633[39m,
-    ms: [33m1003[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698883118[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1871965220[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m60[39m,
-    tx_sec: [33m458[39m,
-    ms: [33m1000[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698883418[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1871970810[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m300[39m,
-    tx_sec: [33m5590[39m,
-    ms: [33m1000[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698883478[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1871970864[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m59.880239520958085[39m,
-    tx_sec: [33m53.89221556886228[39m,
-    ms: [33m1002[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698884483[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1871984705[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m1003.9960039960041[39m,
-    tx_sec: [33m13827.172827172828[39m,
-    ms: [33m1001[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698884663[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1871985217[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m179.64071856287424[39m,
-    tx_sec: [33m510.9780439121756[39m,
-    ms: [33m1002[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698884723[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1871985271[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m59.880239520958085[39m,
-    tx_sec: [33m53.89221556886228[39m,
-    ms: [33m1002[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698884903[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1871986187[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m180[39m,
-    tx_sec: [33m916[39m,
-    ms: [33m1000[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698884963[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1871990553[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m59.940059940059946[39m,
-    tx_sec: [33m4361.638361638362[39m,
-    ms: [33m1001[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698885263[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1871991491[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m300[39m,
-    tx_sec: [33m938[39m,
-    ms: [33m1000[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698885323[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1871996085[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m59.940059940059946[39m,
-    tx_sec: [33m4589.41058941059[39m,
-    ms: [33m1001[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698885383[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1871996511[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m59.940059940059946[39m,
-    tx_sec: [33m425.5744255744256[39m,
-    ms: [33m1001[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698885563[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1871997517[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m179.64071856287424[39m,
-    tx_sec: [33m1003.9920159680639[39m,
-    ms: [33m1002[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698885623[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1872002051[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m59.940059940059946[39m,
-    tx_sec: [33m4529.47052947053[39m,
-    ms: [33m1001[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698885743[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1872002967[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m119.88011988011989[39m,
-    tx_sec: [33m915.0849150849152[39m,
-    ms: [33m1001[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698885803[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1872007529[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m60[39m,
-    tx_sec: [33m4562[39m,
-    ms: [33m1000[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698885863[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1872007987[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m59.880239520958085[39m,
-    tx_sec: [33m457.0858283433134[39m,
-    ms: [33m1002[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698886043[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1872008871[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m180[39m,
-    tx_sec: [33m884[39m,
-    ms: [33m1000[39m } ]
-^C
-[1m[7m#[27m[1m[0m                                                                                                                       ]2;root@iZ8vbc0j8dkzi7ywb61o10Z: ~/server2/script]1;..erver2/script[0m[27m[24m[J[01;31m➜  [36mscript[00m [K[?1h=[?2004hnode testSysInfo.js[?1l>[?2004l
-]2;node testSysInfo.js]1;node[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698904576[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1872100595[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m-1[39m,
-    tx_sec: [33m-1[39m,
-    ms: [33m0[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698904636[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1872101579[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m60.42296072507553[39m,
-    tx_sec: [33m990.9365558912386[39m,
-    ms: [33m993[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698904696[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1872102005[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m60[39m,
-    tx_sec: [33m426[39m,
-    ms: [33m1000[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698904876[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1872102889[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m179.64071856287424[39m,
-    tx_sec: [33m882.2355289421158[39m,
-    ms: [33m1002[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698904936[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1872107255[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m59.940059940059946[39m,
-    tx_sec: [33m4361.638361638362[39m,
-    ms: [33m1001[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698904996[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1872107713[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m60[39m,
-    tx_sec: [33m458[39m,
-    ms: [33m1000[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698905356[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1872109541[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m359.6403596403597[39m,
-    tx_sec: [33m1826.1738261738265[39m,
-    ms: [33m1001[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698905416[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1872114075[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m59.880239520958085[39m,
-    tx_sec: [33m4524.9500998004[39m,
-    ms: [33m1002[39m } ]
-[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698905656[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1872115801[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m239.76023976023978[39m,
-    tx_sec: [33m1724.2757242757245[39m,
-    ms: [33m1001[39m } ]
-^X[ { iface: [32m'eth0'[39m,
-    operstate: [32m'up'[39m,
-    rx_bytes: [33m698906631[39m,
-    rx_dropped: [33m0[39m,
-    rx_errors: [33m0[39m,
-    tx_bytes: [33m1872129209[39m,
-    tx_dropped: [33m0[39m,
-    tx_errors: [33m0[39m,
-    rx_sec: [33m973.0538922155689[39m,
-    tx_sec: [33m13381.2375249501[39m,
-    ms: [33m1002[39m } ]
-^C
-[1m[7m#[27m[1m[0m                                                                                                                       ]2;root@iZ8vbc0j8dkzi7ywb61o10Z: ~/server2/script]1;..erver2/script[0m[27m[24m[J[01;31m➜  [36mscript[00m [K[?1h=[?2004hnode testSysInfo.js[?1l>[?2004l
-]2;node testSysInfo.js]1;node[90mundefined[39m [32m' '[39m [90mundefined[39m
-[90mundefined[39m [32m' '[39m [90mundefined[39m
-[90mundefined[39m [32m' '[39m [90mundefined[39m
-[90mundefined[39m [32m' '[39m [90mundefined[39m
-^C
-[1m[7m#[27m[1m[0m                                                                                                                       ]2;root@iZ8vbc0j8dkzi7ywb61o10Z: ~/server2/script]1;..erver2/script[0m[27m[24m[J[01;31m➜  [36mscript[00m [K[?1h=[?2004hnode testSysInfo.js[?1l>[?2004l
-]2;node testSysInfo.js]1;node[33m-1[39m [32m' '[39m [33m-1[39m
-[33m172.34468937875752[39m [32m' '[39m [33m180.36072144288576[39m
-[33m4854.854854854855[39m [32m' '[39m [33m60.06006006006006[39m
-[33m323.03090727816556[39m [32m' '[39m [33m179.46161515453642[39m
-[33m4454.454454454454[39m [32m' '[39m [33m60.06006006006006[39m
-[33m161.83816183816185[39m [32m' '[39m [33m59.940059940059946[39m
-[33m323.6763236763237[39m [32m' '[39m [33m179.82017982017985[39m
-[33m4510[39m [32m' '[39m [33m60[39m
