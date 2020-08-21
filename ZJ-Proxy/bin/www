@@ -155,14 +155,14 @@ function initialize() {
 			global.ws.delete(connection.id);
 			// Client is offline
 			console.log('offline');
-			utils
-				.clientOffline(connection.id)
-				.then((res) => {
-					console.log(res.data);
-				})
-				.catch((err) => {
-					console.error(err);
-				});
+			// utils
+			// 	.clientOffline(connection.id)
+			// 	.then((res) => {
+			// 		console.log(res.data);
+			// 	})
+			// 	.catch((err) => {
+			// 		console.error(err);
+			// 	});
 		});
 	});
 

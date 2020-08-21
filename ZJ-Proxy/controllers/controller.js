@@ -6,19 +6,19 @@ const path = require('path');
 const si = require('systeminformation');
 const EventEmitter = require('events').EventEmitter;
 
-exports.getImage = (req, res, next) => {
-	res.writeHead(200, { 'Content-Type': 'image/png' });
-	let file = path.join(__dirname, '../public/images/10M.png');
-	let rs = fs.createReadStream(file);
-	let resData = [];
-	rs.on('data', function (chunk) {
-		resData.push(chunk);
-	});
-	rs.on('end', function () {
-		res.write(Buffer.concat(resData));
-		res.end();
-	});
-};
+// exports.getImage = (req, res, next) => {
+// 	res.writeHead(200, { 'Content-Type': 'image/png' });
+// 	let file = path.join(__dirname, '../public/images/10M.png');
+// 	let rs = fs.createReadStream(file);
+// 	let resData = [];
+// 	rs.on('data', function (chunk) {
+// 		resData.push(chunk);
+// 	});
+// 	rs.on('end', function () {
+// 		res.write(Buffer.concat(resData));
+// 		res.end();
+// 	});
+// };
 /**
  *
  * Read mp4 from local, return in stream
