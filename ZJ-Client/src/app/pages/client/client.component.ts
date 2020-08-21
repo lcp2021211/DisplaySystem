@@ -8,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 export class ClientComponent implements OnInit {
   constructor() {}
 
-  MAX_NUMBER = [...Array(100)].map((v, k) => k + 1);
+  MAX_NUMBER = [...Array(10)].map((v, k) => (k + 1) * 10);
 
   type: string;
   show = false;
