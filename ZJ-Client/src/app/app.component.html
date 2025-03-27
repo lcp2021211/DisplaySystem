@@ -1,0 +1,23 @@
+<nb-layout>
+  <nb-layout-header fixed>
+    <div style="width: 100%; height: 100%; display: flex; justify-content: space-between;">
+      <div style="display: flex;">
+        <nb-icon icon="menu-2-outline" style="width: 2em; height: 2em; cursor: pointer;" (click)="toggleSidebar()">
+        </nb-icon>
+        <h2 style="margin: 0; margin-left: 0.5em;">移动目标防御监控平台</h2>
+      </div>
+      <nb-select placeholder="选择主题" (selectedChange)="changeTheme($event)">
+        <nb-option value="default">Default</nb-option>
+        <nb-option value="dark">Dark</nb-option>
+        <nb-option value="cosmic">Cosmic</nb-option>
+        <nb-option value="corporate">Corporate</nb-option>
+      </nb-select>
+    </div>
+  </nb-layout-header>
+  <nb-sidebar>
+    <nb-menu [items]="menus"></nb-menu>
+  </nb-sidebar>
+  <nb-layout-column style="padding: 10px;">
+    <router-outlet></router-outlet>
+  </nb-layout-column>
+</nb-layout>

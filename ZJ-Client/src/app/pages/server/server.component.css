@@ -1,0 +1,11 @@
+* {
+  margin: 10px;
+}
+
+nb-card {
+  margin-bottom: 10px;
+}
+
+nb-card-body {
+  padding: 10px;
+}

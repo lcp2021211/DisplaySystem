@@ -1,0 +1,11 @@
+<nb-radio-group [(value)]="selected">
+  <nb-radio style="display: inline;" value="cpu" [checked]="true">处理器</nb-radio>
+  <nb-radio style="display: inline;" value="mem">内存</nb-radio>
+  <nb-radio style="display: inline;" value="fs">硬盘</nb-radio>
+  <nb-radio style="display: inline;" value="net">网络</nb-radio>
+</nb-radio-group>
+
+<div style="display: flex; flex-wrap: wrap; width: 100%; margin: 0px;">
+  <app-proxy-card *ngFor="let proxy of proxies" [config]="config" [selected]="selected" [proxy]="proxy"
+    [info]="info[proxy]" style="width: calc(25% - 20px);"></app-proxy-card>
+</div>
