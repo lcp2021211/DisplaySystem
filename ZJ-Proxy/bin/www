@@ -1,0 +1,192 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+const http = require('http');
+const app = require('../app');
+const utils = require('../utils/utils');
+const config = require('../config/config');
+const debug = require('debug')('test:server');
+const websocketServer = require('websocket').server;
+const publicIP = require('public-ip');
+
+/**
+ * Get port from environment and store in Express.
+ */
+let CLIport = process.argv.slice(2)[0];
+let port = normalizePort(process.env.PORT || CLIport);
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ * Listen on provided port, on all network interfaces.
+ */
+let server = http.createServer(app);
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string or false.
+ * @param {*} val
+ * @returns
+ */
+function normalizePort(val) {
+	let port = parseInt(val, 10);
+
+	if (isNaN(port)) {
+		// named pipe
+		return val;
+	}
+
+	if (port >= 0) {
+		// port number
+		return port;
+	}
+
+	return false;
+}
+
+/**
+ * Event listener for http server "error" event.
+ * @param {*} error
+ */
+function onError(error) {
+	if (error.syscall !== 'listen') {
+		throw error;
+	}
+
+	let bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+
+	// handle specific listen errors with friendly messages
+	switch (error.code) {
+		case 'EACCES':
+			console.error(bind + ' requires elevated privileges');
+			process.exit(1);
+			break;
+		case 'EADDRINUSE':
+			console.error(bind + ' is already in use');
+			process.exit(1);
+			break;
+		default:
+			throw error;
+	}
+}
+
+/**
+ * Event listener for http server "listening" event.
+ */
+function onListening() {
+	let addr = server.address();
+	let bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+	debug('Listening on ' + bind);
+
+	initialize();
+}
+
+function initialize() {
+	publicIP.v4().then((ip) => {
+		global.ip = `${ip}:3000`;
+		console.log(global.ip);
+	});
+	// websocket server
+	let wsServer = new websocketServer({
+		httpServer: server,
+		autoAcceptConnections: false,
+	});
+
+	function originIsAllowed(origin) {
+		return true;
+	}
+
+	// initialize a map in memory to save all connections
+	global.ws = new Map();
+
+	wsServer.on('request', async (request) => {
+		// Validate
+		if (!originIsAllowed(request.origin)) {
+			request.reject();
+			console.log(new Date() + ' Connection from origin ' + request.origin + ' rejected.');
+			return;
+		}
+
+		let connection = request.accept('echo-protocol', request.origin);
+		// Get the clientID and type in websocket url
+		let arr = request.resource.split('/');
+		let clientID = parseInt(arr[1]);
+		let spy = parseInt(arr[2]);
+		// Record clientID
+		connection.id = clientID;
+		global.ws.set(clientID, connection);
+		// Client is online
+		utils
+			.clientOnline(clientID, spy)
+			.then((res) => {
+				if (res.data.code === 200) {
+					console.log('Update Successfully');
+				} else {
+					connection.sendUTF(
+						JSON.stringify({
+							type: 'switch',
+							content: 'null',
+						})
+					);
+				}
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+
+		console.log(`Client: ${clientID} connect! Connection size: ${global.ws.size}, -----------${new Date()}`);
+
+		connection.on('message', function (message) {
+			if (message.type === 'utf8') {
+				console.log('Received UTF8 Message: ' + message.utf8Data);
+				connection.sendUTF(message.utf8Data);
+			} else if (message.type === 'binary') {
+				console.log('Received Binary Message: ' + message.binaryData.length + ' bytes');
+				connection.sendBytes(message.binaryData);
+			}
+		});
+
+		connection.on('close', function (reasonCode, description) {
+			console.log(`Client: ${clientID} disconnect! Connection size: ${global.ws.size}, -----------${new Date()}`);
+			global.ws.delete(connection.id);
+			// Client is offline
+			console.log('offline');
+			// utils
+			// 	.clientOffline(connection.id)
+			// 	.then((res) => {
+			// 		console.log(res.data);
+			// 	})
+			// 	.catch((err) => {
+			// 		console.error(err);
+			// 	});
+		});
+	});
+
+	// how to recognize different users and distinguish them
+	// at the same time, send messages to the client by certain operations from proxy itself
+	global.attackFrequency = 0;
+	global.attackStrength = 0;
+
+	/**
+	 * Execute interval to detect whether send message to server
+	 */
+	setInterval(function () {
+		if (global.attackFrequency !== 0 || global.attackStrength !== 0) {
+			console.log('send frequency:', global.attackFrequency, ' send strength: ', global.attackStrength);
+			utils
+				.sendAttackMessage(global.attackFrequency, global.attackStrength)
+				.then((res) => {
+					console.log(res);
+				})
+				.catch((err) => {
+					console.error(err);
+				});
+			global.attackStrength = 0;
+			global.attackFrequency = 0;
+		}
+	}, config.interval);
+}

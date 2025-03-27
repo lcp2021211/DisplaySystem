@@ -1,0 +1,171 @@
+<!-- <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui">
+    <meta name="referrer" content="no-referrer">
+    <title>xgplayer</title>
+    <style type="text/css">
+      html, body {width:100%;height:100%;margin:auto;overflow: hidden;}
+      body {display:flex;}
+      #mse {flex:auto;}
+    </style>
+    <script type="text/javascript">
+      window.addEventListener('resize',function(){document.getElementById('mse').style.height=window.innerHeight+'px';});
+    </script>
+  </head>
+  <body>
+    <div id="mse"></div>
+    <video src="" width="600px" height="400px" controls></video>
+    <video src="http://47.92.118.15:3000/video" width="600px" height="400px" controls></video>
+    <script src="//cdn.jsdelivr.net/npm/xgplayer@1.1.4-beta.45/browser/index.js" charset="utf-8"></script>
+    <script type="text/javascript">
+      // let player=new Player({
+      //   id: 'mse',
+      //   autoplay: false,
+      //   volume: 0.3,
+      //   url:'/video/mp4/xgplayer-demo-720p.mp4',
+      //   poster: "//s2.pstatp.com/cdn/expire-1-M/byted-player-videos/1.0.0/poster.jpg",
+      //   playsinline: true,
+      //   height: window.innerHeight,
+      //   width: window.innerWidth
+      // });
+      // let player = new Player({
+      //   el:document.querySelector('#mse'),
+      //     url: 'http://39.98.199.218:8080'
+      // });
+
+      // player.emit('resourceReady', [{name: '高清', url: 'http://39.98.199.218:8080'}, {name: '超清', url: 'http://47.92.250.54:8080'}]);
+      
+      blob_load = (src, callback) => {
+        const req = new XMLHttpRequest();
+        req.open('GET', src, true);
+        req.responseType = 'blob';
+        req.onload = function () {
+          // Onload is triggered even on 404
+          // so we need to check the status code
+        if (this.status === 200) {
+          const videoBlob = this.response;
+          console.log(videoBlob.size)
+          const blobSrc = URL.createObjectURL(videoBlob); // IE10+
+          // Video is now downloaded
+          // and we can set it as source on the video element
+          // video.src = blobSrc ;
+          callback(videoBlob.size)
+          console.log(blobSrc, 'blobSrc加载完毕');
+        }
+        };
+        req.onerror = function () {
+          // Error
+        };
+        req.send();
+      }
+      
+      // 分段请求
+      // blob_load('http://localhost:3001/test.mp4', size => {
+      //   const BYTES_PER_CHUNK = 1024 * 1024
+      //   const SIZE = size
+      //   var start = 0
+      //   var end = BYTES_PER_CHUNK
+      //   var blob = new Blob([],{type: 'video/mp4'})
+      //   while(start < SIZE) {
+      //     console.log('another chunk')
+      //     const req = new XMLHttpRequest()
+      //     req.open('GET', 'http://localhost:3001/test.mp4', true)
+      //     req.responseType = 'blob'
+      //     req.setRequestHeader('Content-Range', start + '-' + end + '/' + SIZE)
+          
+      //     req.onload = function() {
+      //       if(this.status === 200) {
+      //         console.log(this.response)
+      //         console.log(blob)
+      //       }
+      //     }
+      //     console.log(start)
+      //     req.send(blob.slice(start, end))
+      //     start = end
+      //     end = start + BYTES_PER_CHUNK
+      //   }
+      // })
+      const SIZE = 1024 * 1024
+      // 根据传来的参数和URL和range进行抓去
+      function fetchFromUrl(url, start, end, size) {
+        return new Promise((resolve, reject) => {
+          const req = new XMLHttpRequest()
+          req.open('GET', url, true)
+          if(end > size && start < size) {
+            req.setRequestHeader('Content-Range', start + '-' + size + '/' + SIZE)
+          }else if(start >= size){
+            reject(new Error('already end of the file'))
+          }else{
+            req.setRequestHeader('Content-Range', start + '-' + end + '/' + SIZE)
+          }
+          req.responseType = 'arraybuffer'
+          req.onload = function() {
+            resolve(req.response)
+          }
+          req.send()
+        })
+      }
+      var video = document.querySelector('video')
+      var mimeCodec = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"'
+      var url = 'http://47.92.118.15:3000/video'
+      function download(url) {
+        if ('MediaSource' in window && MediaSource.isTypeSupported(mimeCodec)) {
+          var mediaSource = new MediaSource();
+          console.log(mediaSource)
+          //console.log(mediaSource.readyState); // closed
+          video.src = URL.createObjectURL(mediaSource);
+          mediaSource.addEventListener('sourceopen', sourceOpen);
+        } else {
+          console.error('Unsupported MIME type or codec: ', mimeCodec);
+        }
+      }
+      async function sourceOpen(_) {
+        var mediaSource = this
+        console.log(mediaSource)
+        var sourceBuffer = mediaSource.addSourceBuffer(mimeCodec)
+        var video = document.querySelector('video')
+        // video.play()
+        // Get file size
+        getFileSize(url, async size => {
+          var start = 0
+          var end = start + SIZE
+          while(start < SIZE) {
+            console.log(start)
+            sourceBuffer.addEventListener('updateend', function (_) {
+              mediaSource.endOfStream()
+              //console.log(mediaSource.readyState); // ended
+              // video.play()
+            })
+            
+            try{
+              var buf = await fetchFromUrl(url, start, end, size)
+              sourceBuffer.appendBuffer(buf)
+              start = end
+              end += SIZE
+            }catch (err) {
+              console.log(err)
+            }
+          }
+        })
+      }
+      function getFileSize(url, callback) {
+        const req = new XMLHttpRequest()
+        req.open('GET', url, true)
+        req.responseType = 'blob'
+        req.onload = function( ) {
+          if(this.status === 200) {
+            callback(this.response.size)
+          }
+        }
+        req.send()
+      }
+      download('http://47.92.118.15:3000/video')
+    </script>
+  </body>
+</html> -->
+<html>
+<h1>Express</h1>
+
+</html>

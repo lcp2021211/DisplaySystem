@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui">
+    <meta name="referrer" content="no-referrer">
+    <title>MTD Test WebPage</title>
+    <style type="text/css">
+      html, body {width:100%;height:100%;margin:auto;overflow: hidden;}
+      body {display:flex; flex-direction: column}
+      #mse {flex:auto;}
+    </style>
+    <script type="text/javascript">
+      window.addEventListener('resize',function(){document.getElementById('mse').style.height=window.innerHeight+'px';});
+    </script>
+  </head> 
+  <body>
+    <div displayInfo>
+      <video width="600px" height="400px" controls id="mse"></video>
+      <p id="elapsedTime"></p>
+      <p id="networkSpeed"></p>
+      <p id="clientText"></p>
+      <p id="blockOrNot">是否封禁：否</p>
+    </div>
+    
+    <button onclick="downloadVideo()">下载视频</button>
+    <button onclick="WebSocketTest()">SocketTest</button>
+    <input type="text" placeholder="client ID" id="clientID">
+    <button onclick="registerClient()">提交</button>
+    <button id="attackButton" onclick="attack()">攻击</button>
+  </body>
+
+  <script src="/javascripts/test.js"></script>
+  <!-- <script src="/javascripts/eventTest.js">
+    
+  </script> -->
+  </html>
